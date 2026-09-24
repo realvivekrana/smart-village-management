@@ -3,62 +3,69 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-const rateLimit = require("express-rate-limit");
+const mongoose = require("mongoose");
+
+const env = require("./config/env");
+
+const {
+  apiLimiter,
+  authLimiter,
+} = require("./middleware/rateLimitMiddleware");
+
+const {
+  notFound,
+  errorHandler,
+} = require("./middleware/errorMiddleware");
 
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
 /*
 |--------------------------------------------------------------------------
-| Security
+| Proxy
 |--------------------------------------------------------------------------
+| Render / Railway / Nginx ke peeche deploy karoge to real client IP
+| chahiye, warna rate limit sab users pe ek saath lagega.
+*/
+
+if (env.isProduction) {
+  app.set("trust proxy", 1);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Security + CORS
+|--------------------------------------------------------------------------
+| FRONTEND_URL me comma se multiple origins de sakte ho.
 */
 
 app.use(helmet());
 
-/*
-|--------------------------------------------------------------------------
-| CORS
-|--------------------------------------------------------------------------
-*/
+const allowedOrigins = env.frontendUrl
+  .split(",")
+  .map((origin) => origin.trim());
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
 
 /*
 |--------------------------------------------------------------------------
-| Logging
+| Logging, Body Parser, Cookies
 |--------------------------------------------------------------------------
 */
 
-app.use(morgan("dev"));
+if (env.nodeEnv !== "test") {
+  app.use(morgan(env.isProduction ? "combined" : "dev"));
+}
 
-/*
-|--------------------------------------------------------------------------
-| Body Parser
-|--------------------------------------------------------------------------
-*/
-
-app.use(express.json({ limit: "10mb" }));
-
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "10mb",
-  })
-);
-
-/*
-|--------------------------------------------------------------------------
-| Cookies
-|--------------------------------------------------------------------------
-*/
-
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 
 /*
@@ -67,18 +74,31 @@ app.use(cookieParser());
 |--------------------------------------------------------------------------
 */
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: "Too many requests. Please try again later.",
-  },
-});
+app.use("/api", apiLimiter);
 
-app.use("/api", limiter);
+app.use(
+  ["/api/v1/auth/login", "/api/v1/auth/register"],
+  authLimiter
+);
+
+/*
+|--------------------------------------------------------------------------
+| Health Check
+|--------------------------------------------------------------------------
+*/
+
+const healthCheck = (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Smart Village Management API is running",
+    environment: env.nodeEnv,
+    database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    timestamp: new Date().toISOString(),
+  });
+};
+
+app.get("/", healthCheck);
+app.get("/api/v1/health", healthCheck);
 
 /*
 |--------------------------------------------------------------------------
@@ -87,71 +107,15 @@ app.use("/api", limiter);
 */
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/users", userRoutes);
 
 /*
 |--------------------------------------------------------------------------
-| Health Check
+| 404 + Error Handler (hamesha sabse last me)
 |--------------------------------------------------------------------------
 */
 
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Smart Village Management API is running",
-    environment: process.env.NODE_ENV || "development",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-/*
-|--------------------------------------------------------------------------
-| 404 Handler
-|--------------------------------------------------------------------------
-*/
-
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Route not found: ${req.method} ${req.originalUrl}`,
-  });
-});
-
-/*
-|--------------------------------------------------------------------------
-| Global Error Handler
-|--------------------------------------------------------------------------
-*/
-
-app.use((err, req, res, next) => {
-  console.error("Error:", err);
-
-  // MongoDB duplicate key
-  if (err.code === 11000) {
-    const duplicateField = Object.keys(err.keyPattern || {})[0];
-
-    return res.status(409).json({
-      success: false,
-      message: `${duplicateField || "Field"} already exists`,
-    });
-  }
-
-  // Mongoose validation
-  if (err.name === "ValidationError") {
-    const errors = Object.values(err.errors).map(
-      (error) => error.message
-    );
-
-    return res.status(400).json({
-      success: false,
-      message: "Validation failed",
-      errors,
-    });
-  }
-
-  res.status(err.statusCode || 500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-  });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
