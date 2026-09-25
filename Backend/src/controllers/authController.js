@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+const authService = require("../services/authService");
+const emailService = require("../services/emailService");
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +71,9 @@ const register = async (req, res, next) => {
 
     // Generate JWT
     const token = generateToken(user._id);
+
+    // Welcome email (non-blocking)
+    emailService.sendWelcomeEmail(user).catch(() => {});
 
     return res.status(201).json({
       success: true,
@@ -161,20 +166,10 @@ const login = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
+    // req.user is already the full user document set by protect middleware
     return res.status(200).json({
       success: true,
-      data: {
-        user,
-      },
+      data: { user: req.user },
     });
   } catch (error) {
     next(error);
@@ -200,9 +195,48 @@ const logout = async (req, res, next) => {
   }
 };
 
+/*
+|--------------------------------------------------------------------------
+| Forgot Password
+|--------------------------------------------------------------------------
+| POST /api/v1/auth/forgot-password
+*/
+
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const result = await authService.requestPasswordReset(email);
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/*
+|--------------------------------------------------------------------------
+| Reset Password
+|--------------------------------------------------------------------------
+| POST /api/v1/auth/reset-password
+*/
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    const result = await authService.resetPassword(token, password);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
   logout,
+  forgotPassword,
+  resetPassword,
 };
