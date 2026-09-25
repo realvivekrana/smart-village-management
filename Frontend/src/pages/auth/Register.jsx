@@ -65,7 +65,7 @@ export default function Register() {
               <label className="label">I am a</label>
               <select className="input" value={form.role} onChange={set("role")}>
                 <option value="citizen">Citizen / Resident</option>
-                <option value="business_owner">Business Owner</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
 

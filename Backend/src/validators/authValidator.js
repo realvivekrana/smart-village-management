@@ -25,7 +25,7 @@ const registerValidator = [
 
   body("role")
     .optional()
-    .isIn(["citizen", "business_owner"]).withMessage("Role must be citizen or business_owner"),
+    .isIn(["citizen", "admin"]).withMessage("Role must be citizen or admin"),
 ];
 
 const loginValidator = [
@@ -49,11 +49,10 @@ const forgotPasswordValidator = [
 
 const resetPasswordValidator = [
   body("token")
-    .trim()
     .notEmpty().withMessage("Reset token is required"),
 
   body("password")
-    .notEmpty().withMessage("New password is required")
+    .notEmpty().withMessage("Password is required")
     .isLength({ min: 8 }).withMessage("Password must be at least 8 characters")
     .matches(/[A-Z]/).withMessage("Password must contain at least one uppercase letter")
     .matches(/[0-9]/).withMessage("Password must contain at least one number"),
