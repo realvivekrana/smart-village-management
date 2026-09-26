@@ -3,68 +3,52 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit");
 
-const env = require("./config/env");
-
-const { apiLimiter, authLimiter } = require("./middleware/rateLimitMiddleware");
-const { notFound, errorHandler } = require("./middleware/errorMiddleware");
-
-// Routes
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
-const villageRoutes = require("./routes/villageRoutes");
-const noticeRoutes = require("./routes/noticeRoutes");
-const complaintRoutes = require("./routes/complaintRoutes");
-const emergencyRoutes = require("./routes/emergencyRoutes");
-const eventRoutes = require("./routes/eventRoutes");
-const jobRoutes = require("./routes/jobRoutes");
-const jobApplicationRoutes = require("./routes/jobApplicationRoutes");
-const businessRoutes = require("./routes/businessRoutes");
+const governmentContactRoutes = require("./routes/governmentContactRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
-const communityRoutes = require("./routes/communityRoutes");
-const commentRoutes = require("./routes/commentRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
-const contactRoutes = require("./routes/contactRoutes");
 
 const app = express();
 
 /*
 |--------------------------------------------------------------------------
-| Proxy
+| Security Middleware
 |--------------------------------------------------------------------------
 */
-if (env.isProduction) {
-  app.set("trust proxy", 1);
-}
+
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 
 /*
 |--------------------------------------------------------------------------
-| Security + CORS
+| CORS
 |--------------------------------------------------------------------------
 */
-app.use(helmet());
 
-const allowedOrigins = env.frontendUrl.split(",").map((o) => o.trim());
-
-// Vite dev server port badal jaata hai (5173, 5174, 5175...) jab pehla port
-// pehle se busy ho. Development mein har localhost/127.0.0.1 port allow karo
-// taaki ye CORS error baar baar na aaye. Production mein sirf FRONTEND_URL
-// (allowedOrigins) hi allow hoga.
-const isLocalDevOrigin = (origin) =>
-  !env.isProduction && /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "http://localhost:3000",
+].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Same-origin / server-to-server requests (Postman, curl) mein origin
-      // header hota hi nahi — unhe allow karna zaroori hai.
-      if (!origin || allowedOrigins.includes(origin) || isLocalDevOrigin(origin)) {
+      // Allow requests without an origin
+      // such as Postman or server-to-server requests.
+      if (!origin) {
         return callback(null, true);
       }
-      return callback(new Error(`CORS blocked for origin: ${origin}`));
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
@@ -72,116 +56,237 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| Logging, Body Parser, Cookies
+| Rate Limiting
 |--------------------------------------------------------------------------
 */
-if (env.nodeEnv !== "test") {
-  app.use(morgan(env.isProduction ? "combined" : "dev"));
-}
 
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
+});
+
+app.use("/api/", apiLimiter);
+
+/*
+|--------------------------------------------------------------------------
+| Body Parsers
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  express.json({
+    limit: "10mb",
+  })
+);
+
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "10mb",
+  })
+);
+
+/*
+|--------------------------------------------------------------------------
+| Cookie Parser
+|--------------------------------------------------------------------------
+*/
+
 app.use(cookieParser());
 
 /*
 |--------------------------------------------------------------------------
-| Rate Limiting
+| Logging
 |--------------------------------------------------------------------------
 */
-app.use("/api", apiLimiter);
 
-app.use(
-  ["/api/v1/auth/login", "/api/v1/auth/register"],
-  authLimiter
-);
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan("dev"));
+}
 
 /*
 |--------------------------------------------------------------------------
 | Health Check
 |--------------------------------------------------------------------------
 */
-const healthCheck = (req, res) => {
+
+app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
     message: "Smart Village Management API is running",
-    environment: env.nodeEnv,
-    database:
-      mongoose.connection.readyState === 1
-        ? "connected"
-        : "disconnected",
+    environment: process.env.NODE_ENV || "development",
     timestamp: new Date().toISOString(),
   });
-};
+});
 
-app.get("/", healthCheck);
-app.get("/api/v1/health", healthCheck);
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API is healthy",
+    environment: process.env.NODE_ENV || "development",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
-app.use("/api/v1/auth", authRoutes);
-
-app.use("/api/v1/users", userRoutes);
-
-app.use("/api/v1/village", villageRoutes);
-
-app.use("/api/v1/notices", noticeRoutes);
-
-app.use("/api/v1/complaints", complaintRoutes);
-
-app.use("/api/v1/emergency", emergencyRoutes);
-
-app.use("/api/v1/events", eventRoutes);
-
-app.use("/api/v1/jobs", jobRoutes);
-
-app.use("/api/v1/applications", jobApplicationRoutes);
-
-app.use("/api/v1/businesses", businessRoutes);
-
-app.use("/api/v1/services", serviceRoutes);
-
-app.use("/api/v1/community", communityRoutes);
-
-app.use("/api/v1/comments", commentRoutes);
-
-app.use("/api/v1/reviews", reviewRoutes);
-
-app.use("/api/v1/notifications", notificationRoutes);
-
-app.use("/api/v1/dashboard", dashboardRoutes);
-
-app.use("/api/v1/contact", contactRoutes);
 
 /*
 |--------------------------------------------------------------------------
-| Nested Routes
+| Authentication
 |--------------------------------------------------------------------------
 */
 
-// Comments under community posts
 app.use(
-  "/api/v1/community/:postId/comments",
-  commentRoutes
+  "/api/v1/auth",
+  authRoutes
 );
-
-// Reviews under businesses
-app.use(
-  "/api/v1/businesses/:businessId/reviews",
-  reviewRoutes
-);
-
-// Applications under jobs
-app.use("/api/v1", jobApplicationRoutes);
 
 /*
 |--------------------------------------------------------------------------
-| 404 + Error Handler
+| Government Contacts
+|--------------------------------------------------------------------------
+|
+| Public:
+| GET    /api/v1/government-contacts
+| GET    /api/v1/government-contacts/:id
+|
+| Admin:
+| POST   /api/v1/government-contacts
+| PUT    /api/v1/government-contacts/:id
+| PATCH  /api/v1/government-contacts/:id/status
+| DELETE /api/v1/government-contacts/:id
+|
 |--------------------------------------------------------------------------
 */
-app.use(notFound);
-app.use(errorHandler);
+
+app.use(
+  "/api/v1/government-contacts",
+  governmentContactRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Government / Village Services
+|--------------------------------------------------------------------------
+|
+| Public:
+| GET    /api/v1/services
+| GET    /api/v1/services/:id
+|
+| Admin:
+| POST   /api/v1/services
+| PUT    /api/v1/services/:id
+| DELETE /api/v1/services/:id
+|
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/services",
+  serviceRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| 404 Handler
+|--------------------------------------------------------------------------
+*/
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Global Error Handler
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  (err, req, res, next) => {
+    console.error("Global Error:", err);
+
+    /*
+     * CORS error
+     */
+    if (err.message === "Not allowed by CORS") {
+      return res.status(403).json({
+        success: false,
+        message: "CORS policy blocked this request",
+      });
+    }
+
+    /*
+     * JSON parsing error
+     */
+    if (
+      err instanceof SyntaxError &&
+      err.status === 400 &&
+      err.body
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid JSON request body",
+      });
+    }
+
+    /*
+     * Mongoose validation error
+     */
+    if (err.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: Object.values(err.errors).map(
+          (error) => error.message
+        ),
+      });
+    }
+
+    /*
+     * Mongoose CastError
+     */
+    if (err.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid resource ID",
+      });
+    }
+
+    /*
+     * Duplicate key error
+     */
+    if (err.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "Duplicate record already exists",
+      });
+    }
+
+    /*
+     * Default error
+     */
+    return res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Internal server error",
+      ...(process.env.NODE_ENV === "development" && {
+        stack: err.stack,
+      }),
+    });
+  }
+);
 
 module.exports = app;

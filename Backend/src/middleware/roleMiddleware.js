@@ -1,41 +1,38 @@
 /*
 |--------------------------------------------------------------------------
-| authorize
+| Role Authorization Middleware
 |--------------------------------------------------------------------------
-| Usage:
-|
-| router.post("/", protect, authorize("admin"), createNotice);
-| router.post("/", protect, authorize("citizen", "admin"), addBusiness);
-|
-| Sirf do roles hain: "citizen" aur "admin".
+| Available roles:
+| - citizen
+| - admin
 |--------------------------------------------------------------------------
 */
 
 const authorize =
   (...allowedRoles) =>
   (req, res, next) => {
+    // User authentication check
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message:
-          "Authentication required. Please login.",
+        message: "Authentication required. Please login.",
       });
     }
 
     const { role } = req.user;
 
+    // Check whether user's role is allowed
     if (allowedRoles.includes(role)) {
       return next();
     }
 
     return res.status(403).json({
       success: false,
-      message:
-        "You do not have permission to perform this action",
+      message: "You do not have permission to perform this action",
     });
   };
 
-// Shortcut: admin only
+// Admin-only middleware
 const adminOnly = authorize("admin");
 
 module.exports = {
