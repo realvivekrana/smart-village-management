@@ -1,178 +1,43 @@
 const mongoose = require("mongoose");
 
-const placeSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      trim: true,
-      required: true,
-      maxlength: 150,
-    },
-
-    type: {
-      type: String,
-      enum: [
-        "temple",
-        "mosque",
-        "church",
-        "school",
-        "college",
-        "hospital",
-        "health_center",
-        "park",
-        "market",
-        "super_market",
-        "government_office",
-        "police_station",
-        "railway_station",
-        "bus_stop",
-        "atm",
-        "petrol_pump",
-        "restaurant",
-        "hotel",
-        "cinema",
-        "electronic_shop",
-        "water_body",
-        "tourist_place",
-        "other",
-      ],
-      default: "other",
-    },
-
-    description: {
-      type: String,
-      trim: true,
-      maxlength: 1000,
-    },
-
-    address: {
-      type: String,
-      trim: true,
-      maxlength: 500,
-    },
-
-    distanceKm: {
-      type: Number,
-      min: 0,
-    },
-
-    phone: {
-      type: String,
-      trim: true,
-      maxlength: 30,
-    },
-
-    coordinates: {
-      lat: Number,
-      lng: Number,
-    },
-
-    imageUrl: {
-      type: String,
-      trim: true,
-    },
-
-    sourceName: {
-      type: String,
-      trim: true,
-      maxlength: 100,
-    },
-
-    sourceUrl: {
-      type: String,
-      trim: true,
-      maxlength: 500,
-    },
-
-    verified: {
-      type: Boolean,
-      default: false,
-    },
-
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  {
-    _id: true,
-  }
-);
-
-const nearbySchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      trim: true,
-    },
-
-    distanceKm: {
-      type: Number,
-      min: 0,
-    },
-  },
-  {
-    _id: false,
-  }
-);
-
 const villageSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: [true, "Village name is required"],
       trim: true,
-      maxlength: 100,
+      maxlength: 150,
     },
 
-    localName: {
+    description: {
       type: String,
       trim: true,
-      maxlength: 100,
-    },
-
-    block: {
-      type: String,
-      trim: true,
-      maxlength: 100,
+      maxlength: 5000,
+      default: "",
     },
 
     district: {
       type: String,
-      required: [true, "District is required"],
       trim: true,
-      maxlength: 100,
+      default: "",
     },
 
     state: {
       type: String,
-      required: [true, "State is required"],
       trim: true,
-      maxlength: 100,
+      default: "",
+    },
+
+    country: {
+      type: String,
+      trim: true,
+      default: "India",
     },
 
     pincode: {
       type: String,
       trim: true,
-      match: [/^\d{6}$/, "Please enter a valid 6-digit pincode"],
-    },
-
-    languages: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
-
-    altitude: {
-      type: Number,
-      min: 0,
-    },
-
-    stdCode: {
-      type: String,
-      trim: true,
-      maxlength: 20,
+      default: "",
     },
 
     population: {
@@ -181,122 +46,89 @@ const villageSchema = new mongoose.Schema(
       default: 0,
     },
 
-    location: {
-      lat: {
-        type: Number,
-        min: -90,
-        max: 90,
-      },
-      lng: {
-        type: Number,
-        min: -180,
-        max: 180,
-      },
-    },
-
     area: {
-      type: Number,
-      min: 0,
-      default: 0,
-    },
-
-    description: {
       type: String,
       trim: true,
-      maxlength: 5000,
+      default: "",
+    },
+
+    establishedYear: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+
+    image: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    contact: {
+      phone: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+
+      email: {
+        type: String,
+        trim: true,
+        lowercase: true,
+        default: "",
+      },
+
+      address: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+    },
+
+    website: {
+      type: String,
+      trim: true,
+      default: "",
     },
 
     history: {
       type: String,
       trim: true,
-      maxlength: 10000,
+      default: "",
     },
 
-    howToReach: {
-      road: String,
-      rail: String,
-      air: String,
+    culture: {
+      type: String,
+      trim: true,
+      default: "",
     },
 
-    rivers: [
+    facilities: [
       {
         type: String,
         trim: true,
       },
     ],
 
-    assemblyConstituency: {
-      type: String,
-      trim: true,
-      maxlength: 150,
+    latitude: {
+      type: Number,
+      default: null,
     },
 
-    lokSabhaConstituency: {
-      type: String,
-      trim: true,
-      maxlength: 150,
-    },
-
-    nearbyVillages: [nearbySchema],
-
-    nearbyCities: [nearbySchema],
-
-    nearbyTaluks: [nearbySchema],
-
-    nearbyAirports: [nearbySchema],
-
-    nearbyTouristPlaces: [nearbySchema],
-
-    nearbyDistricts: [nearbySchema],
-
-    nearbyRailwayStations: [nearbySchema],
-
-    images: [
-      {
-        url: {
-          type: String,
-          trim: true,
-        },
-
-        publicId: {
-          type: String,
-          trim: true,
-        },
-
-        caption: {
-          type: String,
-          trim: true,
-          maxlength: 200,
-        },
-      },
-    ],
-
-    places: [placeSchema],
-
-    sarpanch: {
-      name: {
-        type: String,
-        trim: true,
-        maxlength: 100,
-      },
-
-      phone: {
-        type: String,
-        trim: true,
-        match: [
-          /^[6-9]\d{9}$/,
-          "Please enter a valid Indian phone number",
-        ],
-      },
-
-      since: {
-        type: Date,
-      },
+    longitude: {
+      type: Number,
+      default: null,
     },
 
     isActive: {
       type: Boolean,
       default: true,
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   {
@@ -305,12 +137,12 @@ const villageSchema = new mongoose.Schema(
 );
 
 villageSchema.index({
-  name: "text",
-  district: "text",
-  state: "text",
-  block: "text",
+  name: 1,
 });
 
-const Village = mongoose.model("Village", villageSchema);
+villageSchema.index({
+  district: 1,
+  state: 1,
+});
 
-module.exports = Village;
+module.exports = mongoose.model("Village", villageSchema);
