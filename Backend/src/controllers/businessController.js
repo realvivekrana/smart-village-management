@@ -168,6 +168,15 @@ const updateBusiness = async (req, res, next) => {
     if (!isAdmin) updates.status = "pending";
 
     Object.assign(business, updates);
+
+    // Newly uploaded photos (if any) are appended to the existing gallery
+    if (req.files && req.files.length > 0 && env.cloudinary.enabled) {
+      const uploaded = await cloudinaryService.uploadMultipleImages(req.files, "smart-village/businesses");
+      const hasMainImage = business.images.some((img) => img.isMain);
+      if (!hasMainImage && uploaded.length > 0) uploaded[0].isMain = true;
+      business.images.push(...uploaded);
+    }
+
     await business.save();
 
     return res.status(200).json({ success: true, message: "Business updated", data: { business } });
