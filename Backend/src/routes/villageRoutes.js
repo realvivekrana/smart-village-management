@@ -11,7 +11,8 @@ const {
   deleteVillagePlace,
 } = require("../controllers/villageController");
 
-const { protect, authorize } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
+const { authorize } = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
