@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
@@ -98,6 +99,16 @@ const AboutVillage = () => {
   const activePlaces = places.filter(
     (place) => place.isActive !== false
   );
+
+  const nearbyGroups = [
+    { label: "Nearby Villages", icon: "🏘️", items: village.nearbyVillages },
+    { label: "Nearby Cities", icon: "🏙️", items: village.nearbyCities },
+    { label: "Nearby Blocks / Taluks", icon: "🧭", items: village.nearbyTaluks },
+    { label: "Nearby Districts", icon: "🗺️", items: village.nearbyDistricts },
+    { label: "Nearby Railway Stations", icon: "🚆", items: village.nearbyRailwayStations },
+    { label: "Nearby Airports", icon: "✈️", items: village.nearbyAirports },
+    { label: "Nearby Tourist Places", icon: "📸", items: village.nearbyTouristPlaces },
+  ].filter((group) => Array.isArray(group.items) && group.items.length > 0);
 
   return (
     <main className="bg-gray-50">
@@ -352,6 +363,56 @@ const AboutVillage = () => {
         </section>
       )}
 
+      {/* Nearby Villages, Cities & Connectivity */}
+      {nearbyGroups.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <SectionTitle
+            eyebrow="Around the Village"
+            title="Nearby Places & Connectivity"
+          />
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {nearbyGroups.map((group) => (
+              <div
+                key={group.label}
+                className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+              >
+                <h3 className="flex items-center gap-2 text-base font-bold text-gray-900">
+                  <span>{group.icon}</span>
+                  {group.label}
+                </h3>
+
+                <ul className="mt-4 space-y-2">
+                  {group.items
+                    .slice()
+                    .sort(
+                      (a, b) =>
+                        (a.distanceKm ?? 0) - (b.distanceKm ?? 0)
+                    )
+                    .map((item) => (
+                      <li
+                        key={`${group.label}-${item.name}`}
+                        className="flex items-center justify-between border-b border-gray-100 pb-2 text-sm last:border-b-0 last:pb-0"
+                      >
+                        <span className="text-gray-700">
+                          {item.name}
+                        </span>
+
+                        {item.distanceKm !== undefined &&
+                          item.distanceKm !== null && (
+                            <span className="shrink-0 text-xs font-medium text-gray-400">
+                              {item.distanceKm} km
+                            </span>
+                          )}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Important Places */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -375,12 +436,23 @@ const AboutVillage = () => {
           </div>
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {activePlaces.slice(0, 12).map((place) => (
+            {activePlaces.slice(0, 9).map((place) => (
               <PlaceCard
                 key={place._id || place.name}
                 place={place}
               />
             ))}
+          </div>
+        )}
+
+        {activePlaces.length > 9 && (
+          <div className="mt-8 text-center">
+            <Link
+              to="/village-places"
+              className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            >
+              View All {activePlaces.length} Places →
+            </Link>
           </div>
         )}
       </section>
@@ -402,7 +474,7 @@ const AboutVillage = () => {
               )}
 
               {sarpanch.phone && (
-                <a
+                
                   href={`tel:${sarpanch.phone}`}
                   className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
                 >
@@ -577,6 +649,32 @@ const ReachCard = ({
   );
 };
 
+const PLACE_TYPE_ICONS = {
+  temple: "🛕",
+  mosque: "🕌",
+  church: "⛪",
+  school: "🏫",
+  college: "🎓",
+  hospital: "🏥",
+  health_center: "⚕️",
+  park: "🌳",
+  market: "🛒",
+  super_market: "🛍️",
+  government_office: "🏛️",
+  police_station: "👮",
+  railway_station: "🚆",
+  bus_stop: "🚌",
+  atm: "🏧",
+  petrol_pump: "⛽",
+  restaurant: "🍽️",
+  hotel: "🏨",
+  cinema: "🎬",
+  electronic_shop: "🔌",
+  water_body: "💧",
+  tourist_place: "📸",
+  other: "📍",
+};
+
 const PlaceCard = ({ place }) => {
   return (
     <article className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
@@ -589,7 +687,7 @@ const PlaceCard = ({ place }) => {
         />
       ) : (
         <div className="flex h-44 items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 text-5xl">
-          📍
+          {PLACE_TYPE_ICONS[place.type] || PLACE_TYPE_ICONS.other}
         </div>
       )}
 
@@ -636,7 +734,7 @@ const PlaceCard = ({ place }) => {
             )}
 
           {place.phone && (
-            <a
+            
               href={`tel:${place.phone}`}
               className="text-xs font-medium text-blue-600 hover:text-blue-700"
             >
