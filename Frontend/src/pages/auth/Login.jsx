@@ -35,7 +35,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="text-4xl">🏘️</Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">Smart Village</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">Kakarcholi</h1>
           <p className="text-gray-500 text-sm mt-1">Sign in to your account</p>
         </div>
 

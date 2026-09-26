@@ -36,7 +36,7 @@ export default function Navbar({ onMenuOpen }) {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-primary-700 dark:text-primary-400 text-lg">
-            🏘️ <span className="hidden sm:block">Smart Village</span>
+            🏘️ <span className="hidden sm:block">Kakarcholi</span>
           </Link>
 
           {/* Desktop Nav */}

@@ -35,7 +35,7 @@ export default function Dashboard() {
   return (
     <Page
       title="Admin Dashboard"
-      subtitle="Live overview of the Smart Village Management system. Auto-refreshes every 30 seconds."
+      subtitle="Live overview of the Kakarcholi Village system. Auto-refreshes every 30 seconds."
       actions={<><button className="btn-secondary" onClick={load} type="button">↻ Refresh now</button><Link className="btn-primary" to="/admin/complaints">Review Complaints</Link></>}
     >
       {error ? <ErrorBox message={error} retry={load} /> : null}

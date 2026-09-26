@@ -22,7 +22,7 @@ export default function MobileMenu({ isOpen, onClose }) {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <nav className="absolute top-0 left-0 bottom-0 w-72 bg-white dark:bg-gray-900 shadow-xl overflow-y-auto">
         <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
-          <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ Smart Village</span>
+          <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ Kakarcholi</span>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
 

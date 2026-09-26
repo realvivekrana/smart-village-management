@@ -46,7 +46,7 @@ export default function Sidebar({ onClose }) {
     <aside className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-64">
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
-        <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ Smart Village</span>
+        <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ Kakarcholi</span>
         {onClose && (
           <button onClick={onClose} className="lg:hidden p-1 text-gray-400 hover:text-gray-600">✕</button>
         )}
