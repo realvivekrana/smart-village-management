@@ -3,14 +3,15 @@ const cloudinaryService = require("../services/cloudinaryService");
 
 /*
 |--------------------------------------------------------------------------
-| GET VILLAGE
+| GET ACTIVE VILLAGE
 |--------------------------------------------------------------------------
-| Public API
-| Returns the active village.
 */
+
 const getVillage = async (req, res) => {
   try {
-    const village = await Village.findOne({ isActive: true }).lean();
+    const village = await Village.findOne({
+      isActive: true,
+    }).lean();
 
     if (!village) {
       return res.status(404).json({
@@ -34,19 +35,33 @@ const getVillage = async (req, res) => {
   }
 };
 
-
 /*
 |--------------------------------------------------------------------------
 | CREATE VILLAGE
 |--------------------------------------------------------------------------
 */
+
 const createVillage = async (req, res) => {
   try {
-    const existingVillage = await Village.findOne({
-      name: req.body.name,
-      block: req.body.block,
-      district: req.body.district,
-    });
+    const {
+      name,
+      block,
+      district,
+    } = req.body;
+
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Village name is required",
+      });
+    }
+
+    const existingVillage =
+      await Village.findOne({
+        name: String(name).trim(),
+        block: block || "",
+        district: district || "",
+      });
 
     if (existingVillage) {
       return res.status(409).json({
@@ -56,7 +71,11 @@ const createVillage = async (req, res) => {
       });
     }
 
-    const village = await Village.create(req.body);
+    const village = await Village.create({
+      ...req.body,
+      name: String(name).trim(),
+      createdBy: req.user?._id || null,
+    });
 
     return res.status(201).json({
       success: true,
@@ -74,17 +93,329 @@ const createVillage = async (req, res) => {
   }
 };
 
+/*
+|--------------------------------------------------------------------------
+| NORMALIZE VILLAGE PAYLOAD
+|--------------------------------------------------------------------------
+| Frontend ke flat/nested fields ko consistent MongoDB structure me rakhta hai.
+|--------------------------------------------------------------------------
+*/
+
+const normalizeVillagePayload = (body = {}) => {
+  const payload = {};
+
+  /*
+  |--------------------------------------------------------------------------
+  | Simple fields
+  |--------------------------------------------------------------------------
+  */
+
+  const simpleFields = [
+    "name",
+    "localName",
+    "description",
+    "history",
+    "culture",
+    "block",
+    "district",
+    "state",
+    "country",
+    "pincode",
+    "stdCode",
+    "website",
+    "assemblyConstituency",
+    "lokSabhaConstituency",
+    "image",
+  ];
+
+  simpleFields.forEach((field) => {
+    if (body[field] !== undefined) {
+      payload[field] =
+        typeof body[field] === "string"
+          ? body[field].trim()
+          : body[field];
+    }
+  });
+
+  /*
+  |--------------------------------------------------------------------------
+  | Numeric fields
+  |--------------------------------------------------------------------------
+  */
+
+  const numericFields = [
+    "population",
+    "area",
+    "altitude",
+    "latitude",
+    "longitude",
+  ];
+
+  numericFields.forEach((field) => {
+    if (
+      body[field] !== undefined &&
+      body[field] !== null &&
+      body[field] !== ""
+    ) {
+      const value = Number(body[field]);
+
+      if (!Number.isNaN(value)) {
+        payload[field] = value;
+      }
+    }
+  });
+
+  /*
+  |--------------------------------------------------------------------------
+  | Arrays
+  |--------------------------------------------------------------------------
+  */
+
+  const arrayFields = [
+    "languages",
+    "rivers",
+    "facilities",
+  ];
+
+  arrayFields.forEach((field) => {
+    if (body[field] !== undefined) {
+      if (Array.isArray(body[field])) {
+        payload[field] = body[field]
+          .map((item) => String(item).trim())
+          .filter(Boolean);
+      } else if (typeof body[field] === "string") {
+        payload[field] = body[field]
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+      }
+    }
+  });
+
+  /*
+  |--------------------------------------------------------------------------
+  | Contact
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    body.contact !== undefined ||
+    body.phone !== undefined ||
+    body.email !== undefined ||
+    body.address !== undefined
+  ) {
+    const existingContact =
+      body.contact &&
+      typeof body.contact === "object"
+        ? body.contact
+        : {};
+
+    payload.contact = {
+      phone:
+        existingContact.phone ??
+        body.phone ??
+        "",
+
+      email:
+        existingContact.email ??
+        body.email ??
+        "",
+
+      address:
+        existingContact.address ??
+        body.address ??
+        "",
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Sarpanch
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    body.sarpanch !== undefined ||
+    body.sarpanchName !== undefined ||
+    body.sarpanchPhone !== undefined
+  ) {
+    const existingSarpanch =
+      body.sarpanch &&
+      typeof body.sarpanch === "object"
+        ? body.sarpanch
+        : {};
+
+    payload.sarpanch = {
+      name:
+        existingSarpanch.name ??
+        body.sarpanchName ??
+        "",
+
+      phone:
+        existingSarpanch.phone ??
+        body.sarpanchPhone ??
+        "",
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | How To Reach
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    body.howToReach !== undefined ||
+    body.road !== undefined ||
+    body.rail !== undefined ||
+    body.air !== undefined
+  ) {
+    const existingHowToReach =
+      body.howToReach &&
+      typeof body.howToReach === "object"
+        ? body.howToReach
+        : {};
+
+    payload.howToReach = {
+      road:
+        existingHowToReach.road ??
+        body.road ??
+        "",
+
+      rail:
+        existingHowToReach.rail ??
+        body.rail ??
+        "",
+
+      air:
+        existingHowToReach.air ??
+        body.air ??
+        "",
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Coordinates
+  |--------------------------------------------------------------------------
+  */
+
+  const sourceCoordinates =
+    body.location &&
+    typeof body.location === "object"
+      ? body.location
+      : body.coordinates &&
+        typeof body.coordinates === "object"
+      ? body.coordinates
+      : {};
+
+  const lat =
+    sourceCoordinates.lat ??
+    body.latitude;
+
+  const lng =
+    sourceCoordinates.lng ??
+    body.longitude;
+
+  if (
+    lat !== undefined ||
+    lng !== undefined
+  ) {
+    const latitude =
+      lat === "" ||
+      lat === null ||
+      lat === undefined
+        ? null
+        : Number(lat);
+
+    const longitude =
+      lng === "" ||
+      lng === null ||
+      lng === undefined
+        ? null
+        : Number(lng);
+
+    payload.location = {
+      lat: Number.isNaN(latitude)
+        ? null
+        : latitude,
+
+      lng: Number.isNaN(longitude)
+        ? null
+        : longitude,
+    };
+
+    payload.coordinates = {
+      lat: Number.isNaN(latitude)
+        ? null
+        : latitude,
+
+      lng: Number.isNaN(longitude)
+        ? null
+        : longitude,
+    };
+
+    if (!Number.isNaN(latitude)) {
+      payload.latitude = latitude;
+    }
+
+    if (!Number.isNaN(longitude)) {
+      payload.longitude = longitude;
+    }
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Dynamic collections
+  |--------------------------------------------------------------------------
+  */
+
+  const collectionFields = [
+    "places",
+    "nearbyVillages",
+    "nearbyCities",
+    "nearbyTaluks",
+    "nearbyDistricts",
+    "nearbyRailwayStations",
+    "nearbyAirports",
+    "nearbyTouristPlaces",
+  ];
+
+  collectionFields.forEach((field) => {
+    if (body[field] !== undefined) {
+      payload[field] = Array.isArray(body[field])
+        ? body[field]
+        : [];
+    }
+  });
+
+  /*
+  |--------------------------------------------------------------------------
+  | Existing gallery data
+  |--------------------------------------------------------------------------
+  */
+
+  if (body.images !== undefined) {
+    payload.images = Array.isArray(body.images)
+      ? body.images
+      : [];
+  }
+
+  return payload;
+};
 
 /*
 |--------------------------------------------------------------------------
-| UPDATE VILLAGE
+| UPDATE VILLAGE BY ID
 |--------------------------------------------------------------------------
 */
+
 const updateVillage = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const village = await Village.findById(id);
+    const village =
+      await Village.findById(id);
 
     if (!village) {
       return res.status(404).json({
@@ -93,11 +424,16 @@ const updateVillage = async (req, res) => {
       });
     }
 
-    Object.keys(req.body).forEach((key) => {
-      if (req.body[key] !== undefined) {
-        village[key] = req.body[key];
+    const payload =
+      normalizeVillagePayload(req.body);
+
+    Object.entries(payload).forEach(
+      ([key, value]) => {
+        if (value !== undefined) {
+          village[key] = value;
+        }
       }
-    });
+    );
 
     await village.save();
 
@@ -117,17 +453,21 @@ const updateVillage = async (req, res) => {
   }
 };
 
-
 /*
 |--------------------------------------------------------------------------
-| UPDATE ACTIVE VILLAGE (no :id needed)
+| UPDATE ACTIVE VILLAGE
 |--------------------------------------------------------------------------
-| Frontend calls PUT /api/v1/village directly without an id.
-| This finds the currently active village and updates it.
 */
-const updateActiveVillage = async (req, res) => {
+
+const updateActiveVillage = async (
+  req,
+  res
+) => {
   try {
-    const village = await Village.findOne({ isActive: true });
+    const village =
+      await Village.findOne({
+        isActive: true,
+      });
 
     if (!village) {
       return res.status(404).json({
@@ -136,49 +476,61 @@ const updateActiveVillage = async (req, res) => {
       });
     }
 
-    Object.keys(req.body).forEach((key) => {
-      if (req.body[key] !== undefined) {
-        village[key] = req.body[key];
+    const payload =
+      normalizeVillagePayload(req.body);
+
+    Object.entries(payload).forEach(
+      ([key, value]) => {
+        if (value !== undefined) {
+          village[key] = value;
+        }
       }
-    });
+    );
 
     await village.save();
 
     return res.status(200).json({
       success: true,
-      message: "Village updated successfully",
+      message:
+        "Village settings updated successfully",
       data: village,
     });
   } catch (error) {
-    console.error("updateActiveVillage error:", error);
+    console.error(
+      "updateActiveVillage error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to update village",
+      message:
+        "Failed to update village settings",
       error: error.message,
     });
   }
 };
 
-
 /*
 |--------------------------------------------------------------------------
 | GET VILLAGE PLACES
 |--------------------------------------------------------------------------
-| Public directory.
-|
-| Optional query:
-| ?type=school
-| ?search=school
-| ?verified=true
 */
-const getVillagePlaces = async (req, res) => {
-  try {
-    const { type, search, verified } = req.query;
 
-    const village = await Village.findOne({
-      isActive: true,
-    }).lean();
+const getVillagePlaces = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      type,
+      search,
+      verified,
+    } = req.query;
+
+    const village =
+      await Village.findOne({
+        isActive: true,
+      }).lean();
 
     if (!village) {
       return res.status(404).json({
@@ -187,54 +539,58 @@ const getVillagePlaces = async (req, res) => {
       });
     }
 
-    let places = Array.isArray(village.places)
+    let places = Array.isArray(
+      village.places
+    )
       ? village.places
       : [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Filter by category
-    |--------------------------------------------------------------------------
-    */
     if (type && type !== "all") {
       places = places.filter(
         (place) =>
-          String(place.type).toLowerCase() ===
+          String(
+            place.type || ""
+          ).toLowerCase() ===
           String(type).toLowerCase()
       );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Search
-    |--------------------------------------------------------------------------
-    */
     if (search) {
-      const keyword = String(search).toLowerCase().trim();
+      const keyword =
+        String(search)
+          .toLowerCase()
+          .trim();
 
-      places = places.filter((place) => {
-        const name = String(place.name || "").toLowerCase();
-        const address = String(place.address || "").toLowerCase();
-        const description = String(
-          place.description || ""
-        ).toLowerCase();
+      places = places.filter(
+        (place) => {
+          const name =
+            String(
+              place.name || ""
+            ).toLowerCase();
 
-        return (
-          name.includes(keyword) ||
-          address.includes(keyword) ||
-          description.includes(keyword)
-        );
-      });
+          const address =
+            String(
+              place.address || ""
+            ).toLowerCase();
+
+          const description =
+            String(
+              place.description || ""
+            ).toLowerCase();
+
+          return (
+            name.includes(keyword) ||
+            address.includes(keyword) ||
+            description.includes(keyword)
+          );
+        }
+      );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Verified filter
-    |--------------------------------------------------------------------------
-    */
     if (verified === "true") {
       places = places.filter(
-        (place) => place.verified === true
+        (place) =>
+          place.verified === true
       );
     }
 
@@ -244,42 +600,35 @@ const getVillagePlaces = async (req, res) => {
       data: places,
     });
   } catch (error) {
-    console.error("getVillagePlaces error:", error);
+    console.error(
+      "getVillagePlaces error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch village places",
+      message:
+        "Failed to fetch village places",
       error: error.message,
     });
   }
 };
 
-
 /*
 |--------------------------------------------------------------------------
 | ADD VILLAGE PLACE
 |--------------------------------------------------------------------------
-| Admin can add:
-|
-| school
-| college
-| hospital
-| temple
-| mosque
-| ATM
-| railway station
-| bus stop
-| petrol pump
-| market
-| restaurant
-| hotel
-| etc.
 */
-const addVillagePlace = async (req, res) => {
+
+const addVillagePlace = async (
+  req,
+  res
+) => {
   try {
     const { id } = req.params;
 
-    const village = await Village.findById(id);
+    const village =
+      await Village.findById(id);
 
     if (!village) {
       return res.status(404).json({
@@ -288,57 +637,79 @@ const addVillagePlace = async (req, res) => {
       });
     }
 
-    if (!req.body.name) {
+    if (
+      !req.body.name ||
+      !String(req.body.name).trim()
+    ) {
       return res.status(400).json({
         success: false,
         message: "Place name is required",
       });
     }
 
+    if (!Array.isArray(village.places)) {
+      village.places = [];
+    }
+
     village.places.push({
       ...req.body,
+      name: String(
+        req.body.name
+      ).trim(),
+
       verified:
-        typeof req.body.verified === "boolean"
-          ? req.body.verified
-          : false,
+        req.body.verified === true,
+
       isActive:
-        typeof req.body.isActive === "boolean"
-          ? req.body.isActive
-          : true,
+        req.body.isActive !== false,
     });
 
     await village.save();
 
     const newPlace =
-      village.places[village.places.length - 1];
+      village.places[
+        village.places.length - 1
+      ];
 
     return res.status(201).json({
       success: true,
-      message: "Village place added successfully",
+      message:
+        "Village place added successfully",
       data: newPlace,
     });
   } catch (error) {
-    console.error("addVillagePlace error:", error);
+    console.error(
+      "addVillagePlace error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to add village place",
+      message:
+        "Failed to add village place",
       error: error.message,
     });
   }
 };
-
 
 /*
 |--------------------------------------------------------------------------
 | UPDATE VILLAGE PLACE
 |--------------------------------------------------------------------------
 */
-const updateVillagePlace = async (req, res) => {
-  try {
-    const { id, placeId } = req.params;
 
-    const village = await Village.findById(id);
+const updateVillagePlace = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      id,
+      placeId,
+    } = req.params;
+
+    const village =
+      await Village.findById(id);
 
     if (!village) {
       return res.status(404).json({
@@ -347,50 +718,70 @@ const updateVillagePlace = async (req, res) => {
       });
     }
 
-    const place = village.places.id(placeId);
+    const place =
+      village.places.id(placeId);
 
     if (!place) {
       return res.status(404).json({
         success: false,
-        message: "Village place not found",
+        message:
+          "Village place not found",
       });
     }
 
-    Object.keys(req.body).forEach((key) => {
-      if (req.body[key] !== undefined) {
-        place[key] = req.body[key];
+    Object.keys(req.body).forEach(
+      (key) => {
+        if (
+          req.body[key] !==
+          undefined
+        ) {
+          place[key] =
+            req.body[key];
+        }
       }
-    });
+    );
 
     await village.save();
 
     return res.status(200).json({
       success: true,
-      message: "Village place updated successfully",
+      message:
+        "Village place updated successfully",
       data: place,
     });
   } catch (error) {
-    console.error("updateVillagePlace error:", error);
+    console.error(
+      "updateVillagePlace error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to update village place",
+      message:
+        "Failed to update village place",
       error: error.message,
     });
   }
 };
-
 
 /*
 |--------------------------------------------------------------------------
 | DELETE VILLAGE PLACE
 |--------------------------------------------------------------------------
 */
-const deleteVillagePlace = async (req, res) => {
-  try {
-    const { id, placeId } = req.params;
 
-    const village = await Village.findById(id);
+const deleteVillagePlace = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      id,
+      placeId,
+    } = req.params;
+
+    const village =
+      await Village.findById(id);
 
     if (!village) {
       return res.status(404).json({
@@ -399,12 +790,14 @@ const deleteVillagePlace = async (req, res) => {
       });
     }
 
-    const place = village.places.id(placeId);
+    const place =
+      village.places.id(placeId);
 
     if (!place) {
       return res.status(404).json({
         success: false,
-        message: "Village place not found",
+        message:
+          "Village place not found",
       });
     }
 
@@ -414,32 +807,40 @@ const deleteVillagePlace = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Village place deleted successfully",
+      message:
+        "Village place deleted successfully",
+      data: village.places,
     });
   } catch (error) {
-    console.error("deleteVillagePlace error:", error);
+    console.error(
+      "deleteVillagePlace error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to delete village place",
+      message:
+        "Failed to delete village place",
       error: error.message,
     });
   }
 };
-
 
 /*
 |--------------------------------------------------------------------------
 | UPLOAD VILLAGE IMAGES
 |--------------------------------------------------------------------------
-| This endpoint expects image URLs/public IDs from the
-| existing upload middleware/controller flow.
 */
-const uploadVillageImages = async (req, res) => {
+
+const uploadVillageImages = async (
+  req,
+  res
+) => {
   try {
     const { id } = req.params;
 
-    const village = await Village.findById(id);
+    const village =
+      await Village.findById(id);
 
     if (!village) {
       return res.status(404).json({
@@ -448,78 +849,122 @@ const uploadVillageImages = async (req, res) => {
       });
     }
 
-    let uploadedImages = [];
+    if (
+      !Array.isArray(req.files) ||
+      req.files.length === 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please select at least one image",
+      });
+    }
 
     /*
     |--------------------------------------------------------------------------
-    | Files uploaded via multer -> Cloudinary
+    | Upload files to Cloudinary
     |--------------------------------------------------------------------------
     */
-    if (Array.isArray(req.files) && req.files.length > 0) {
-      const results = await cloudinaryService.uploadMultipleImages(
+
+    const results =
+      await cloudinaryService.uploadMultipleImages(
         req.files,
         "smart-village/village"
       );
 
-      uploadedImages = results.map((result, index) => ({
-        url: result.url,
-        publicId: result.publicId,
-        caption: (req.body.captions && req.body.captions[index]) || "",
-      }));
-    }
+    const uploadedImages =
+      results.map(
+        (result, index) => ({
+          url: result.url,
+          publicId:
+            result.publicId,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Direct image payload support (e.g. pre-hosted URLs)
-    |--------------------------------------------------------------------------
-    */
+          caption:
+            Array.isArray(
+              req.body.captions
+            )
+              ? req.body.captions[
+                  index
+                ] || ""
+              : "",
+
+          title: "",
+
+          category:
+            "Village",
+        })
+      );
+
     if (
-      Array.isArray(req.body.images) &&
-      req.body.images.length > 0
+      !Array.isArray(
+        village.images
+      )
     ) {
-      uploadedImages = [
-        ...uploadedImages,
-        ...req.body.images.map((image) => ({
-          url: image.url || image,
-          publicId: image.publicId || "",
-          caption: image.caption || "",
-        })),
-      ];
+      village.images = [];
     }
 
-    if (uploadedImages.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No images provided",
-      });
-    }
-
-    village.images.push(...uploadedImages);
+    village.images.push(
+      ...uploadedImages
+    );
 
     await village.save();
 
     return res.status(200).json({
       success: true,
-      message: "Village images uploaded successfully",
+      message:
+        "Village images uploaded successfully",
       data: village.images,
     });
   } catch (error) {
-    console.error("uploadVillageImages error:", error);
+    console.error(
+      "uploadVillageImages error:",
+      error
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cloudinary configuration error
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      error.message ===
+      "Cloudinary is not configured"
+    ) {
+      return res.status(503).json({
+        success: false,
+        message:
+          "Image upload service is not configured. Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET to Backend/.env",
+      });
+    }
 
     return res.status(500).json({
       success: false,
-      message: "Failed to upload village images",
+      message:
+        "Failed to upload village images",
       error: error.message,
     });
   }
 };
 
+/*
+|--------------------------------------------------------------------------
+| DELETE VILLAGE IMAGE
+|--------------------------------------------------------------------------
+*/
 
-const deleteVillageImage = async (req, res) => {
+const deleteVillageImage = async (
+  req,
+  res
+) => {
   try {
-    const { id, imageId } = req.params;
+    const {
+      id,
+      imageId,
+    } = req.params;
 
-    const village = await Village.findById(id);
+    const village =
+      await Village.findById(id);
 
     if (!village) {
       return res.status(404).json({
@@ -528,7 +973,8 @@ const deleteVillageImage = async (req, res) => {
       });
     }
 
-    const image = village.images.id(imageId);
+    const image =
+      village.images.id(imageId);
 
     if (!image) {
       return res.status(404).json({
@@ -538,29 +984,41 @@ const deleteVillageImage = async (req, res) => {
     }
 
     if (image.publicId) {
-      await cloudinaryService.deleteImage(image.publicId);
+      await cloudinaryService.deleteImage(
+        image.publicId
+      );
     }
 
-    village.images.pull(imageId);
+    image.deleteOne();
 
     await village.save();
 
     return res.status(200).json({
       success: true,
-      message: "Village image deleted successfully",
+      message:
+        "Village image deleted successfully",
       data: village.images,
     });
   } catch (error) {
-    console.error("deleteVillageImage error:", error);
+    console.error(
+      "deleteVillageImage error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to delete village image",
+      message:
+        "Failed to delete village image",
       error: error.message,
     });
   }
 };
 
+/*
+|--------------------------------------------------------------------------
+| EXPORTS
+|--------------------------------------------------------------------------
+*/
 
 module.exports = {
   getVillage,
