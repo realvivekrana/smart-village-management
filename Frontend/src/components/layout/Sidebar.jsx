@@ -14,6 +14,7 @@ const adminLinks = [
   { to: "/admin/community", icon: "💬", label: "Community" },
   { to: "/admin/reports", icon: "📈", label: "Reports" },
   { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings" },
+  { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory" },
 ];
 
 const businessLinks = [

@@ -5,6 +5,7 @@ const quickLinks = [
   { to: "/about", label: "About Kakarcholi", icon: "🏘️" },
   { to: "/notices", label: "Notices", icon: "📢" },
   { to: "/events", label: "Events", icon: "📅" },
+  { to: "/gallery", label: "Village Gallery", icon: "🖼️" },
 ];
 
 const services = [
@@ -19,6 +20,7 @@ const communityLinks = [
   { to: "/login", label: "Citizen Login", icon: "🔐" },
   { to: "/citizen/complaints/create", label: "File a Complaint", icon: "📝" },
   { to: "/village-places", label: "Explore Village", icon: "📍" },
+  { to: "/contact", label: "Contact Us", icon: "✉️" },
 ];
 
 export default function Footer() {

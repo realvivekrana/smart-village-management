@@ -14,9 +14,10 @@ const navLinks = [
   { to: "/businesses", label: "Businesses" },
   { to: "/services", label: "Services" },
   { to: "/emergency", label: "Emergency" },
+  { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About Village" },
+  { to: "/contact", label: "Contact" },
 ];
-
 export default function Navbar({ onMenuOpen }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { unreadCount } = useContext(NotificationContext);

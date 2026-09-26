@@ -29,6 +29,8 @@ const Services = lazy(() => import("../pages/public/Services"));
 const ServiceDetails = lazy(() => import("../pages/public/ServiceDetails"));
 const Emergency = lazy(() => import("../pages/public/Emergency"));
 const VillagePlaces = lazy(() => import("../pages/public/VillagePlaces"));
+const VillageGallery = lazy(() => import("../pages/public/VillageGallery"));
+const ContactVillage = lazy(() => import("../pages/public/ContactVillage"));
 
 // Citizen
 const CitizenDashboard = lazy(() => import("../pages/citizen/Dashboard"));
@@ -59,6 +61,7 @@ const AdminEmergency = lazy(() => import("../pages/admin/EmergencyContacts"));
 const AdminCommunity = lazy(() => import("../pages/admin/CommunityPosts"));
 const AdminReports = lazy(() => import("../pages/admin/Reports"));
 const AdminVillageSettings = lazy(() => import("../pages/admin/VillageSettings"));
+const AdminVillageDirectory = lazy(() => import("../pages/admin/VillageDirectory"));
 
 const Fallback = () => <Loader fullScreen />;
 
@@ -88,6 +91,8 @@ export default function AppRoutes() {
           <Route path="/services/:id" element={<ServiceDetails />} />
           <Route path="/emergency" element={<Emergency />} />
           <Route path="/village-places" element={<VillagePlaces />} />
+          <Route path="/gallery" element={<VillageGallery />} />
+          <Route path="/contact" element={<ContactVillage />} />
         </Route>
 
         {/* Citizen */}
@@ -146,6 +151,7 @@ export default function AppRoutes() {
           <Route path="/admin/community" element={<AdminCommunity />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/village-settings" element={<AdminVillageSettings />} />
+          <Route path="/admin/village-directory" element={<AdminVillageDirectory />} />
         </Route>
 
         {/* 404 */}

@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
-const navLinks = [
+const links = [
   { to: "/", label: "Home", end: true },
   { to: "/notices", label: "Notices" },
   { to: "/events", label: "Events" },
@@ -9,7 +9,9 @@ const navLinks = [
   { to: "/businesses", label: "Businesses" },
   { to: "/services", label: "Services" },
   { to: "/emergency", label: "Emergency" },
+  { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About Village" },
+  { to: "/contact", label: "Contact" },
 ];
 
 export default function MobileMenu({ isOpen, onClose }) {
