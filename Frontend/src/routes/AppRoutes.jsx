@@ -51,6 +51,7 @@ const Applications = lazy(() => import("../pages/businessOwner/Applications"));
 // Admin
 const AdminDashboard = lazy(() => import("../pages/admin/Dashboard"));
 const AdminUsers = lazy(() => import("../pages/admin/Users"));
+const AdminUserDetail = lazy(() => import("../pages/admin/UserDetail"));
 const AdminComplaints = lazy(() => import("../pages/admin/Complaints"));
 const AdminBusinesses = lazy(() => import("../pages/admin/Businesses"));
 const AdminEvents = lazy(() => import("../pages/admin/Events"));
@@ -141,6 +142,7 @@ export default function AppRoutes() {
         >
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/users/:id" element={<AdminUserDetail />} />
           <Route path="/admin/complaints" element={<AdminComplaints />} />
           <Route path="/admin/businesses" element={<AdminBusinesses />} />
           <Route path="/admin/events" element={<AdminEvents />} />

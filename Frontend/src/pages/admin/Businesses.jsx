@@ -53,7 +53,7 @@ const Businesses = () => {
       setError("");
 
       await api.patch(
-        `/businesses/${businessId}/status`,
+        `/businesses/${businessId}/review`,
         {
           status,
         }
