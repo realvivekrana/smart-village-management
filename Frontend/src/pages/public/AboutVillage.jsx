@@ -271,6 +271,16 @@ const AboutVillage = () => {
                     : ""
                 }
               />
+
+              <Detail
+                label="Assembly Constituency"
+                value={village.assemblyConstituency}
+              />
+
+              <Detail
+                label="Lok Sabha Constituency"
+                value={village.lokSabhaConstituency}
+              />
             </div>
           </div>
         </div>
@@ -335,6 +345,39 @@ const AboutVillage = () => {
           />
         </div>
       </section>
+
+      {/* Map */}
+      {village.location?.lat && village.location?.lng && (
+        <section className="border-y border-gray-200 bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <SectionTitle
+                eyebrow="Find Us"
+                title="Village Location"
+              />
+
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${village.location.lat},${village.location.lng}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                Open in Google Maps ↗
+              </a>
+            </div>
+
+            <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+              <iframe
+                title={`${village.name} location map`}
+                src={`https://www.google.com/maps?q=${village.location.lat},${village.location.lng}&hl=en&z=13&output=embed`}
+                className="h-96 w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Rivers */}
       {rivers.length > 0 && (

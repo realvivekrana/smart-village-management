@@ -10,6 +10,9 @@
  * - population, area, sarpanch, history
  *   → kept as-is if the active document already has a real value,
  *     otherwise filled in from the rich data.
+ * - location
+ *   → kept as-is if the active document already has real lat/lng,
+ *     otherwise filled in from the rich data (estimated coordinates).
  *
  * SETUP: place this file in the SAME folder as kakarcholiVillageData.js
  * (e.g. Backend/src/seeds/), since it does require("./kakarcholiVillageData").
@@ -77,6 +80,10 @@ async function run() {
       name: existingSarpanch.name || kakarcholiVillageData.sarpanch.name,
       phone: existingSarpanch.phone || kakarcholiVillageData.sarpanch.phone,
     },
+    location:
+      village.location && village.location.lat && village.location.lng
+        ? village.location
+        : kakarcholiVillageData.location,
 
     // Keep it active
     isActive: true,
@@ -96,6 +103,7 @@ async function run() {
   console.log(`   nearbyAirports: ${village.nearbyAirports.length}`);
   console.log(`   population (kept/filled): ${village.population}`);
   console.log(`   sarpanch: ${JSON.stringify(village.sarpanch)}`);
+  console.log(`   location (kept/filled): ${JSON.stringify(village.location)}`);
 
   await mongoose.disconnect();
   console.log("\n🔌 Disconnected from MongoDB");

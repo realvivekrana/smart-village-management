@@ -17,13 +17,26 @@ const kakarcholiVillageData = {
   population: null,
   area: null,
 
+  // Estimated village-centre coordinates. Jainagar (the block HQ, ~4 km
+  // away) is confirmed at 24.375833°N, 85.643611°E per Wikipedia; Kakarcholi's
+  // point below is an estimate placed a little south-west of Jainagar based
+  // on nearby-village bearing data. Adjust in Google Maps and paste the
+  // corrected lat/lng here if you want pinpoint accuracy.
+  location: { lat: 24.3595, lng: 85.6208 },
+
   languages: ["Hindi", "Santali"],
   rivers: ["Barakar River"],
+
+  // Administrative constituencies (factual/non-partisan — party names
+  // intentionally left out since this is a civic services platform).
+  assemblyConstituency: "Barkatha",
+  lokSabhaConstituency: "Kodarma",
 
   description:
     "Kakarcholi is a village in Jainagar Block, Koderma District, Jharkhand, India. It is located about 15 km south of Koderma district headquarters, 4 km from Jainagar, and around 137 km from the state capital Ranchi. Jainagar, Jainagar West, Chehal, Satdiha and Dandadih are the nearby villages.",
 
-  history: "",
+  history:
+    "Kakarcholi lies in Jainagar Block of Koderma district, a region long known as the \"Mica City\" belt of Jharkhand — for decades this area, along with neighbouring Jhumri Tilaiya, was one of India's major centres of mica mining and processing, and many families in villages around Jainagar have historically been connected to the mica trade. Administratively, the village was part of Bihar until the state of Jharkhand was carved out in November 2000, after which it came under Koderma district. Kakarcholi today functions as its own Gram Panchayat, governing several smaller surrounding hamlets under the Panchayati Raj system.\n\n[Village-specific history — founding, local traditions, notable events, or the origin of the name \"Kakarcholi\" — is best added by village elders/Sarpanch, since no independent published record of this exists yet. Replace or extend this paragraph once that information is collected.]",
 
   howToReach: {
     road: "Kakarcholi is connected via the Koderma-Jainagar-Markacho Road, which passes through Jainagar, about 4 km away.",
@@ -103,6 +116,7 @@ const kakarcholiVillageData = {
     { name: "Utkarmit Madhyavidyalya", type: "school", address: "Santh, Jharkhand 825109", distanceKm: 1.8, isActive: true },
     { name: "+2 High School Jainagar", type: "school", address: "Pahridih, Jharkhand 825109", distanceKm: 1.9, isActive: true },
     { name: "Wisdom +2 Education Academy", type: "school", address: "High School Road, Jainagar, Jharkhand 825109", distanceKm: 2.1, isActive: true },
+    { name: "Sharda High School", type: "school", address: "Jhumri Telaiya, Jharkhand 825409", distanceKm: 13.9, isActive: true },
 
     { name: "SMU", type: "college", address: "", isActive: true },
     { name: "Kathadih College", type: "college", address: "Katahadih, Jharkhand 825410", distanceKm: 3.7, isActive: true },
@@ -143,10 +157,12 @@ const kakarcholiVillageData = {
     { name: "Punit Tea Stall", type: "restaurant", address: "Jainagar, Jharkhand 825109", distanceKm: 2.8, isActive: true },
     { name: "Minhaj Hotel Chehal", type: "restaurant", address: "Chehal, Jharkhand 825109", distanceKm: 2.9, isActive: true },
     { name: "Hotel Samrat", type: "restaurant", address: "Madhubani-Jainagar Road, Belkatri, Jharkhand 825109", distanceKm: 3.6, isActive: true },
+    { name: "Jhatka Chikan Center", type: "restaurant", address: "Koderma-Jainagar-Markacho Rd, Jainagar, Jharkhand 825109", distanceKm: 2.9, isActive: true },
 
     { name: "Sarkar Filling Station (IOCL)", type: "petrol_pump", address: "Belkatri, Jharkhand 825109", distanceKm: 3.1, isActive: true },
     { name: "Hameed and Sons Fuel Point", type: "petrol_pump", address: "Pipcho, Jharkhand 825318", distanceKm: 8.0, isActive: true },
     { name: "Hamid and Sons Fuel Point (Pipcho Chowk)", type: "petrol_pump", address: "Chowk, Pipcho, Jharkhand 825318", distanceKm: 9.0, isActive: true },
+    { name: "Bank Of India Pipcho (Jamal Khan)", type: "petrol_pump", address: "Pipcho, Jharkhand 825318", distanceKm: 8.0, isActive: true },
 
     { name: "AirAble Fan", type: "electronic_shop", address: "Jainagar, Jharkhand 825109", distanceKm: 2.3, isActive: true },
     { name: "Sony Electronics", type: "electronic_shop", address: "Jainagar, Jharkhand 825109", distanceKm: 2.4, isActive: true },
@@ -158,9 +174,11 @@ const kakarcholiVillageData = {
 
     { name: "Jainagar Police Station", type: "police_station", address: "Jainagar, Jharkhand 825109", distanceKm: 2.6, isActive: true },
     { name: "Koderma Police Station", type: "police_station", address: "NH31, Koderma, Jharkhand 825410", distanceKm: 14.9, isActive: true },
+    { name: "Superintendent of Police Office", type: "police_station", address: "NH31, Chechai, Jharkhand 825409", distanceKm: 13.8, isActive: true },
 
     { name: "Anganwadi Kheskari", type: "government_office", address: "Salaia, Jharkhand 825410", distanceKm: 3.3, isActive: true },
     { name: "Suresh License Centre", type: "government_office", address: "Jhumri Telaiya, Jharkhand", distanceKm: 14.3, isActive: true },
+    { name: "Hindu Samshan Ghat", type: "other", address: "Koderma, Jharkhand 825410", distanceKm: 14.4, isActive: true },
 
     { name: "Dr. Ambedkar Ground", type: "park", address: "Jhumri Telaiya, Jharkhand 825409", distanceKm: 13.9, isActive: true },
     { name: "Mahaveer Udyaan", type: "park", address: "Koderma-Jainagar-Markacho Rd, Jhumri Telaiya, Jharkhand 825409", distanceKm: 14.1, isActive: true },

@@ -6,6 +6,7 @@ const {
   updateVillage,
   updateActiveVillage,
   uploadVillageImages,
+  deleteVillageImage,
   getVillagePlaces,
   addVillagePlace,
   updateVillagePlace,
@@ -14,6 +15,7 @@ const {
 
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
+const { uploadMultipleImages } = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
@@ -65,7 +67,16 @@ router.post(
   "/:id/images",
   protect,
   authorize("admin", "super_admin"),
+  uploadMultipleImages("images", 10),
   uploadVillageImages
+);
+
+// Delete a village image
+router.delete(
+  "/:id/images/:imageId",
+  protect,
+  authorize("admin", "super_admin"),
+  deleteVillageImage
 );
 
 

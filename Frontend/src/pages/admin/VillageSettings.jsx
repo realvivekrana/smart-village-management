@@ -28,6 +28,9 @@ const emptyForm = {
   languages: "",
   rivers: "",
 
+  assemblyConstituency: "",
+  lokSabhaConstituency: "",
+
   road: "",
   rail: "",
   air: "",
@@ -36,14 +39,24 @@ const emptyForm = {
   longitude: "",
 };
 
+const emptyGalleryState = {
+  files: [],
+  uploading: false,
+  images: [],
+  error: "",
+};
+
 const VillageSettings = () => {
   const [form, setForm] = useState(emptyForm);
+  const [villageId, setVillageId] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [gallery, setGallery] = useState(emptyGalleryState);
 
   const token =
     localStorage.getItem("token") ||
@@ -82,6 +95,11 @@ const VillageSettings = () => {
       }
 
       setForm(villageToForm(village));
+      setVillageId(village._id || village.id || "");
+      setGallery((previous) => ({
+        ...previous,
+        images: Array.isArray(village.images) ? village.images : [],
+      }));
     } catch (err) {
       console.error("Village settings error:", err);
 
@@ -181,6 +199,120 @@ const VillageSettings = () => {
     setSuccess("");
     setError("");
     loadVillage();
+  };
+
+  const handleGalleryFilesChange = (event) => {
+    setGallery((previous) => ({
+      ...previous,
+      files: Array.from(event.target.files || []),
+      error: "",
+    }));
+  };
+
+  const handleGalleryUpload = async () => {
+    if (!villageId) {
+      setGallery((previous) => ({
+        ...previous,
+        error: "Village not loaded yet, please wait and try again.",
+      }));
+      return;
+    }
+
+    if (gallery.files.length === 0) {
+      setGallery((previous) => ({
+        ...previous,
+        error: "Please choose at least one photo first.",
+      }));
+      return;
+    }
+
+    try {
+      setGallery((previous) => ({
+        ...previous,
+        uploading: true,
+        error: "",
+      }));
+
+      const formData = new FormData();
+
+      gallery.files.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      const response = await fetch(
+        `${API_URL}/village/${villageId}/images`,
+        {
+          method: "POST",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+            result?.error ||
+            `Failed to upload photos (${response.status})`
+        );
+      }
+
+      setGallery({
+        files: [],
+        uploading: false,
+        images: Array.isArray(result?.data) ? result.data : gallery.images,
+        error: "",
+      });
+
+      setSuccess("Photos uploaded successfully.");
+    } catch (err) {
+      console.error("Gallery upload error:", err);
+
+      setGallery((previous) => ({
+        ...previous,
+        uploading: false,
+        error: err.message || "Unable to upload photos.",
+      }));
+    }
+  };
+
+  const handleGalleryDelete = async (imageId) => {
+    if (!villageId || !imageId) return;
+
+    try {
+      const response = await fetch(
+        `${API_URL}/village/${villageId}/images/${imageId}`,
+        {
+          method: "DELETE",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        }
+      );
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+            result?.error ||
+            `Failed to delete photo (${response.status})`
+        );
+      }
+
+      setGallery((previous) => ({
+        ...previous,
+        images: Array.isArray(result?.data) ? result.data : previous.images.filter((img) => img._id !== imageId),
+      }));
+
+      setSuccess("Photo removed successfully.");
+    } catch (err) {
+      console.error("Gallery delete error:", err);
+      setError(err.message || "Unable to delete photo.");
+    }
   };
 
   if (loading) {
@@ -331,6 +463,22 @@ const VillageSettings = () => {
                 name="stdCode"
                 value={form.stdCode}
                 onChange={handleChange}
+              />
+
+              <Input
+                label="Assembly Constituency"
+                name="assemblyConstituency"
+                value={form.assemblyConstituency}
+                onChange={handleChange}
+                placeholder="Example: Barkatha"
+              />
+
+              <Input
+                label="Lok Sabha Constituency"
+                name="lokSabhaConstituency"
+                value={form.lokSabhaConstituency}
+                onChange={handleChange}
+                placeholder="Example: Kodarma"
               />
             </div>
 
@@ -563,7 +711,81 @@ const VillageSettings = () => {
               )}
           </SettingsCard>
 
-          {/* Save */}
+          {/* Photo Gallery */}
+          <SettingsCard
+            title="Village Photos / Gallery"
+            description="Photos shown on the public village gallery."
+            icon="🖼️"
+          >
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Upload New Photos
+              </label>
+
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={handleGalleryFilesChange}
+                className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
+              />
+
+              <p className="mt-1.5 text-xs text-gray-400">
+                JPG, PNG or WEBP. Up to 10 photos at a time.
+              </p>
+
+              {gallery.error && (
+                <p className="mt-2 text-sm text-red-600">
+                  {gallery.error}
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={handleGalleryUpload}
+                disabled={gallery.uploading || gallery.files.length === 0}
+                className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {gallery.uploading
+                  ? "Uploading..."
+                  : `Upload ${gallery.files.length || ""} Photo${gallery.files.length === 1 ? "" : "s"}`.trim()}
+              </button>
+            </div>
+
+            {gallery.images.length > 0 && (
+              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                {gallery.images.map((image, index) => (
+                  <div
+                    key={image._id || image.url || index}
+                    className="group relative overflow-hidden rounded-xl border border-gray-200"
+                  >
+                    <img
+                      src={image.url}
+                      alt={image.caption || "Village photo"}
+                      className="h-28 w-full object-cover"
+                      loading="lazy"
+                    />
+
+                    {image._id && (
+                      <button
+                        type="button"
+                        onClick={() => handleGalleryDelete(image._id)}
+                        className="absolute right-1.5 top-1.5 rounded-full bg-red-600/90 px-2 py-1 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {gallery.images.length === 0 && (
+              <p className="mt-4 text-sm text-gray-400">
+                No photos uploaded yet.
+              </p>
+            )}
+          </SettingsCard>
           <div className="sticky bottom-0 z-20 rounded-2xl border border-gray-200 bg-white/95 p-4 shadow-xl backdrop-blur">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-gray-500">
@@ -700,6 +922,12 @@ const villageToForm = (village) => {
         ? village.rivers.join(", ")
         : village?.rivers || "",
 
+    assemblyConstituency:
+      village?.assemblyConstituency || "",
+
+    lokSabhaConstituency:
+      village?.lokSabhaConstituency || "",
+
     road:
       howToReach.road ||
       "",
@@ -773,13 +1001,16 @@ const formToPayload = (form) => {
       form.rivers
     ),
 
+    assemblyConstituency: form.assemblyConstituency.trim(),
+    lokSabhaConstituency: form.lokSabhaConstituency.trim(),
+
     howToReach: {
       road: form.road.trim(),
       rail: form.rail.trim(),
       air: form.air.trim(),
     },
 
-    coordinates: {
+    location: {
       lat:
         form.latitude === ""
           ? undefined

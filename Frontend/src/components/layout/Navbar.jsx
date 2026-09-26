@@ -14,6 +14,7 @@ const navLinks = [
   { to: "/businesses", label: "Businesses" },
   { to: "/services", label: "Services" },
   { to: "/emergency", label: "Emergency" },
+  { to: "/about", label: "About Village" },
 ];
 
 export default function Navbar({ onMenuOpen }) {

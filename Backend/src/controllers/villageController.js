@@ -1,4 +1,5 @@
 const Village = require("../models/Village");
+const cloudinaryService = require("../services/cloudinaryService");
 
 /*
 |--------------------------------------------------------------------------
@@ -451,20 +452,25 @@ const uploadVillageImages = async (req, res) => {
 
     /*
     |--------------------------------------------------------------------------
-    | Cloudinary / uploaded files
+    | Files uploaded via multer -> Cloudinary
     |--------------------------------------------------------------------------
     */
     if (Array.isArray(req.files) && req.files.length > 0) {
-      uploadedImages = req.files.map((file) => ({
-        url: file.path || file.secure_url || file.url,
-        publicId: file.filename || file.public_id || "",
-        caption: "",
+      const results = await cloudinaryService.uploadMultipleImages(
+        req.files,
+        "smart-village/village"
+      );
+
+      uploadedImages = results.map((result, index) => ({
+        url: result.url,
+        publicId: result.publicId,
+        caption: (req.body.captions && req.body.captions[index]) || "",
       }));
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Direct image payload support
+    | Direct image payload support (e.g. pre-hosted URLs)
     |--------------------------------------------------------------------------
     */
     if (
@@ -509,12 +515,60 @@ const uploadVillageImages = async (req, res) => {
 };
 
 
+const deleteVillageImage = async (req, res) => {
+  try {
+    const { id, imageId } = req.params;
+
+    const village = await Village.findById(id);
+
+    if (!village) {
+      return res.status(404).json({
+        success: false,
+        message: "Village not found",
+      });
+    }
+
+    const image = village.images.id(imageId);
+
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    if (image.publicId) {
+      await cloudinaryService.deleteImage(image.publicId);
+    }
+
+    village.images.pull(imageId);
+
+    await village.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Village image deleted successfully",
+      data: village.images,
+    });
+  } catch (error) {
+    console.error("deleteVillageImage error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete village image",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   getVillage,
   createVillage,
   updateVillage,
   updateActiveVillage,
   uploadVillageImages,
+  deleteVillageImage,
   getVillagePlaces,
   addVillagePlace,
   updateVillagePlace,
