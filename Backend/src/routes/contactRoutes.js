@@ -8,54 +8,58 @@ const {
   deleteContactMessage,
 } = require("../controllers/contactController");
 
-const { protect, authorize } = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
+const { adminOnly } = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
 /*
 |--------------------------------------------------------------------------
-| Public Contact Form
+| PUBLIC
 |--------------------------------------------------------------------------
-| POST /api/v1/contact
 */
-router.post("/", createContactMessage);
+
+// POST /api/v1/contact
+router.post(
+  "/",
+  createContactMessage
+);
 
 /*
 |--------------------------------------------------------------------------
-| Admin Contact Messages
-|--------------------------------------------------------------------------
-| GET    /api/v1/contact
-| GET    /api/v1/contact/:id
-| PATCH  /api/v1/contact/:id/status
-| DELETE /api/v1/contact/:id
+| ADMIN
 |--------------------------------------------------------------------------
 */
 
+// GET /api/v1/contact
 router.get(
   "/",
   protect,
-  authorize("admin"),
+  adminOnly,
   getContactMessages
 );
 
+// GET /api/v1/contact/:id
 router.get(
   "/:id",
   protect,
-  authorize("admin"),
+  adminOnly,
   getContactMessageById
 );
 
+// PATCH /api/v1/contact/:id/status
 router.patch(
   "/:id/status",
   protect,
-  authorize("admin"),
+  adminOnly,
   updateContactMessageStatus
 );
 
+// DELETE /api/v1/contact/:id
 router.delete(
   "/:id",
   protect,
-  authorize("admin"),
+  adminOnly,
   deleteContactMessage
 );
 

@@ -15,11 +15,17 @@ const Users = () => {
 
       const response = await api.get("/users");
 
-      const data = response?.data?.data ?? response?.data ?? [];
+      const data =
+        response?.data?.data?.users ??
+        response?.data?.users ??
+        [];
 
       setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Failed to fetch users:", err);
+      console.error(
+        "Failed to fetch users:",
+        err
+      );
 
       setError(
         err?.response?.data?.message ||
@@ -39,11 +45,16 @@ const Users = () => {
       setActionLoading(userId);
       setError("");
 
-      await api.patch(`/users/${userId}/toggle-active`);
+      await api.patch(
+        `/users/${userId}/toggle-active`
+      );
 
       await fetchUsers();
     } catch (err) {
-      console.error("Failed to update user status:", err);
+      console.error(
+        "Failed to update user status:",
+        err
+      );
 
       setError(
         err?.response?.data?.message ||
@@ -54,18 +65,27 @@ const Users = () => {
     }
   };
 
-  const updateUserRole = async (userId, role) => {
+  const updateUserRole = async (
+    userId,
+    role
+  ) => {
     try {
       setActionLoading(userId);
       setError("");
 
-      await api.patch(`/users/${userId}/role`, {
-        role,
-      });
+      await api.patch(
+        `/users/${userId}/role`,
+        {
+          role,
+        }
+      );
 
       await fetchUsers();
     } catch (err) {
-      console.error("Failed to update user role:", err);
+      console.error(
+        "Failed to update user role:",
+        err
+      );
 
       setError(
         err?.response?.data?.message ||
@@ -89,13 +109,22 @@ const Users = () => {
       setActionLoading(userId);
       setError("");
 
-      await api.delete(`/users/${userId}`);
+      await api.delete(
+        `/users/${userId}`
+      );
 
       setUsers((currentUsers) =>
-        currentUsers.filter((user) => user._id !== userId)
+        currentUsers.filter(
+          (user) =>
+            (user._id || user.id) !==
+            userId
+        )
       );
     } catch (err) {
-      console.error("Failed to delete user:", err);
+      console.error(
+        "Failed to delete user:",
+        err
+      );
 
       setError(
         err?.response?.data?.message ||
@@ -125,7 +154,8 @@ const Users = () => {
           </h1>
 
           <p className="mt-1 text-sm text-gray-500">
-            Manage registered village users and their access.
+            Manage registered village users
+            and their access.
           </p>
         </div>
 
@@ -179,7 +209,9 @@ const Users = () => {
                 </tr>
               ) : (
                 users.map((user) => {
-                  const userId = user._id || user.id;
+                  const userId =
+                    user._id || user.id;
+
                   const isActive =
                     user.isActive !== false;
 
@@ -193,16 +225,19 @@ const Users = () => {
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
                             {user.name
                               ?.charAt(0)
-                              ?.toUpperCase() || "U"}
+                              ?.toUpperCase() ||
+                              "U"}
                           </div>
 
                           <div>
                             <div className="font-medium text-gray-900">
-                              {user.name || "Unknown User"}
+                              {user.name ||
+                                "Unknown User"}
                             </div>
 
                             <div className="text-sm text-gray-500">
-                              {user.email || "No email"}
+                              {user.email ||
+                                "No email"}
                             </div>
                           </div>
                         </div>
@@ -214,9 +249,13 @@ const Users = () => {
 
                       <td className="whitespace-nowrap px-6 py-4">
                         <select
-                          value={user.role || "citizen"}
+                          value={
+                            user.role ||
+                            "citizen"
+                          }
                           disabled={
-                            actionLoading === userId
+                            actionLoading ===
+                            userId
                           }
                           onChange={(event) =>
                             updateUserRole(
@@ -230,12 +269,8 @@ const Users = () => {
                             Citizen
                           </option>
 
-                          <option value="moderator">
-                            Moderator
-                          </option>
-
-                          <option value="business">
-                            Business
+                          <option value="business_owner">
+                            Business Owner
                           </option>
 
                           <option value="admin">
@@ -270,10 +305,13 @@ const Users = () => {
                           <button
                             type="button"
                             disabled={
-                              actionLoading === userId
+                              actionLoading ===
+                              userId
                             }
                             onClick={() =>
-                              toggleUserStatus(userId)
+                              toggleUserStatus(
+                                userId
+                              )
                             }
                             className={`rounded-md px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 ${
                               isActive
@@ -281,21 +319,26 @@ const Users = () => {
                                 : "bg-green-100 text-green-800 hover:bg-green-200"
                             }`}
                           >
-                            {actionLoading === userId
+                            {actionLoading ===
+                            userId
                               ? "Saving..."
                               : isActive
                               ? "Deactivate"
                               : "Activate"}
                           </button>
 
-                          {user.role !== "admin" && (
+                          {user.role !==
+                            "super_admin" && (
                             <button
                               type="button"
                               disabled={
-                                actionLoading === userId
+                                actionLoading ===
+                                userId
                               }
                               onClick={() =>
-                                deleteUser(userId)
+                                deleteUser(
+                                  userId
+                                )
                               }
                               className="rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-200 disabled:cursor-not-allowed disabled:opacity-50"
                             >

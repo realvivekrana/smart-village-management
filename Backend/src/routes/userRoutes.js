@@ -9,6 +9,7 @@ const {
   getUserById,
   toggleUserActive,
   updateUserRole,
+  deleteUser,
 } = require("../controllers/userController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -27,16 +28,20 @@ const {
 
 const router = express.Router();
 
-// ============================================================
-// MY PROFILE
-// ============================================================
+/*
+|--------------------------------------------------------------------------
+| MY PROFILE
+|--------------------------------------------------------------------------
+*/
 
+// GET /api/v1/users/profile
 router.get(
   "/profile",
   protect,
   getMyProfile
 );
 
+// PUT /api/v1/users/profile
 router.put(
   "/profile",
   protect,
@@ -45,6 +50,7 @@ router.put(
   updateMyProfile
 );
 
+// PUT /api/v1/users/change-password
 router.put(
   "/change-password",
   protect,
@@ -53,6 +59,7 @@ router.put(
   changePassword
 );
 
+// POST /api/v1/users/avatar
 router.post(
   "/avatar",
   protect,
@@ -60,11 +67,12 @@ router.post(
   uploadAvatar
 );
 
-// ============================================================
-// ADMIN USER MANAGEMENT
-// ============================================================
+/*
+|--------------------------------------------------------------------------
+| ADMIN USER MANAGEMENT
+|--------------------------------------------------------------------------
+*/
 
-// Get all users
 // GET /api/v1/users
 router.get(
   "/",
@@ -73,7 +81,6 @@ router.get(
   getAllUsers
 );
 
-// Get single user
 // GET /api/v1/users/:id
 router.get(
   "/:id",
@@ -82,7 +89,6 @@ router.get(
   getUserById
 );
 
-// Activate / deactivate user
 // PATCH /api/v1/users/:id/toggle-active
 router.patch(
   "/:id/toggle-active",
@@ -91,13 +97,20 @@ router.patch(
   toggleUserActive
 );
 
-// Update user role
 // PATCH /api/v1/users/:id/role
 router.patch(
   "/:id/role",
   protect,
   adminOnly,
   updateUserRole
+);
+
+// DELETE /api/v1/users/:id
+router.delete(
+  "/:id",
+  protect,
+  adminOnly,
+  deleteUser
 );
 
 module.exports = router;

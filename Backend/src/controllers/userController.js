@@ -1,18 +1,23 @@
 const User = require("../models/User");
-const { getPagination, getPaginationMeta } = require("../utils/pagination");
+const {
+  getPagination,
+  getPaginationMeta,
+} = require("../utils/pagination");
 const cloudinaryService = require("../services/cloudinaryService");
 const env = require("../config/env");
 
 /*
 |--------------------------------------------------------------------------
-| GET /api/v1/users/profile  (protected)
+| GET /api/v1/users/profile
 |--------------------------------------------------------------------------
 */
 const getMyProfile = async (req, res, next) => {
   try {
     return res.status(200).json({
       success: true,
-      data: { user: req.user },
+      data: {
+        user: req.user,
+      },
     });
   } catch (error) {
     next(error);
@@ -21,12 +26,17 @@ const getMyProfile = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| PUT /api/v1/users/profile  (protected)
+| PUT /api/v1/users/profile
 |--------------------------------------------------------------------------
 */
 const updateMyProfile = async (req, res, next) => {
   try {
-    const allowedFields = ["name", "phone", "address"];
+    const allowedFields = [
+      "name",
+      "phone",
+      "address",
+    ];
+
     const updates = {};
 
     allowedFields.forEach((field) => {
@@ -37,7 +47,9 @@ const updateMyProfile = async (req, res, next) => {
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { $set: updates },
+      {
+        $set: updates,
+      },
       {
         new: true,
         runValidators: true,
@@ -47,7 +59,9 @@ const updateMyProfile = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: { user },
+      data: {
+        user,
+      },
     });
   } catch (error) {
     next(error);
@@ -56,34 +70,48 @@ const updateMyProfile = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| PUT /api/v1/users/change-password  (protected)
+| PUT /api/v1/users/change-password
 |--------------------------------------------------------------------------
 */
 const changePassword = async (req, res, next) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const {
+      currentPassword,
+      newPassword,
+    } = req.body;
 
-    const user = await User.findById(req.user._id).select(
-      "+password"
-    );
+    const user = await User.findById(
+      req.user._id
+    ).select("+password");
 
-    const isMatch = await user.comparePassword(
-      currentPassword
-    );
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isMatch =
+      await user.comparePassword(
+        currentPassword
+      );
 
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Current password is incorrect",
+        message:
+          "Current password is incorrect",
       });
     }
 
     user.password = newPassword;
+
     await user.save();
 
     return res.status(200).json({
       success: true,
-      message: "Password changed successfully",
+      message:
+        "Password changed successfully",
     });
   } catch (error) {
     next(error);
@@ -92,7 +120,7 @@ const changePassword = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| POST /api/v1/users/avatar  (protected)
+| POST /api/v1/users/avatar
 |--------------------------------------------------------------------------
 */
 const uploadAvatar = async (req, res, next) => {
@@ -100,43 +128,56 @@ const uploadAvatar = async (req, res, next) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "No image file provided",
+        message:
+          "No image file provided",
       });
     }
 
     if (!env.cloudinary.enabled) {
       return res.status(503).json({
         success: false,
-        message: "Image upload is not configured",
+        message:
+          "Image upload is not configured",
       });
     }
 
-    const currentUser = await User.findById(req.user._id);
+    const currentUser =
+      await User.findById(req.user._id);
 
-    if (currentUser.avatarPublicId) {
+    if (
+      currentUser.avatarPublicId
+    ) {
       await cloudinaryService.deleteImage(
         currentUser.avatarPublicId
       );
     }
 
-    const result = await cloudinaryService.uploadImage(
-      req.file.buffer,
-      "smart-village/avatars"
-    );
+    const result =
+      await cloudinaryService.uploadImage(
+        req.file.buffer,
+        "smart-village/avatars"
+      );
 
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        avatar: result.url,
-        avatarPublicId: result.publicId,
-      },
-      { new: true }
-    );
+    const user =
+      await User.findByIdAndUpdate(
+        req.user._id,
+        {
+          avatar: result.url,
+          avatarPublicId:
+            result.publicId,
+        },
+        {
+          new: true,
+        }
+      );
 
     return res.status(200).json({
       success: true,
-      message: "Avatar uploaded successfully",
-      data: { user },
+      message:
+        "Avatar uploaded successfully",
+      data: {
+        user,
+      },
     });
   } catch (error) {
     next(error);
@@ -148,12 +189,23 @@ const uploadAvatar = async (req, res, next) => {
 | GET /api/v1/users
 |--------------------------------------------------------------------------
 */
-const getAllUsers = async (req, res, next) => {
+const getAllUsers = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const { page, limit, skip } =
-      getPagination(req.query);
+    const {
+      page,
+      limit,
+      skip,
+    } = getPagination(req.query);
 
-    const { role, isActive, search } = req.query;
+    const {
+      role,
+      isActive,
+      search,
+    } = req.query;
 
     const filter = {};
 
@@ -162,7 +214,8 @@ const getAllUsers = async (req, res, next) => {
     }
 
     if (isActive !== undefined) {
-      filter.isActive = isActive === "true";
+      filter.isActive =
+        isActive === "true";
     }
 
     if (search) {
@@ -188,9 +241,14 @@ const getAllUsers = async (req, res, next) => {
       ];
     }
 
-    const [users, total] = await Promise.all([
+    const [
+      users,
+      total,
+    ] = await Promise.all([
       User.find(filter)
-        .sort({ createdAt: -1 })
+        .sort({
+          createdAt: -1,
+        })
         .skip(skip)
         .limit(limit),
 
@@ -199,12 +257,15 @@ const getAllUsers = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      data: { users },
-      pagination: getPaginationMeta(
-        total,
-        page,
-        limit
-      ),
+      data: {
+        users,
+      },
+      pagination:
+        getPaginationMeta(
+          total,
+          page,
+          limit
+        ),
     });
   } catch (error) {
     next(error);
@@ -216,9 +277,16 @@ const getAllUsers = async (req, res, next) => {
 | GET /api/v1/users/:id
 |--------------------------------------------------------------------------
 */
-const getUserById = async (req, res, next) => {
+const getUserById = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user =
+      await User.findById(
+        req.params.id
+      );
 
     if (!user) {
       return res.status(404).json({
@@ -229,7 +297,9 @@ const getUserById = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      data: { user },
+      data: {
+        user,
+      },
     });
   } catch (error) {
     next(error);
@@ -241,9 +311,16 @@ const getUserById = async (req, res, next) => {
 | PATCH /api/v1/users/:id/toggle-active
 |--------------------------------------------------------------------------
 */
-const toggleUserActive = async (req, res, next) => {
+const toggleUserActive = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user =
+      await User.findById(
+        req.params.id
+      );
 
     if (!user) {
       return res.status(404).json({
@@ -252,14 +329,18 @@ const toggleUserActive = async (req, res, next) => {
       });
     }
 
-    if (user.role === "super_admin") {
+    if (
+      user.role === "super_admin"
+    ) {
       return res.status(403).json({
         success: false,
-        message: "Cannot deactivate super admin",
+        message:
+          "Cannot deactivate super admin",
       });
     }
 
-    user.isActive = !user.isActive;
+    user.isActive =
+      !user.isActive;
 
     await user.save();
 
@@ -270,7 +351,9 @@ const toggleUserActive = async (req, res, next) => {
           ? "activated"
           : "deactivated"
       } successfully`,
-      data: { user },
+      data: {
+        user,
+      },
     });
   } catch (error) {
     next(error);
@@ -282,7 +365,11 @@ const toggleUserActive = async (req, res, next) => {
 | PATCH /api/v1/users/:id/role
 |--------------------------------------------------------------------------
 */
-const updateUserRole = async (req, res, next) => {
+const updateUserRole = async (
+  req,
+  res,
+  next
+) => {
   try {
     const { role } = req.body;
 
@@ -292,7 +379,9 @@ const updateUserRole = async (req, res, next) => {
       "admin",
     ];
 
-    if (!validRoles.includes(role)) {
+    if (
+      !validRoles.includes(role)
+    ) {
       return res.status(400).json({
         success: false,
         message:
@@ -300,7 +389,10 @@ const updateUserRole = async (req, res, next) => {
       });
     }
 
-    const user = await User.findById(req.params.id);
+    const user =
+      await User.findById(
+        req.params.id
+      );
 
     if (!user) {
       return res.status(404).json({
@@ -309,10 +401,13 @@ const updateUserRole = async (req, res, next) => {
       });
     }
 
-    if (user.role === "super_admin") {
+    if (
+      user.role === "super_admin"
+    ) {
       return res.status(403).json({
         success: false,
-        message: "Cannot change super admin role",
+        message:
+          "Cannot change super admin role",
       });
     }
 
@@ -322,8 +417,69 @@ const updateUserRole = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message: "User role updated successfully",
-      data: { user },
+      message:
+        "User role updated successfully",
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/*
+|--------------------------------------------------------------------------
+| DELETE /api/v1/users/:id
+|--------------------------------------------------------------------------
+*/
+const deleteUser = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const user =
+      await User.findById(
+        req.params.id
+      );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (
+      user.role === "super_admin"
+    ) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Cannot delete super admin",
+      });
+    }
+
+    if (
+      req.user._id.toString() ===
+      user._id.toString()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "You cannot delete your own account",
+      });
+    }
+
+    await User.findByIdAndDelete(
+      req.params.id
+    );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "User deleted successfully",
     });
   } catch (error) {
     next(error);
@@ -339,4 +495,5 @@ module.exports = {
   getUserById,
   toggleUserActive,
   updateUserRole,
+  deleteUser,
 };
