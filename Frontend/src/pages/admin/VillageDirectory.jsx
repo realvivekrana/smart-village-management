@@ -563,9 +563,9 @@ const VillageDirectory = () => {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto mb-3 h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+          <div className="mx-auto mb-3 h-10 w-10 animate-spin rounded-full border-4 border-gray-300 dark:border-gray-600 border-t-blue-600" />
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Loading village directory...
           </p>
         </div>
@@ -574,15 +574,15 @@ const VillageDirectory = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-container space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Village Directory
           </h1>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Manage schools, hospitals, temples, railway
             stations, markets and other village places.
           </p>
@@ -599,13 +599,13 @@ const VillageDirectory = () => {
 
       {/* Alerts */}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+        <div className="rounded-lg border border-green-200 dark:border-green-900/40 bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-700 dark:text-green-300">
           {success}
         </div>
       )}
@@ -634,10 +634,10 @@ const VillageDirectory = () => {
       </div>
 
       {/* Filters */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Search
             </label>
 
@@ -648,7 +648,7 @@ const VillageDirectory = () => {
                 setSearch(event.target.value)
               }
               placeholder="Search by place name, address..."
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
@@ -708,14 +708,14 @@ const VillageDirectory = () => {
       </div>
 
       {/* Directory */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-5 py-4">
           <div>
-            <h2 className="font-semibold text-gray-900">
+            <h2 className="font-semibold text-gray-900 dark:text-white">
               Places
             </h2>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Showing {filteredPlaces.length} of{" "}
               {places.length} places
             </p>
@@ -726,8 +726,8 @@ const VillageDirectory = () => {
           <EmptyState onAdd={openCreateModal} />
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800/70">
                 <tr>
                   <Th>Place</Th>
                   <Th>Category</Th>
@@ -739,11 +739,11 @@ const VillageDirectory = () => {
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {filteredPlaces.map((place) => (
                   <tr
                     key={place._id}
-                    className="hover:bg-gray-50"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   >
                     <td className="whitespace-nowrap px-5 py-4">
                       <div className="flex items-center gap-3">
@@ -754,7 +754,7 @@ const VillageDirectory = () => {
                             className="h-10 w-10 rounded-lg object-cover"
                           />
                         ) : (
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-sm font-semibold text-blue-600">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-sm font-semibold text-blue-600 dark:text-blue-400">
                             {place.name
                               ?.charAt(0)
                               ?.toUpperCase() || "P"}
@@ -762,12 +762,12 @@ const VillageDirectory = () => {
                         )}
 
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-gray-900 dark:text-white">
                             {place.name}
                           </p>
 
                           {place.phone && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {place.phone}
                             </p>
                           )}
@@ -776,18 +776,18 @@ const VillageDirectory = () => {
                     </td>
 
                     <td className="whitespace-nowrap px-5 py-4">
-                      <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
+                      <span className="rounded-full bg-gray-100 dark:bg-gray-700 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300">
                         {getTypeLabel(place.type)}
                       </span>
                     </td>
 
                     <td className="max-w-xs px-5 py-4">
-                      <p className="truncate text-sm text-gray-600">
+                      <p className="truncate text-sm text-gray-600 dark:text-gray-400">
                         {place.address || "—"}
                       </p>
                     </td>
 
-                    <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-600 dark:text-gray-400">
                       {place.distanceKm !== undefined &&
                       place.distanceKm !== null
                         ? `${place.distanceKm} km`
@@ -802,8 +802,8 @@ const VillageDirectory = () => {
                         }
                         className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                           place.isActive === false
-                            ? "bg-red-50 text-red-700"
-                            : "bg-green-50 text-green-700"
+                            ? "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300"
+                            : "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
                         }`}
                       >
                         {place.isActive === false
@@ -820,7 +820,7 @@ const VillageDirectory = () => {
                         }
                         className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                           place.verified
-                            ? "bg-blue-50 text-blue-700"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
                             : "bg-yellow-50 text-yellow-700"
                         }`}
                       >
@@ -837,7 +837,7 @@ const VillageDirectory = () => {
                           onClick={() =>
                             openEditModal(place)
                           }
-                          className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                          className="rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                         >
                           Edit
                         </button>
@@ -847,7 +847,7 @@ const VillageDirectory = () => {
                           onClick={() =>
                             setDeleteTarget(place)
                           }
-                          className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                          className="rounded-md border border-red-200 dark:border-red-900/40 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-900/20"
                         >
                           Delete
                         </button>
@@ -891,7 +891,7 @@ const VillageDirectory = () => {
               />
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Category
                 </label>
 
@@ -899,7 +899,7 @@ const VillageDirectory = () => {
                   name="type"
                   value={form.type}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   {PLACE_TYPES.filter(
                     (item) => item.value !== "all"
@@ -944,7 +944,7 @@ const VillageDirectory = () => {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Description
               </label>
 
@@ -953,13 +953,13 @@ const VillageDirectory = () => {
                 value={form.description}
                 onChange={handleChange}
                 rows={4}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 placeholder="Description..."
               />
             </div>
 
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-gray-900">
+              <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
                 Location
               </h3>
 
@@ -1010,17 +1010,17 @@ const VillageDirectory = () => {
               />
             </div>
 
-            <div className="space-y-3 rounded-lg bg-gray-50 p-4">
+            <div className="space-y-3 rounded-lg bg-gray-50 dark:bg-gray-800/70 p-4">
               <label className="flex items-center gap-3">
                 <input
                   type="checkbox"
                   name="verified"
                   checked={form.verified}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                  className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-400"
                 />
 
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   Mark as verified
                 </span>
               </label>
@@ -1031,16 +1031,16 @@ const VillageDirectory = () => {
                   name="isActive"
                   checked={form.isActive}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                  className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-400"
                 />
 
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
                   Show this place publicly
                 </span>
               </label>
             </div>
 
-            <div className="flex justify-end gap-3 border-t border-gray-200 pt-5">
+            <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 pt-5">
               <button
                 type="button"
                 disabled={saving}
@@ -1048,7 +1048,7 @@ const VillageDirectory = () => {
                   setShowModal(false);
                   resetForm();
                 }}
-                className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -1080,9 +1080,9 @@ const VillageDirectory = () => {
           }}
         >
           <div>
-            <p className="text-sm leading-6 text-gray-600">
+            <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
               Are you sure you want to delete{" "}
-              <strong className="text-gray-900">
+              <strong className="text-gray-900 dark:text-white">
                 {deleteTarget.name}
               </strong>
               ? This action cannot be undone.
@@ -1095,7 +1095,7 @@ const VillageDirectory = () => {
                 onClick={() =>
                   setDeleteTarget(null)
                 }
-                className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50"
               >
                 Cancel
               </button>
@@ -1127,10 +1127,10 @@ const VillageDirectory = () => {
 
 const StatCard = ({ title, value }) => {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <p className="text-sm text-gray-500">{title}</p>
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
+      <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
 
-      <p className="mt-2 text-2xl font-bold text-gray-900">
+      <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
         {value}
       </p>
     </div>
@@ -1145,14 +1145,14 @@ const Filter = ({
 }) => {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-700">
+      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </label>
 
       <select
         value={value}
         onChange={onChange}
-        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
       >
         {options.map((option) => (
           <option
@@ -1180,10 +1180,10 @@ const Input = ({
 }) => {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-700">
+      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
         {required && (
-          <span className="ml-1 text-red-500">*</span>
+          <span className="ml-1 text-red-500 dark:text-red-400">*</span>
         )}
       </label>
 
@@ -1196,7 +1196,7 @@ const Input = ({
         placeholder={placeholder}
         min={min}
         step={step}
-        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
       />
     </div>
   );
@@ -1204,7 +1204,7 @@ const Input = ({
 
 const Th = ({ children }) => {
   return (
-    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+    <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
       {children}
     </th>
   );
@@ -1213,15 +1213,15 @@ const Th = ({ children }) => {
 const EmptyState = ({ onAdd }) => {
   return (
     <div className="px-6 py-16 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-xl">
         📍
       </div>
 
-      <h3 className="mt-4 text-base font-semibold text-gray-900">
+      <h3 className="mt-4 text-base font-semibold text-gray-900 dark:text-white">
         No places found
       </h3>
 
-      <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">
+      <p className="mx-auto mt-1 max-w-md text-sm text-gray-500 dark:text-gray-400">
         No village places match your current search and
         filters.
       </p>
@@ -1244,16 +1244,16 @@ const Modal = ({
 }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-        <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl">
+        <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             {title}
           </h2>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-xl leading-none text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-lg p-2 text-xl leading-none text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:text-gray-300"
           >
             ×
           </button>

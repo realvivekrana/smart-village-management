@@ -49,9 +49,23 @@ app.use(helmet());
 
 const allowedOrigins = env.frontendUrl.split(",").map((o) => o.trim());
 
+// Vite dev server port badal jaata hai (5173, 5174, 5175...) jab pehla port
+// pehle se busy ho. Development mein har localhost/127.0.0.1 port allow karo
+// taaki ye CORS error baar baar na aaye. Production mein sirf FRONTEND_URL
+// (allowedOrigins) hi allow hoga.
+const isLocalDevOrigin = (origin) =>
+  !env.isProduction && /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Same-origin / server-to-server requests (Postman, curl) mein origin
+      // header hota hi nahi — unhe allow karna zaroori hai.
+      if (!origin || allowedOrigins.includes(origin) || isLocalDevOrigin(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );

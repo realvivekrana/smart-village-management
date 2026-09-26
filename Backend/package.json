@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "seed:admin": "node src/seeds/adminSeed.js",
     "seed:kakarcholi": "node src/seeds/kakarcholiSeed.js"
   },
   "dependencies": {

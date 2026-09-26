@@ -317,11 +317,11 @@ const VillageSettings = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[500px] items-center justify-center bg-gray-50">
+      <div className="flex min-h-[500px] items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-300 dark:border-gray-600 border-t-blue-600" />
 
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
             Loading village settings...
           </p>
         </div>
@@ -330,21 +330,21 @@ const VillageSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white">
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 Administration
               </p>
 
-              <h1 className="mt-1 text-2xl font-bold text-gray-900">
+              <h1 className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
                 Village Settings
               </h1>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Manage the information displayed across
                 the village website.
               </p>
@@ -354,7 +354,7 @@ const VillageSettings = () => {
               type="button"
               onClick={handleReset}
               disabled={saving}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 disabled:opacity-50"
             >
               Reset
             </button>
@@ -365,15 +365,15 @@ const VillageSettings = () => {
       {/* Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 p-4">
             <span>⚠️</span>
 
             <div>
-              <p className="text-sm font-semibold text-red-800">
+              <p className="text-sm font-semibold text-red-800 dark:text-red-200">
                 Error
               </p>
 
-              <p className="mt-1 text-sm text-red-700">
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
                 {error}
               </p>
             </div>
@@ -381,15 +381,15 @@ const VillageSettings = () => {
         )}
 
         {success && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4">
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-green-200 dark:border-green-900/40 bg-green-50 dark:bg-green-900/20 p-4">
             <span>✓</span>
 
             <div>
-              <p className="text-sm font-semibold text-green-800">
+              <p className="text-sm font-semibold text-green-800 dark:text-green-200">
                 Success
               </p>
 
-              <p className="mt-1 text-sm text-green-700">
+              <p className="mt-1 text-sm text-green-700 dark:text-green-300">
                 {success}
               </p>
             </div>
@@ -704,7 +704,7 @@ const VillageSettings = () => {
                   href={`https://www.google.com/maps/search/?api=1&query=${form.latitude},${form.longitude}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-flex text-sm font-medium text-blue-600 hover:text-blue-700"
+                  className="mt-4 inline-flex text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:text-blue-300"
                 >
                   🗺️ Preview location on Google Maps
                 </a>
@@ -718,7 +718,7 @@ const VillageSettings = () => {
             icon="🖼️"
           >
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Upload New Photos
               </label>
 
@@ -727,15 +727,15 @@ const VillageSettings = () => {
                 accept="image/jpeg,image/png,image/webp"
                 multiple
                 onChange={handleGalleryFilesChange}
-                className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
+                className="block w-full text-sm text-gray-600 dark:text-gray-400 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 dark:file:bg-blue-900/20 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/30"
               />
 
-              <p className="mt-1.5 text-xs text-gray-400">
+              <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
                 JPG, PNG or WEBP. Up to 10 photos at a time.
               </p>
 
               {gallery.error && (
-                <p className="mt-2 text-sm text-red-600">
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {gallery.error}
                 </p>
               )}
@@ -757,7 +757,7 @@ const VillageSettings = () => {
                 {gallery.images.map((image, index) => (
                   <div
                     key={image._id || image.url || index}
-                    className="group relative overflow-hidden rounded-xl border border-gray-200"
+                    className="group relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
                   >
                     <img
                       src={image.url}
@@ -781,14 +781,14 @@ const VillageSettings = () => {
             )}
 
             {gallery.images.length === 0 && (
-              <p className="mt-4 text-sm text-gray-400">
+              <p className="mt-4 text-sm text-gray-400 dark:text-gray-500">
                 No photos uploaded yet.
               </p>
             )}
           </SettingsCard>
-          <div className="sticky bottom-0 z-20 rounded-2xl border border-gray-200 bg-white/95 p-4 shadow-xl backdrop-blur">
+          <div className="sticky bottom-0 z-20 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/95 p-4 shadow-xl backdrop-blur">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Changes will update the village information
                 displayed on the website.
               </p>
@@ -1044,19 +1044,19 @@ const SettingsCard = ({
   children,
 }) => {
   return (
-    <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <div className="border-b border-gray-100 px-6 py-5 sm:px-7">
+    <section className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+      <div className="border-b border-gray-100 dark:border-gray-700 px-6 py-5 sm:px-7">
         <div className="flex gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/20 text-xl">
             {icon}
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
               {title}
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {description}
             </p>
           </div>
@@ -1083,11 +1083,11 @@ const Input = ({
 }) => {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-700">
+      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
 
         {required && (
-          <span className="ml-1 text-red-500">
+          <span className="ml-1 text-red-500 dark:text-red-400">
             *
           </span>
         )}
@@ -1102,7 +1102,7 @@ const Input = ({
         required={required}
         min={min}
         step={step}
-        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-white outline-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
       />
     </div>
   );
@@ -1120,11 +1120,11 @@ const Textarea = ({
 }) => {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-700">
+      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
 
         {required && (
-          <span className="ml-1 text-red-500">
+          <span className="ml-1 text-red-500 dark:text-red-400">
             *
           </span>
         )}
@@ -1137,11 +1137,11 @@ const Textarea = ({
         placeholder={placeholder}
         rows={rows}
         required={required}
-        className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        className="w-full resize-y rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 text-sm leading-6 text-gray-900 dark:text-white outline-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
       />
 
       {hint && (
-        <p className="mt-1.5 text-xs text-gray-400">
+        <p className="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
           {hint}
         </p>
       )}

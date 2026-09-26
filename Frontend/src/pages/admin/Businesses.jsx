@@ -120,19 +120,19 @@ const Businesses = () => {
   const getStatusClass = (status) => {
     switch (status) {
       case "approved":
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300";
 
       case "pending":
         return "bg-yellow-100 text-yellow-800";
 
       case "rejected":
-        return "bg-red-100 text-red-700";
+        return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300";
 
       case "suspended":
-        return "bg-gray-100 text-gray-700";
+        return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
 
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
     }
   };
 
@@ -158,7 +158,7 @@ const Businesses = () => {
   if (loading) {
     return (
       <div className="flex min-h-[300px] items-center justify-center">
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500 dark:text-gray-400">
           Loading businesses...
         </div>
       </div>
@@ -166,70 +166,70 @@ const Businesses = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-container space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Businesses
           </h1>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Manage registered businesses in
             the village.
           </p>
         </div>
 
-        <div className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
+        <div className="rounded-lg bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
           Total: {businesses.length}
         </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-300">
           {error}
         </div>
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800/70">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Business
                 </th>
 
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Owner
                 </th>
 
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Category
                 </th>
 
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Contact
                 </th>
 
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Status
                 </th>
 
-                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Actions
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {businesses.length === 0 ? (
                 <tr>
                   <td
                     colSpan="6"
-                    className="px-6 py-12 text-center text-sm text-gray-500"
+                    className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400"
                   >
                     No businesses found.
                   </td>
@@ -260,17 +260,17 @@ const Businesses = () => {
                         key={
                           businessId
                         }
-                        className="hover:bg-gray-50"
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
                       >
                         {/* Business */}
                         <td className="px-6 py-4">
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-gray-900 dark:text-white">
                             {business.name ||
                               "Unnamed Business"}
                           </div>
 
                           {business.description && (
-                            <div className="mt-1 max-w-xs truncate text-sm text-gray-500">
+                            <div className="mt-1 max-w-xs truncate text-sm text-gray-500 dark:text-gray-400">
                               {
                                 business.description
                               }
@@ -280,19 +280,19 @@ const Businesses = () => {
 
                         {/* Owner */}
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {ownerName}
                           </div>
 
                           {ownerEmail && (
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
                               {ownerEmail}
                             </div>
                           )}
                         </td>
 
                         {/* Category */}
-                        <td className="px-6 py-4 text-sm text-gray-600">
+                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                           {business.category ||
                             business.businessType ||
                             "—"}
@@ -300,13 +300,13 @@ const Businesses = () => {
 
                         {/* Contact */}
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-700">
+                          <div className="text-sm text-gray-700 dark:text-gray-300">
                             {business.phone ||
                               "—"}
                           </div>
 
                           {business.email && (
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
                               {business.email}
                             </div>
                           )}
@@ -342,7 +342,7 @@ const Businesses = () => {
                                     "approved"
                                   )
                                 }
-                                className="rounded-md bg-green-100 px-3 py-1.5 text-sm font-medium text-green-700 hover:bg-green-200 disabled:opacity-50"
+                                className="rounded-md bg-green-100 dark:bg-green-900/30 px-3 py-1.5 text-sm font-medium text-green-700 dark:text-green-300 hover:bg-green-200 dark:bg-green-900/40 disabled:opacity-50"
                               >
                                 Approve
                               </button>
@@ -362,7 +362,7 @@ const Businesses = () => {
                                     "rejected"
                                   )
                                 }
-                                className="rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-200 disabled:opacity-50"
+                                className="rounded-md bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-200 dark:bg-red-900/40 disabled:opacity-50"
                               >
                                 Reject
                               </button>
@@ -382,7 +382,7 @@ const Businesses = () => {
                                     "suspended"
                                   )
                                 }
-                                className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+                                className="rounded-md bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50"
                               >
                                 Suspend
                               </button>
