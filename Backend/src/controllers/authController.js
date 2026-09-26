@@ -12,7 +12,7 @@ const emailService = require("../services/emailService");
 
 const register = async (req, res, next) => {
   try {
-    const { name, email, phone, password, role, address } = req.body;
+    const { name, email, phone, password, address } = req.body;
 
     // Required fields
     if (!name || !email || !phone || !password) {
@@ -50,14 +50,11 @@ const register = async (req, res, next) => {
     |--------------------------------------------------------------------------
     | Role Security
     |--------------------------------------------------------------------------
-    | Public registration se koi user admin/super_admin nahi bana sakta.
+    | Public registration se koi user admin nahi bana sakta.
+    | Sirf citizen role hi public registration se milta hai.
     */
 
-    const allowedPublicRoles = ["citizen", "business_owner"];
-
-    const userRole = allowedPublicRoles.includes(role)
-      ? role
-      : "citizen";
+    const userRole = "citizen";
 
     // Create user
     const user = await User.create({

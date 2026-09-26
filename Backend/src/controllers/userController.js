@@ -329,16 +329,6 @@ const toggleUserActive = async (
       });
     }
 
-    if (
-      user.role === "super_admin"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Cannot deactivate super admin",
-      });
-    }
-
     user.isActive =
       !user.isActive;
 
@@ -375,7 +365,6 @@ const updateUserRole = async (
 
     const validRoles = [
       "citizen",
-      "business_owner",
       "admin",
     ];
 
@@ -385,7 +374,7 @@ const updateUserRole = async (
       return res.status(400).json({
         success: false,
         message:
-          "Invalid role. Must be citizen, business_owner, or admin",
+          "Invalid role. Must be citizen or admin",
       });
     }
 
@@ -398,16 +387,6 @@ const updateUserRole = async (
       return res.status(404).json({
         success: false,
         message: "User not found",
-      });
-    }
-
-    if (
-      user.role === "super_admin"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Cannot change super admin role",
       });
     }
 
@@ -448,16 +427,6 @@ const deleteUser = async (
       return res.status(404).json({
         success: false,
         message: "User not found",
-      });
-    }
-
-    if (
-      user.role === "super_admin"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Cannot delete super admin",
       });
     }
 

@@ -55,7 +55,7 @@ const getBusinessById = async (req, res, next) => {
     }
 
     // Non-approved businesses visible only to owner / admin
-    const isAdmin = req.user && ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user && req.user.role === "admin";
     const isOwner = req.user && String(business.owner._id) === String(req.user._id);
     if (business.status !== "approved" && !isAdmin && !isOwner) {
       return res.status(404).json({ success: false, message: "Business not found" });
@@ -69,7 +69,7 @@ const getBusinessById = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| GET /api/v1/businesses/my  (business_owner)
+| GET /api/v1/businesses/my  (citizen)
 |--------------------------------------------------------------------------
 */
 const getMyBusiness = async (req, res, next) => {
@@ -120,7 +120,7 @@ const getAllBusinessesAdmin = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| POST /api/v1/businesses  (business_owner)
+| POST /api/v1/businesses  (citizen)
 |--------------------------------------------------------------------------
 */
 const createBusiness = async (req, res, next) => {
@@ -158,7 +158,7 @@ const updateBusiness = async (req, res, next) => {
     const business = await Business.findById(req.params.id);
     if (!business) return res.status(404).json({ success: false, message: "Business not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(business.owner) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
@@ -226,7 +226,7 @@ const deleteBusiness = async (req, res, next) => {
     const business = await Business.findById(req.params.id);
     if (!business) return res.status(404).json({ success: false, message: "Business not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(business.owner) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }

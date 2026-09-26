@@ -42,7 +42,7 @@ router.get("/places", getVillagePlaces);
 router.post(
   "/",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   createVillage
 );
 
@@ -50,7 +50,7 @@ router.post(
 router.put(
   "/",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   updateActiveVillage
 );
 
@@ -58,7 +58,7 @@ router.put(
 router.put(
   "/:id",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   updateVillage
 );
 
@@ -66,7 +66,7 @@ router.put(
 router.post(
   "/:id/images",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   uploadMultipleImages("images", 10),
   uploadVillageImages
 );
@@ -75,7 +75,7 @@ router.post(
 router.delete(
   "/:id/images/:imageId",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   deleteVillageImage
 );
 
@@ -90,7 +90,7 @@ router.delete(
 router.post(
   "/:id/places",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   addVillagePlace
 );
 
@@ -98,7 +98,7 @@ router.post(
 router.put(
   "/:id/places/:placeId",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   updateVillagePlace
 );
 
@@ -106,7 +106,7 @@ router.put(
 router.delete(
   "/:id/places/:placeId",
   protect,
-  authorize("admin", "super_admin"),
+  authorize("admin"),
   deleteVillagePlace
 );
 

@@ -17,25 +17,20 @@ const adminLinks = [
   { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory" },
 ];
 
-const businessLinks = [
-  { to: "/business-owner/dashboard", icon: "📊", label: "Dashboard" },
-  { to: "/business-owner/my-business", icon: "🏪", label: "My Business" },
-  { to: "/business-owner/add-business", icon: "➕", label: "Add Business" },
-  { to: "/business-owner/my-jobs", icon: "💼", label: "My Jobs" },
-];
-
 const citizenLinks = [
   { to: "/citizen/dashboard", icon: "📊", label: "Dashboard" },
   { to: "/citizen/complaints", icon: "📋", label: "My Complaints" },
   { to: "/citizen/complaints/create", icon: "➕", label: "File Complaint" },
   { to: "/citizen/posts", icon: "💬", label: "My Posts" },
+  { to: "/business-owner/my-business", icon: "🏪", label: "My Business" },
+  { to: "/business-owner/add-business", icon: "➕", label: "Add Business" },
+  { to: "/business-owner/my-jobs", icon: "💼", label: "My Jobs" },
   { to: "/citizen/notifications", icon: "🔔", label: "Notifications" },
   { to: "/citizen/profile", icon: "👤", label: "Profile" },
 ];
 
 function getLinks(role) {
-  if (["admin", "super_admin"].includes(role)) return adminLinks;
-  if (role === "business_owner") return businessLinks;
+  if (role === "admin") return adminLinks;
   return citizenLinks;
 }
 

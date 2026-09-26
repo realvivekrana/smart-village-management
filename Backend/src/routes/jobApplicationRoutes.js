@@ -22,10 +22,10 @@ router.get("/my", protect, getMyApplications);
 router.post("/jobs/:jobId/apply", protect, uploadResume, applyJobValidator, validate, applyForJob);
 
 // View applications for a job (owner / admin)
-router.get("/jobs/:jobId/applications", protect, authorize("business_owner", "admin"), getJobApplications);
+router.get("/jobs/:jobId/applications", protect, authorize("citizen", "admin"), getJobApplications);
 
 // Update / withdraw application
-router.patch("/:id/status", protect, authorize("business_owner", "admin"), updateApplicationStatus);
+router.patch("/:id/status", protect, authorize("citizen", "admin"), updateApplicationStatus);
 router.delete("/:id", protect, withdrawApplication);
 
 module.exports = router;

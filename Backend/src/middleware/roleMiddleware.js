@@ -5,10 +5,9 @@
 | Usage:
 |
 | router.post("/", protect, authorize("admin"), createNotice);
-| router.post("/", protect, authorize("business_owner"), addBusiness);
+| router.post("/", protect, authorize("citizen", "admin"), addBusiness);
 |
-| Rule:
-| super_admin ko har protected route ki access hai.
+| Sirf do roles hain: "citizen" aur "admin".
 |--------------------------------------------------------------------------
 */
 
@@ -25,10 +24,7 @@ const authorize =
 
     const { role } = req.user;
 
-    if (
-      role === "super_admin" ||
-      allowedRoles.includes(role)
-    ) {
+    if (allowedRoles.includes(role)) {
       return next();
     }
 
@@ -39,7 +35,7 @@ const authorize =
     });
   };
 
-// Shortcut: admin + super_admin
+// Shortcut: admin only
 const adminOnly = authorize("admin");
 
 module.exports = {

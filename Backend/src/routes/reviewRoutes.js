@@ -19,6 +19,6 @@ router.post("/", protect, createReview);
 // Standalone review actions (mounted at /api/v1/reviews)
 router.put("/:id", protect, updateReview);
 router.delete("/:id", protect, deleteReview);
-router.post("/:id/respond", protect, authorize("business_owner"), respondToReview);
+router.post("/:id/respond", protect, authorize("citizen"), respondToReview);
 
 module.exports = router;

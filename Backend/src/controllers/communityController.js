@@ -118,7 +118,7 @@ const updatePost = async (req, res, next) => {
     const post = await CommunityPost.findById(req.params.id);
     if (!post || !post.isActive) return res.status(404).json({ success: false, message: "Post not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(post.createdBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
@@ -144,7 +144,7 @@ const deletePost = async (req, res, next) => {
     const post = await CommunityPost.findById(req.params.id);
     if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(post.createdBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }

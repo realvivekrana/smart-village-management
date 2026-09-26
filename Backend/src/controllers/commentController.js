@@ -104,7 +104,7 @@ const deleteComment = async (req, res, next) => {
     const comment = await Comment.findById(req.params.id);
     if (!comment) return res.status(404).json({ success: false, message: "Comment not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(comment.createdBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }

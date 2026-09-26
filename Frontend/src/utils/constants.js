@@ -3,9 +3,7 @@ export const APP_NAME = import.meta.env.VITE_APP_NAME || "Kakarcholi Vilage";
 
 export const ROLES = {
   CITIZEN: "citizen",
-  BUSINESS_OWNER: "business_owner",
   ADMIN: "admin",
-  SUPER_ADMIN: "super_admin",
 };
 
 export const COMPLAINT_STATUSES = {

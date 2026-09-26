@@ -17,7 +17,7 @@ const getComplaints = async (req, res, next) => {
     const { status, category, priority, search } = req.query;
 
     const filter = {};
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin) filter.submittedBy = req.user._id;
 
     if (status) filter.status = status;
@@ -60,7 +60,7 @@ const getComplaintById = async (req, res, next) => {
 
     if (!complaint) return res.status(404).json({ success: false, message: "Complaint not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(complaint.submittedBy._id) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
@@ -171,7 +171,7 @@ const deleteComplaint = async (req, res, next) => {
     const complaint = await Complaint.findById(req.params.id);
     if (!complaint) return res.status(404).json({ success: false, message: "Complaint not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     const isOwner = String(complaint.submittedBy) === String(req.user._id);
 
     if (!isAdmin && !isOwner) {

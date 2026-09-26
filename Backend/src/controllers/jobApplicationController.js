@@ -69,7 +69,7 @@ const getJobApplications = async (req, res, next) => {
     const job = await Job.findById(req.params.jobId);
     if (!job) return res.status(404).json({ success: false, message: "Job not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(job.postedBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
@@ -142,7 +142,7 @@ const updateApplicationStatus = async (req, res, next) => {
     const application = await JobApplication.findById(req.params.id).populate("job");
     if (!application) return res.status(404).json({ success: false, message: "Application not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(application.job.postedBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }

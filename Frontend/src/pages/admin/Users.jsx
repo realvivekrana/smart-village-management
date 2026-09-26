@@ -269,10 +269,6 @@ const Users = () => {
                             Citizen
                           </option>
 
-                          <option value="business_owner">
-                            Business Owner
-                          </option>
-
                           <option value="admin">
                             Admin
                           </option>
@@ -327,24 +323,21 @@ const Users = () => {
                               : "Activate"}
                           </button>
 
-                          {user.role !==
-                            "super_admin" && (
-                            <button
-                              type="button"
-                              disabled={
-                                actionLoading ===
+                          <button
+                            type="button"
+                            disabled={
+                              actionLoading ===
+                              userId
+                            }
+                            onClick={() =>
+                              deleteUser(
                                 userId
-                              }
-                              onClick={() =>
-                                deleteUser(
-                                  userId
-                                )
-                              }
-                              className="rounded-md bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-200 dark:bg-red-900/40 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              Delete
-                            </button>
-                          )}
+                              )
+                            }
+                            className="rounded-md bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-200 dark:bg-red-900/40 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>

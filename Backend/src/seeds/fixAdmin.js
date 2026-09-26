@@ -14,7 +14,7 @@ const User = require("../models/User");
 // 👇 Apne credentials yahan daalo
 const EMAIL = "vivekranaworks@gmail.com";
 const PASSWORD = "Vivekgeeta@2546";
-const NAME = "Super Admin";
+const NAME = "Admin";
 const PHONE = "9000000000"; // valid 10-digit Indian number, 6-9 se start
 
 const run = async () => {
@@ -25,7 +25,7 @@ const run = async () => {
   if (user) {
     console.log(`ℹ️  User already exists (role: ${user.role}). Resetting password...`);
     user.password = PASSWORD; // pre-save hook hash kar dega
-    user.role = "super_admin";
+    user.role = "admin";
     user.isActive = true;
     user.isEmailVerified = true;
     await user.save();
@@ -36,7 +36,7 @@ const run = async () => {
       email: EMAIL.toLowerCase(),
       phone: PHONE,
       password: PASSWORD,
-      role: "super_admin",
+      role: "admin",
       isActive: true,
       isEmailVerified: true,
     });

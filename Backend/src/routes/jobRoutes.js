@@ -16,10 +16,10 @@ const validate = require("../middleware/validationMiddleware");
 const { createJobValidator, updateJobValidator } = require("../validators/jobValidator");
 
 router.get("/", getJobs);
-router.get("/my", protect, authorize("business_owner", "admin"), getMyJobs);
+router.get("/my", protect, authorize("citizen", "admin"), getMyJobs);
 router.get("/:id", getJobById);
-router.post("/", protect, authorize("business_owner", "admin"), createJobValidator, validate, createJob);
-router.put("/:id", protect, authorize("business_owner", "admin"), updateJobValidator, validate, updateJob);
-router.delete("/:id", protect, authorize("business_owner", "admin"), deleteJob);
+router.post("/", protect, authorize("citizen", "admin"), createJobValidator, validate, createJob);
+router.put("/:id", protect, authorize("citizen", "admin"), updateJobValidator, validate, updateJob);
+router.delete("/:id", protect, authorize("citizen", "admin"), deleteJob);
 
 module.exports = router;

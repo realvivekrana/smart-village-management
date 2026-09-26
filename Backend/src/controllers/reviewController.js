@@ -130,7 +130,7 @@ const deleteReview = async (req, res, next) => {
     const review = await Review.findById(req.params.id);
     if (!review) return res.status(404).json({ success: false, message: "Review not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(review.reviewer) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }

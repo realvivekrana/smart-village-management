@@ -8,7 +8,7 @@ import {
 } from "../../services/userService";
 import { Badge, ErrorBox, Loading, Page } from "./AdminUI";
 
-const roles = ["citizen", "business_owner", "admin", "super_admin"];
+const roles = ["citizen", "admin"];
 
 export default function UserDetail() {
   const { id } = useParams();
@@ -166,16 +166,14 @@ export default function UserDetail() {
               {isActive ? "Deactivate" : "Activate"}
             </button>
 
-            {user.role !== "super_admin" && (
-              <button
-                type="button"
-                className="btn-danger"
-                disabled={actionLoading}
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
-            )}
+            <button
+              type="button"
+              className="btn-danger"
+              disabled={actionLoading}
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>

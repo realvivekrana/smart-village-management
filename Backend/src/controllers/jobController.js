@@ -61,7 +61,7 @@ const getJobById = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| GET /api/v1/jobs/my  (business_owner)
+| GET /api/v1/jobs/my  (citizen)
 |--------------------------------------------------------------------------
 */
 const getMyJobs = async (req, res, next) => {
@@ -86,7 +86,7 @@ const getMyJobs = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| POST /api/v1/jobs  (business_owner / admin)
+| POST /api/v1/jobs  (citizen / admin)
 |--------------------------------------------------------------------------
 */
 const createJob = async (req, res, next) => {
@@ -94,7 +94,7 @@ const createJob = async (req, res, next) => {
     const job = await Job.create({ ...req.body, postedBy: req.user._id });
 
     // Notify all active citizens (non-blocking)
-    User.find({ isActive: true, role: { $in: ["citizen", "business_owner"] } })
+    User.find({ isActive: true, role: "citizen" })
       .select("_id")
       .lean()
       .then(async (users) => {
@@ -119,7 +119,7 @@ const updateJob = async (req, res, next) => {
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ success: false, message: "Job not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(job.postedBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
@@ -143,7 +143,7 @@ const deleteJob = async (req, res, next) => {
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ success: false, message: "Job not found" });
 
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+    const isAdmin = req.user.role === "admin";
     if (!isAdmin && String(job.postedBy) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }

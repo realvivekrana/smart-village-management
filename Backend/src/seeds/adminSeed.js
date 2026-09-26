@@ -2,7 +2,7 @@
  * Admin Seed
  * Usage: npm run seed:admin
  *
- * Creates the initial super_admin account.
+ * Creates the initial admin account.
  * Configure via environment variables:
  *   ADMIN_NAME, ADMIN_EMAIL, ADMIN_PHONE, ADMIN_PASSWORD
  */
@@ -15,7 +15,7 @@ const User = require("../models/User");
 const seed = async () => {
   await connectDB();
 
-  const name = process.env.ADMIN_NAME || "Super Admin";
+  const name = process.env.ADMIN_NAME || "Admin";
   const email = process.env.ADMIN_EMAIL || "admin@smartvillage.com";
   const phone = process.env.ADMIN_PHONE || "9000000000";
   const password = process.env.ADMIN_PASSWORD || "Admin@1234";
@@ -33,12 +33,12 @@ const seed = async () => {
     email: email.toLowerCase(),
     phone,
     password,
-    role: "super_admin",
+    role: "admin",
     isActive: true,
     isEmailVerified: true,
   });
 
-  console.log(`✅ Super admin created:`);
+  console.log(`✅ Admin created:`);
   console.log(`   Name  : ${admin.name}`);
   console.log(`   Email : ${admin.email}`);
   console.log(`   Phone : ${admin.phone}`);

@@ -29,7 +29,7 @@ export default function MobileMenu({ isOpen, onClose }) {
         </div>
 
         <div className="py-3 px-2">
-          {navLinks.map((link) => (
+          {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}

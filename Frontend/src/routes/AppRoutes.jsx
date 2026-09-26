@@ -110,18 +110,8 @@ export default function AppRoutes() {
           <Route path="/citizen/complaints" element={<MyComplaints />} />
           <Route path="/citizen/posts" element={<MyPosts />} />
           <Route path="/citizen/notifications" element={<CitizenNotifications />} />
-        </Route>
 
-        {/* Business Owner */}
-        <Route
-          element={
-            <ProtectedRoute>
-              <RoleRoute roles={["business_owner", "admin", "super_admin"]}>
-                <DashboardLayout />
-              </RoleRoute>
-            </ProtectedRoute>
-          }
-        >
+          {/* Business features — every citizen (village member) has full access */}
           <Route path="/business-owner/dashboard" element={<BusinessOwnerDashboard />} />
           <Route path="/business-owner/add-business" element={<AddBusiness />} />
           <Route path="/business-owner/edit-business/:id" element={<EditBusiness />} />
@@ -134,7 +124,7 @@ export default function AppRoutes() {
         <Route
           element={
             <ProtectedRoute>
-              <RoleRoute roles={["admin", "super_admin"]}>
+              <RoleRoute roles={["admin"]}>
                 <DashboardLayout />
               </RoleRoute>
             </ProtectedRoute>

@@ -12,6 +12,6 @@ const { authorize } = require("../middleware/roleMiddleware");
 
 router.get("/admin", protect, authorize("admin"), getAdminDashboard);
 router.get("/citizen", protect, getCitizenDashboard);
-router.get("/business-owner", protect, authorize("business_owner", "admin"), getBusinessOwnerDashboard);
+router.get("/business-owner", protect, authorize("citizen", "admin"), getBusinessOwnerDashboard);
 
 module.exports = router;

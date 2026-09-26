@@ -41,7 +41,7 @@ export default function JobDetails({ job, onApply, applying }) {
         </>
       )}
 
-      {user && !expired && user.role !== "admin" && user.role !== "super_admin" && (
+      {user && !expired && user.role !== "admin" && (
         <Button onClick={onApply} loading={applying} size="lg">
           Apply Now →
         </Button>
