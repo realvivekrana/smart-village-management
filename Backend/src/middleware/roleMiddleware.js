@@ -2,12 +2,14 @@
 |--------------------------------------------------------------------------
 | authorize
 |--------------------------------------------------------------------------
-| Usage (hamesha protect ke BAAD lagana):
+| Usage:
 |
-|   router.post("/", protect, authorize("admin"), createNotice);
-|   router.post("/", protect, authorize("business_owner"), addBusiness);
+| router.post("/", protect, authorize("admin"), createNotice);
+| router.post("/", protect, authorize("business_owner"), addBusiness);
 |
-| Rule: super_admin ko har protected route ki access hai.
+| Rule:
+| super_admin ko har protected route ki access hai.
+|--------------------------------------------------------------------------
 */
 
 const authorize =
@@ -16,19 +18,24 @@ const authorize =
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: "Authentication required. Please login.",
+        message:
+          "Authentication required. Please login.",
       });
     }
 
     const { role } = req.user;
 
-    if (role === "super_admin" || allowedRoles.includes(role)) {
+    if (
+      role === "super_admin" ||
+      allowedRoles.includes(role)
+    ) {
       return next();
     }
 
     return res.status(403).json({
       success: false,
-      message: "You do not have permission to perform this action",
+      message:
+        "You do not have permission to perform this action",
     });
   };
 

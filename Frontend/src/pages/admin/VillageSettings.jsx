@@ -1,30 +1,921 @@
-import { useEffect, useState } from "react";
-import api from "../../services/api";
-import { ErrorBox, Form, Loading, Modal, Page } from "./AdminUI";
+import React, { useEffect, useState } from "react";
 
-const fields = [
-  { name: "name", label: "Village name", required: true }, { name: "district", label: "District", required: true }, { name: "state", label: "State", required: true }, { name: "pincode", label: "Pincode" },
-  { name: "population", label: "Population", type: "number" }, { name: "area", label: "Area (sq km)", type: "number" }, { name: "description", label: "Description", type: "textarea", full: true },
-  { name: "sarpanchName", label: "Sarpanch name" }, { name: "sarpanchPhone", label: "Sarpanch phone" }, { name: "isActive", label: "Public village profile active", type: "checkbox" },
-];
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
 
-export default function VillageSettings() {
-  const [village, setVillage] = useState(null); const [loading, setLoading] = useState(true); const [error, setError] = useState(""); const [editing, setEditing] = useState(false); const [uploading, setUploading] = useState(false); const [files, setFiles] = useState([]);
-  const load = async () => { setLoading(true); setError(""); try { const response = await api.get("/village"); setVillage(response.data?.data?.village || null); } catch (err) { if (err.response?.status === 404) setVillage(null); else setError(err.response?.data?.message || "Failed to load village"); } finally { setLoading(false); } };
-  useEffect(() => { load(); }, []);
-  const save = async (form) => { const data = { name: form.name, district: form.district, state: form.state, pincode: form.pincode, population: Number(form.population || 0), area: Number(form.area || 0), description: form.description, isActive: Boolean(form.isActive), sarpanch: { name: form.sarpanchName || "", phone: form.sarpanchPhone || "" }, places: village?.places || [] }; try { const response = village ? await api.put(`/village/${village._id}`, data) : await api.post("/village", data); setVillage(response.data?.data?.village || village); setEditing(false); } catch (err) { setError(err.response?.data?.message || "Save failed"); } };
-  const uploadImages = async () => { if (!village?._id || !files.length) return; setUploading(true); setError(""); try { const body = new FormData(); files.forEach((file) => body.append("images", file)); const response = await api.post(`/village/${village._id}/images`, body, { headers: { "Content-Type": "multipart/form-data" } }); setVillage(response.data?.data?.village || village); setFiles([]); } catch (err) { setError(err.response?.data?.message || "Image upload failed"); } finally { setUploading(false); } };
-  if (loading) return <Page title="Village Settings"><Loading /></Page>;
-  const initial = village ? { ...village, population: village.population || 0, area: village.area || 0, sarpanchName: village.sarpanch?.name || "", sarpanchPhone: village.sarpanch?.phone || "", isActive: village.isActive !== false } : { population: 0, area: 0, isActive: true };
-  return <Page title="Village Settings" subtitle="Live village profile management. Changes are saved directly to the backend database." actions={<button className="btn-primary" onClick={() => setEditing(true)} type="button">{village ? "Edit details" : "Create village profile"}</button>}>
-    {error ? <ErrorBox message={error} retry={load} /> : null}
-    {village ? <>
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="card p-6 lg:col-span-2"><div className="flex items-start justify-between gap-4"><div><h2 className="text-xl font-semibold">{village.name}</h2><p className="mt-1 text-gray-500">{village.district}, {village.state} {village.pincode ? `· ${village.pincode}` : ""}</p></div><span className={`badge ${village.isActive ? "badge-green" : "badge-red"}`}>{village.isActive ? "Public Active" : "Public Inactive"}</span></div><p className="mt-5 whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-300">{village.description || "No description added."}</p><div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4"><div><p className="text-xs text-gray-500">Population</p><p className="font-semibold">{village.population || 0}</p></div><div><p className="text-xs text-gray-500">Area</p><p className="font-semibold">{village.area || 0} sq km</p></div><div><p className="text-xs text-gray-500">Places</p><p className="font-semibold">{village.places?.length || 0}</p></div><div><p className="text-xs text-gray-500">Images</p><p className="font-semibold">{village.images?.length || 0}</p></div></div></div>
-        <div className="card p-6"><h3 className="font-semibold">Sarpanch</h3><p className="mt-3 text-lg">{village.sarpanch?.name || "Not set"}</p><p className="text-sm text-gray-500">{village.sarpanch?.phone || "No phone added"}</p></div>
+const emptyForm = {
+  name: "",
+  localName: "",
+  description: "",
+  history: "",
+  population: "",
+  area: "",
+  pincode: "",
+  stdCode: "",
+  altitude: "",
+  district: "",
+  block: "",
+  state: "",
+  country: "India",
+
+  phone: "",
+  email: "",
+  address: "",
+
+  sarpanchName: "",
+  sarpanchPhone: "",
+
+  languages: "",
+  rivers: "",
+
+  road: "",
+  rail: "",
+  air: "",
+
+  latitude: "",
+  longitude: "",
+};
+
+const VillageSettings = () => {
+  const [form, setForm] = useState(emptyForm);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const token =
+    localStorage.getItem("token") ||
+    localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    loadVillage();
+  }, []);
+
+  const loadVillage = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        `${API_URL}/village`
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load village settings (${response.status})`
+        );
+      }
+
+      const result = await response.json();
+
+      const village =
+        result?.data ||
+        result?.village ||
+        result;
+
+      if (!village) {
+        throw new Error(
+          "Village information not found."
+        );
+      }
+
+      setForm(villageToForm(village));
+    } catch (err) {
+      console.error("Village settings error:", err);
+
+      setError(
+        err.message ||
+          "Unable to load village settings."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+
+    setSuccess("");
+    setError("");
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      setSaving(true);
+      setSuccess("");
+      setError("");
+
+      const payload = formToPayload(form);
+
+      /*
+       * If your backend uses PUT/PATCH on a different
+       * admin endpoint, change this endpoint only.
+       */
+      const response = await fetch(
+        `${API_URL}/village`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token
+              ? {
+                  Authorization: `Bearer ${token}`,
+                }
+              : {}),
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await response
+        .json()
+        .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+            result?.error ||
+            `Failed to save village settings (${response.status})`
+        );
+      }
+
+      const updatedVillage =
+        result?.data ||
+        result?.village;
+
+      if (updatedVillage) {
+        setForm(
+          villageToForm(updatedVillage)
+        );
+      }
+
+      setSuccess(
+        result?.message ||
+          "Village settings saved successfully."
+      );
+    } catch (err) {
+      console.error(
+        "Save village settings error:",
+        err
+      );
+
+      setError(
+        err.message ||
+          "Unable to save village settings."
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReset = () => {
+    setSuccess("");
+    setError("");
+    loadVillage();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[500px] items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+
+          <p className="mt-4 text-sm text-gray-500">
+            Loading village settings...
+          </p>
+        </div>
       </div>
-      <div className="card p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="font-semibold">Village images</h3><p className="text-sm text-gray-500">Upload up to 5 images at a time through the existing backend endpoint.</p></div><div className="flex flex-wrap gap-2"><input type="file" accept="image/*" multiple onChange={(e) => setFiles(Array.from(e.target.files || []).slice(0, 5))} className="input max-w-sm" /><button className="btn-primary" disabled={!files.length || uploading} onClick={uploadImages} type="button">{uploading ? "Uploading..." : "Upload images"}</button></div></div>{files.length ? <p className="mt-2 text-xs text-gray-500">Selected: {files.map((f) => f.name).join(", ")}</p> : null}<div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{(village.images || []).map((image) => <img key={image.publicId || image.url} src={image.url} alt={image.caption || village.name} className="h-36 w-full rounded-xl object-cover" />)}</div></div>
-    </> : <div className="card p-8 text-center text-gray-500">No village profile exists yet. Create it to populate the public village pages.</div>}
-    {editing ? <Modal title={village ? "Edit Village" : "Create Village"} onClose={() => setEditing(false)} wide><Form fields={fields} initial={initial} onSubmit={save} submitLabel={village ? "Save changes" : "Create profile"} onCancel={() => setEditing(false)} /></Modal> : null}
-  </Page>;
-}
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+                Administration
+              </p>
+
+              <h1 className="mt-1 text-2xl font-bold text-gray-900">
+                Village Settings
+              </h1>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Manage the information displayed across
+                the village website.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={saving}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {error && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
+            <span>⚠️</span>
+
+            <div>
+              <p className="text-sm font-semibold text-red-800">
+                Error
+              </p>
+
+              <p className="mt-1 text-sm text-red-700">
+                {error}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4">
+            <span>✓</span>
+
+            <div>
+              <p className="text-sm font-semibold text-green-800">
+                Success
+              </p>
+
+              <p className="mt-1 text-sm text-green-700">
+                {success}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
+          {/* Basic Information */}
+          <SettingsCard
+            title="Basic Information"
+            description="Main information about your village."
+            icon="🏘️"
+          >
+            <div className="grid gap-5 md:grid-cols-2">
+              <Input
+                label="Village Name"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+
+              <Input
+                label="Local Name"
+                name="localName"
+                value={form.localName}
+                onChange={handleChange}
+                placeholder="Local / regional name"
+              />
+
+              <Input
+                label="State"
+                name="state"
+                value={form.state}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Country"
+                name="country"
+                value={form.country}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="District"
+                name="district"
+                value={form.district}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Block"
+                name="block"
+                value={form.block}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="PIN Code"
+                name="pincode"
+                value={form.pincode}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="STD Code"
+                name="stdCode"
+                value={form.stdCode}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mt-5">
+              <Textarea
+                label="Village Description"
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                rows={5}
+                placeholder="Write a detailed description of the village..."
+              />
+            </div>
+
+            <div className="mt-5">
+              <Textarea
+                label="History"
+                name="history"
+                value={form.history}
+                onChange={handleChange}
+                rows={6}
+                placeholder="Village history..."
+              />
+            </div>
+          </SettingsCard>
+
+          {/* Statistics */}
+          <SettingsCard
+            title="Village Statistics"
+            description="Population, area and geographical information."
+            icon="📊"
+          >
+            <div className="grid gap-5 md:grid-cols-3">
+              <Input
+                label="Population"
+                name="population"
+                type="number"
+                min="0"
+                value={form.population}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Area (km²)"
+                name="area"
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.area}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Altitude (metres)"
+                name="altitude"
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.altitude}
+                onChange={handleChange}
+              />
+            </div>
+          </SettingsCard>
+
+          {/* Contact */}
+          <SettingsCard
+            title="Contact Information"
+            description="Contact details shown to village visitors."
+            icon="📞"
+          >
+            <div className="grid gap-5 md:grid-cols-2">
+              <Input
+                label="Phone"
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mt-5">
+              <Textarea
+                label="Full Address"
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Complete village address..."
+              />
+            </div>
+          </SettingsCard>
+
+          {/* Representative */}
+          <SettingsCard
+            title="Village Representative"
+            description="Sarpanch or village representative details."
+            icon="👤"
+          >
+            <div className="grid gap-5 md:grid-cols-2">
+              <Input
+                label="Sarpanch Name"
+                name="sarpanchName"
+                value={form.sarpanchName}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Sarpanch Phone"
+                name="sarpanchPhone"
+                type="tel"
+                value={form.sarpanchPhone}
+                onChange={handleChange}
+              />
+            </div>
+          </SettingsCard>
+
+          {/* Culture */}
+          <SettingsCard
+            title="Culture & Nature"
+            description="Languages and rivers associated with the village."
+            icon="🌿"
+          >
+            <Textarea
+              label="Languages"
+              name="languages"
+              value={form.languages}
+              onChange={handleChange}
+              rows={3}
+              placeholder="Hindi, English, Khortha..."
+              hint="Separate multiple languages using commas."
+            />
+
+            <div className="mt-5">
+              <Textarea
+                label="Rivers / Water Bodies"
+                name="rivers"
+                value={form.rivers}
+                onChange={handleChange}
+                rows={3}
+                placeholder="River 1, River 2..."
+                hint="Separate multiple entries using commas."
+              />
+            </div>
+          </SettingsCard>
+
+          {/* Connectivity */}
+          <SettingsCard
+            title="How to Reach"
+            description="Transportation and connectivity information."
+            icon="🛣️"
+          >
+            <Textarea
+              label="By Road"
+              name="road"
+              value={form.road}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Road connectivity details..."
+            />
+
+            <div className="mt-5">
+              <Textarea
+                label="By Rail"
+                name="rail"
+                value={form.rail}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Nearest railway station and distance..."
+              />
+            </div>
+
+            <div className="mt-5">
+              <Textarea
+                label="By Air"
+                name="air"
+                value={form.air}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Nearest airport and distance..."
+              />
+            </div>
+          </SettingsCard>
+
+          {/* Coordinates */}
+          <SettingsCard
+            title="Map Location"
+            description="GPS coordinates used for the village map."
+            icon="📍"
+          >
+            <div className="grid gap-5 md:grid-cols-2">
+              <Input
+                label="Latitude"
+                name="latitude"
+                type="number"
+                step="any"
+                value={form.latitude}
+                onChange={handleChange}
+                placeholder="Example: 24.4321"
+              />
+
+              <Input
+                label="Longitude"
+                name="longitude"
+                type="number"
+                step="any"
+                value={form.longitude}
+                onChange={handleChange}
+                placeholder="Example: 85.1234"
+              />
+            </div>
+
+            {form.latitude &&
+              form.longitude && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${form.latitude},${form.longitude}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex text-sm font-medium text-blue-600 hover:text-blue-700"
+                >
+                  🗺️ Preview location on Google Maps
+                </a>
+              )}
+          </SettingsCard>
+
+          {/* Save */}
+          <div className="sticky bottom-0 z-20 rounded-2xl border border-gray-200 bg-white/95 p-4 shadow-xl backdrop-blur">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-gray-500">
+                Changes will update the village information
+                displayed on the website.
+              </p>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-xl bg-blue-600 px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving
+                  ? "Saving..."
+                  : "Save Village Settings"}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+/*
+|--------------------------------------------------------------------------
+| Helpers
+|--------------------------------------------------------------------------
+*/
+
+const villageToForm = (village) => {
+  const contact =
+    village?.contact || {};
+
+  const sarpanch =
+    village?.sarpanch || {};
+
+  const howToReach =
+    village?.howToReach || {};
+
+  const address =
+    village?.address || {};
+
+  const coordinates =
+    village?.coordinates ||
+    village?.location ||
+    {};
+
+  return {
+    name: village?.name || "",
+    localName: village?.localName || "",
+    description: village?.description || "",
+    history: village?.history || "",
+
+    population:
+      village?.population ??
+      "",
+
+    area:
+      village?.area ??
+      "",
+
+    pincode:
+      village?.pincode ||
+      village?.pinCode ||
+      "",
+
+    stdCode:
+      village?.stdCode ||
+      "",
+
+    altitude:
+      village?.altitude ??
+      "",
+
+    district:
+      village?.district ||
+      "",
+
+    block:
+      village?.block ||
+      "",
+
+    state:
+      village?.state ||
+      "",
+
+    country:
+      village?.country ||
+      "India",
+
+    phone:
+      contact.phone ||
+      village?.phone ||
+      "",
+
+    email:
+      contact.email ||
+      village?.email ||
+      "",
+
+    address:
+      contact.address ||
+      village?.fullAddress ||
+      (typeof address === "string"
+        ? address
+        : [
+            address?.village,
+            address?.post,
+            address?.block,
+            address?.district,
+            address?.state,
+            address?.pincode,
+          ]
+            .filter(Boolean)
+            .join(", ")) ||
+      "",
+
+    sarpanchName:
+      sarpanch.name ||
+      "",
+
+    sarpanchPhone:
+      sarpanch.phone ||
+      "",
+
+    languages:
+      Array.isArray(village?.languages)
+        ? village.languages.join(", ")
+        : village?.languages || "",
+
+    rivers:
+      Array.isArray(village?.rivers)
+        ? village.rivers.join(", ")
+        : village?.rivers || "",
+
+    road:
+      howToReach.road ||
+      "",
+
+    rail:
+      howToReach.rail ||
+      "",
+
+    air:
+      howToReach.air ||
+      "",
+
+    latitude:
+      coordinates?.lat ??
+      coordinates?.latitude ??
+      "",
+
+    longitude:
+      coordinates?.lng ??
+      coordinates?.longitude ??
+      "",
+  };
+};
+
+const formToPayload = (form) => {
+  return {
+    name: form.name.trim(),
+    localName: form.localName.trim(),
+    description: form.description.trim(),
+    history: form.history.trim(),
+
+    population:
+      form.population === ""
+        ? undefined
+        : Number(form.population),
+
+    area:
+      form.area === ""
+        ? undefined
+        : Number(form.area),
+
+    pincode: form.pincode.trim(),
+    stdCode: form.stdCode.trim(),
+
+    altitude:
+      form.altitude === ""
+        ? undefined
+        : Number(form.altitude),
+
+    district: form.district.trim(),
+    block: form.block.trim(),
+    state: form.state.trim(),
+    country: form.country.trim(),
+
+    contact: {
+      phone: form.phone.trim(),
+      email: form.email.trim(),
+      address: form.address.trim(),
+    },
+
+    sarpanch: {
+      name: form.sarpanchName.trim(),
+      phone: form.sarpanchPhone.trim(),
+    },
+
+    languages: splitCommaValues(
+      form.languages
+    ),
+
+    rivers: splitCommaValues(
+      form.rivers
+    ),
+
+    howToReach: {
+      road: form.road.trim(),
+      rail: form.rail.trim(),
+      air: form.air.trim(),
+    },
+
+    coordinates: {
+      lat:
+        form.latitude === ""
+          ? undefined
+          : Number(form.latitude),
+
+      lng:
+        form.longitude === ""
+          ? undefined
+          : Number(form.longitude),
+    },
+  };
+};
+
+const splitCommaValues = (value) => {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
+
+/*
+|--------------------------------------------------------------------------
+| UI Components
+|--------------------------------------------------------------------------
+*/
+
+const SettingsCard = ({
+  title,
+  description,
+  icon,
+  children,
+}) => {
+  return (
+    <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div className="border-b border-gray-100 px-6 py-5 sm:px-7">
+        <div className="flex gap-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl">
+            {icon}
+          </div>
+
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">
+              {title}
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-6 py-6 sm:px-7">
+        {children}
+      </div>
+    </section>
+  );
+};
+
+const Input = ({
+  label,
+  name,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  min,
+  step,
+}) => {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-gray-700">
+        {label}
+
+        {required && (
+          <span className="ml-1 text-red-500">
+            *
+          </span>
+        )}
+      </label>
+
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        min={min}
+        step={step}
+        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+      />
+    </div>
+  );
+};
+
+const Textarea = ({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  rows = 4,
+  required = false,
+  hint,
+}) => {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-gray-700">
+        {label}
+
+        {required && (
+          <span className="ml-1 text-red-500">
+            *
+          </span>
+        )}
+      </label>
+
+      <textarea
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        rows={rows}
+        required={required}
+        className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+      />
+
+      {hint && (
+        <p className="mt-1.5 text-xs text-gray-400">
+          {hint}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default VillageSettings;
