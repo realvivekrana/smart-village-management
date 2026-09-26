@@ -1,0 +1,14 @@
+✅ Connected to MongoDB
+
+Found active village: id=6ab757975f5e8b7ce1404cb2  name="Kakarcholi"  places=12
+
+✅ Merge complete.
+   places: 62
+   nearbyVillages: 5
+   nearbyCities: 4
+   nearbyRailwayStations: 5
+   nearbyAirports: 4
+   population (kept/filled): null
+   sarpanch: {"name":"","phone":""}
+
+🔌 Disconnected from MongoDB

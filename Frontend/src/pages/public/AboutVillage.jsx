@@ -474,7 +474,7 @@ const AboutVillage = () => {
               )}
 
               {sarpanch.phone && (
-                
+                <a
                   href={`tel:${sarpanch.phone}`}
                   className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
                 >
@@ -734,7 +734,7 @@ const PlaceCard = ({ place }) => {
             )}
 
           {place.phone && (
-            
+            <a
               href={`tel:${place.phone}`}
               className="text-xs font-medium text-blue-600 hover:text-blue-700"
             >

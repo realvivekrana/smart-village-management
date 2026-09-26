@@ -4,6 +4,7 @@ const {
   getVillage,
   createVillage,
   updateVillage,
+  updateActiveVillage,
   uploadVillageImages,
   getVillagePlaces,
   addVillagePlace,
@@ -43,7 +44,15 @@ router.post(
   createVillage
 );
 
-// Update village information
+// Update active village (no id in URL — frontend calls PUT /api/v1/village directly)
+router.put(
+  "/",
+  protect,
+  authorize("admin", "super_admin"),
+  updateActiveVillage
+);
+
+// Update village information by id
 router.put(
   "/:id",
   protect,

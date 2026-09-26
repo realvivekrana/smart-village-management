@@ -252,7 +252,7 @@ const PlaceCard = ({ place }) => {
 
         <div className="mt-4 flex flex-wrap gap-2">
           {place.phone && (
-            
+            <a
               href={`tel:${place.phone}`}
               className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400"
             >
@@ -261,7 +261,7 @@ const PlaceCard = ({ place }) => {
           )}
 
           {mapUrl && (
-            
+            <a
               href={mapUrl}
               target="_blank"
               rel="noreferrer"

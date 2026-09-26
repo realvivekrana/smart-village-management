@@ -119,6 +119,49 @@ const updateVillage = async (req, res) => {
 
 /*
 |--------------------------------------------------------------------------
+| UPDATE ACTIVE VILLAGE (no :id needed)
+|--------------------------------------------------------------------------
+| Frontend calls PUT /api/v1/village directly without an id.
+| This finds the currently active village and updates it.
+*/
+const updateActiveVillage = async (req, res) => {
+  try {
+    const village = await Village.findOne({ isActive: true });
+
+    if (!village) {
+      return res.status(404).json({
+        success: false,
+        message: "Active village not found",
+      });
+    }
+
+    Object.keys(req.body).forEach((key) => {
+      if (req.body[key] !== undefined) {
+        village[key] = req.body[key];
+      }
+    });
+
+    await village.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Village updated successfully",
+      data: village,
+    });
+  } catch (error) {
+    console.error("updateActiveVillage error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update village",
+      error: error.message,
+    });
+  }
+};
+
+
+/*
+|--------------------------------------------------------------------------
 | GET VILLAGE PLACES
 |--------------------------------------------------------------------------
 | Public directory.
@@ -470,6 +513,7 @@ module.exports = {
   getVillage,
   createVillage,
   updateVillage,
+  updateActiveVillage,
   uploadVillageImages,
   getVillagePlaces,
   addVillagePlace,
