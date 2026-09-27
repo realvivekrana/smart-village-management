@@ -48,12 +48,19 @@ const createJobValidator = [
     }),
 
   body("salary.min")
-    .optional()
+    .optional({ nullable: true })
     .isFloat({ min: 0 }).withMessage("Minimum salary must be a positive number"),
 
   body("salary.max")
-    .optional()
-    .isFloat({ min: 0 }).withMessage("Maximum salary must be a positive number"),
+    .optional({ nullable: true })
+    .isFloat({ min: 0 }).withMessage("Maximum salary must be a positive number")
+    .custom((max, { req }) => {
+      const min = req.body?.salary?.min;
+      if (min !== null && min !== undefined && max !== null && max !== undefined && Number(max) < Number(min)) {
+        throw new Error("Maximum salary cannot be less than minimum salary");
+      }
+      return true;
+    }),
 ];
 
 const updateJobValidator = [
@@ -74,6 +81,14 @@ const updateJobValidator = [
   body("applyBy")
     .optional()
     .isISO8601().withMessage("Apply by must be a valid date"),
+
+  body("salary.min")
+    .optional({ nullable: true })
+    .isFloat({ min: 0 }).withMessage("Minimum salary must be a positive number"),
+
+  body("salary.max")
+    .optional({ nullable: true })
+    .isFloat({ min: 0 }).withMessage("Maximum salary must be a positive number"),
 ];
 
 const applyJobValidator = [

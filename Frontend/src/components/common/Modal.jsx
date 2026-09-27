@@ -22,7 +22,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" })
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className={`relative w-full ${sizes[size]} card shadow-xl`}>
+      <div className={`relative w-full ${sizes[size]} max-h-[90vh] overflow-y-auto card shadow-xl`}>
         {title && (
           <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 px-6 py-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>

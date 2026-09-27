@@ -68,7 +68,7 @@ const getMyJobs = async (req, res, next) => {
   try {
     const { page, limit, skip } = getPagination(req.query);
 
-    const filter = { postedBy: req.user._id };
+    const filter = { postedBy: req.user._id, isActive: true };
     const [jobs, total] = await Promise.all([
       Job.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       Job.countDocuments(filter),
