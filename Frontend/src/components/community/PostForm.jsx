@@ -2,19 +2,24 @@ import { useState } from "react";
 import Button from "../common/Button";
 import { COMMUNITY_CATEGORIES } from "../../utils/constants";
 
-export default function PostForm({ onSubmit, loading, onCancel }) {
-  const [content, setContent] = useState("");
-  const [category, setCategory] = useState("general");
+export default function PostForm({ onSubmit, loading, onCancel, initial }) {
+  const isEdit = !!initial;
+  const [content, setContent] = useState(initial?.content || "");
+  const [category, setCategory] = useState(initial?.category || "general");
   const [images, setImages] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!content.trim()) return;
-    const fd = new FormData();
-    fd.append("content", content);
-    fd.append("category", category);
-    images.forEach((img) => fd.append("images", img));
-    onSubmit(fd);
+    if (isEdit) {
+      onSubmit({ content, category });
+    } else {
+      const fd = new FormData();
+      fd.append("content", content);
+      fd.append("category", category);
+      images.forEach((img) => fd.append("images", img));
+      onSubmit(fd);
+    }
   };
 
   return (
@@ -32,14 +37,16 @@ export default function PostForm({ onSubmit, loading, onCancel }) {
         <select className="input max-w-[180px]" value={category} onChange={(e) => setCategory(e.target.value)}>
           {COMMUNITY_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>
-        <label className="cursor-pointer text-sm text-primary-600 hover:underline">
-          📷 Add Photos
-          <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => setImages(Array.from(e.target.files).slice(0, 3))} />
-        </label>
+        {!isEdit && (
+          <label className="cursor-pointer text-sm text-primary-600 hover:underline">
+            📷 Add Photos
+            <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => setImages(Array.from(e.target.files).slice(0, 3))} />
+          </label>
+        )}
         {images.length > 0 && <span className="text-xs text-gray-500">{images.length} photo(s)</span>}
         <div className="ml-auto flex gap-2">
           {onCancel && <Button variant="secondary" type="button" onClick={onCancel}>Cancel</Button>}
-          <Button type="submit" loading={loading}>Post</Button>
+          <Button type="submit" loading={loading}>{isEdit ? "Update" : "Post"}</Button>
         </div>
       </div>
     </form>

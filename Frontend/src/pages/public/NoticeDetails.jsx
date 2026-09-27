@@ -4,6 +4,7 @@ import { getNoticeById } from "../../services/noticeService";
 import NoticeDetailsView from "../../components/notices/NoticeDetails";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import BackButton from "../../components/common/BackButton";
 
 export default function NoticeDetails() {
   const { id } = useParams();
@@ -23,11 +24,19 @@ export default function NoticeDetails() {
   useEffect(load, [id]);
 
   if (loading) return <Loader fullScreen />;
-  if (error) return <div className="page-container"><ErrorMessage message={error} onRetry={load} /></div>;
+  if (error) return (
+    <div className="page-container">
+      <div className="mb-4"><BackButton to="/notices" label="Back to Notices" /></div>
+      <ErrorMessage message={error} onRetry={load} />
+    </div>
+  );
   if (!notice) return null;
 
   return (
     <div className="page-container max-w-3xl">
+      <div className="mb-4">
+        <BackButton to="/notices" label="Back to Notices" />
+      </div>
       <NoticeDetailsView notice={notice} />
     </div>
   );

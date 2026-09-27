@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { getCitizenDashboard } from "../../services/dashboardService";
+import { deleteComplaint } from "../../services/complaintService";
 import ComplaintCard from "../../components/complaints/ComplaintCard";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
 import useAuth from "../../hooks/useAuth";
 
 export default function Dashboard() {
@@ -12,6 +15,8 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [confirmTarget, setConfirmTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -23,6 +28,34 @@ export default function Dashboard() {
   };
 
   useEffect(load, []);
+
+  const handleDelete = async () => {
+    if (!confirmTarget) return;
+    setDeleting(true);
+    try {
+      await deleteComplaint(confirmTarget._id);
+      toast.success("Complaint deleted");
+      setStats((prev) => {
+        const wasResolved = confirmTarget.status === "resolved";
+        const wasPending = confirmTarget.status === "pending";
+        return {
+          ...prev,
+          complaints: {
+            ...prev.complaints,
+            total: Math.max(0, (prev.complaints.total || 0) - 1),
+            pending: wasPending ? Math.max(0, (prev.complaints.pending || 0) - 1) : prev.complaints.pending,
+            resolved: wasResolved ? Math.max(0, (prev.complaints.resolved || 0) - 1) : prev.complaints.resolved,
+          },
+          recentComplaints: prev.recentComplaints.filter((c) => c._id !== confirmTarget._id),
+        };
+      });
+      setConfirmTarget(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Could not delete complaint");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (loading) return <Loader fullScreen />;
   if (error) return <div className="page-container"><ErrorMessage message={error} onRetry={load} /></div>;
@@ -66,10 +99,22 @@ export default function Dashboard() {
           <EmptyState icon="📋" title="No complaints yet" description="File your first complaint to see it here." />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {stats.recentComplaints.map((c) => <ComplaintCard key={c._id} complaint={c} />)}
+            {stats.recentComplaints.map((c) => (
+              <ComplaintCard key={c._id} complaint={c} onDelete={setConfirmTarget} />
+            ))}
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmTarget}
+        onClose={() => setConfirmTarget(null)}
+        onConfirm={handleDelete}
+        title="Delete Complaint"
+        message="Are you sure you want to delete this complaint? This is permanent, even if it is already in progress or resolved."
+        confirmLabel="Delete"
+        loading={deleting}
+      />
     </div>
   );
 }

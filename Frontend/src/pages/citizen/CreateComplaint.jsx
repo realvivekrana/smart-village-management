@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { createComplaint } from "../../services/complaintService";
 import ComplaintForm from "../../components/complaints/ComplaintForm";
+import BackButton from "../../components/common/BackButton";
 
 export default function CreateComplaint() {
   const navigate = useNavigate();
@@ -23,6 +24,9 @@ export default function CreateComplaint() {
 
   return (
     <div className="page-container max-w-2xl">
+      <div className="mb-4">
+        <BackButton to="/citizen/complaints" label="Back to My Complaints" />
+      </div>
       <h1 className="section-title mb-6">📋 File a Complaint</h1>
       <div className="card p-6">
         <ComplaintForm onSubmit={handleSubmit} loading={loading} />

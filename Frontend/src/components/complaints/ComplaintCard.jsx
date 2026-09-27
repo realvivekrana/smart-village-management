@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { formatRelative } from "../../utils/formatDate";
 import { STATUS_COLORS, PRIORITY_COLORS } from "../../utils/constants";
 
-export default function ComplaintCard({ complaint }) {
+export default function ComplaintCard({ complaint, onDelete }) {
   return (
     <div className="card p-5">
       <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
@@ -17,6 +17,17 @@ export default function ComplaintCard({ complaint }) {
         <span className="badge badge-blue capitalize">{complaint.category}</span>
         <span className="text-gray-400">{formatRelative(complaint.createdAt)}</span>
       </div>
+      {onDelete && (
+        <div className="flex justify-end mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(complaint); }}
+            className="btn-danger text-xs px-3 py-1.5"
+          >
+            🗑️ Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }

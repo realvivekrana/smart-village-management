@@ -163,7 +163,7 @@ const assignComplaint = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| DELETE /api/v1/complaints/:id  (citizen: own pending, admin: any)
+| DELETE /api/v1/complaints/:id  (citizen: own, any status | admin: any)
 |--------------------------------------------------------------------------
 */
 const deleteComplaint = async (req, res, next) => {
@@ -176,9 +176,6 @@ const deleteComplaint = async (req, res, next) => {
 
     if (!isAdmin && !isOwner) {
       return res.status(403).json({ success: false, message: "Access denied" });
-    }
-    if (!isAdmin && complaint.status !== "pending") {
-      return res.status(400).json({ success: false, message: "Cannot delete a complaint that is already being processed" });
     }
 
     // Delete images from Cloudinary

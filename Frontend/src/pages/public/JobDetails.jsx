@@ -7,6 +7,7 @@ import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import Modal from "../../components/common/Modal";
 import Button from "../../components/common/Button";
+import BackButton from "../../components/common/BackButton";
 
 export default function JobDetails() {
   const { id } = useParams();
@@ -51,11 +52,19 @@ export default function JobDetails() {
   };
 
   if (loading) return <Loader fullScreen />;
-  if (error) return <div className="page-container"><ErrorMessage message={error} onRetry={load} /></div>;
+  if (error) return (
+    <div className="page-container">
+      <div className="mb-4"><BackButton to="/jobs" label="Back to Jobs" /></div>
+      <ErrorMessage message={error} onRetry={load} />
+    </div>
+  );
   if (!job) return null;
 
   return (
     <div className="page-container max-w-3xl">
+      <div className="mb-4">
+        <BackButton to="/jobs" label="Back to Jobs" />
+      </div>
       <JobDetailsView job={job} onApply={() => setShowModal(true)} applying={applying} />
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={`Apply for ${job.title}`}>
