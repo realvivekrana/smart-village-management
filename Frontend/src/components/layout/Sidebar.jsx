@@ -11,6 +11,7 @@ const adminLinks = [
   { to: "/admin/notices", icon: "📢", label: "Notices" },
   { to: "/admin/services", icon: "🔧", label: "Services" },
   { to: "/admin/emergency", icon: "🚨", label: "Emergency" },
+  { to: "/admin/government-contacts", icon: "🏛️", label: "Government Contacts" },
   { to: "/admin/community", icon: "💬", label: "Community" },
   { to: "/admin/reports", icon: "📈", label: "Reports" },
   { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings" },

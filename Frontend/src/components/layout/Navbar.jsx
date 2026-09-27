@@ -14,6 +14,7 @@ const navLinks = [
   { to: "/businesses", label: "Businesses" },
   { to: "/services", label: "Services" },
   { to: "/emergency", label: "Emergency" },
+  { to: "/government-contacts", label: "Govt. Contacts" },
   { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About Village" },
   { to: "/contact", label: "Contact" },

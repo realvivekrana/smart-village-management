@@ -13,6 +13,7 @@ const services = [
   { to: "/jobs", label: "Jobs & Opportunities", icon: "💼" },
   { to: "/services", label: "Government Services", icon: "🏛️" },
   { to: "/emergency", label: "Emergency Contacts", icon: "🚨" },
+  { to: "/government-contacts", label: "Government Contacts", icon: "📇" },
 ];
 
 const communityLinks = [

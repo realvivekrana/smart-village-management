@@ -228,6 +228,10 @@ const AdminVillageDirectory = lazy(
   () => import("../pages/admin/VillageDirectory")
 );
 
+const AdminGovernmentContacts = lazy(
+  () => import("../pages/admin/GovernmentContacts")
+);
+
 // ============================================================
 // Loading Fallback
 // ============================================================
@@ -557,6 +561,12 @@ export default function AppRoutes() {
           <Route
             path="/admin/village-directory"
             element={<AdminVillageDirectory />}
+          />
+
+          {/* Government Contacts */}
+          <Route
+            path="/admin/government-contacts"
+            element={<AdminGovernmentContacts />}
           />
 
         </Route>
