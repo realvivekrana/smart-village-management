@@ -8,6 +8,21 @@ const rateLimit = require("express-rate-limit");
 const authRoutes = require("./routes/authRoutes");
 const governmentContactRoutes = require("./routes/governmentContactRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
+const villageRoutes = require("./routes/villageRoutes");
+const businessRoutes = require("./routes/businessRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+const communityRoutes = require("./routes/communityRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+const complaintRoutes = require("./routes/complaintRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const emergencyRoutes = require("./routes/emergencyRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const jobRoutes = require("./routes/jobRoutes");
+const jobApplicationRoutes = require("./routes/jobApplicationRoutes");
+const noticeRoutes = require("./routes/noticeRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -195,6 +210,107 @@ app.use(
   "/api/v1/services",
   serviceRoutes
 );
+
+/*
+|--------------------------------------------------------------------------
+| Village (about village + village places/directory)
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/village", villageRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Businesses + Reviews (nested + standalone)
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/businesses", businessRoutes);
+app.use("/api/v1/businesses/:businessId/reviews", reviewRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Community Posts + Comments (nested + standalone)
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/community", communityRoutes);
+app.use("/api/v1/community/:postId/comments", commentRoutes);
+app.use("/api/v1/comments", commentRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Complaints
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/complaints", complaintRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Contact Messages
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/contact", contactRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/dashboard", dashboardRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Emergency Contacts
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/emergency", emergencyRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Events
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/events", eventRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Jobs + Job Applications
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/jobs", jobRoutes);
+app.use("/api/v1/applications", jobApplicationRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Notices
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/notices", noticeRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Notifications
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/notifications", notificationRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Users
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/users", userRoutes);
 
 /*
 |--------------------------------------------------------------------------

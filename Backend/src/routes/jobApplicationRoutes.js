@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  applyForJob,
-  getJobApplications,
   getMyApplications,
   updateApplicationStatus,
   withdrawApplication,
@@ -11,18 +9,12 @@ const {
 
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
-const { uploadResume } = require("../middleware/uploadMiddleware");
-const validate = require("../middleware/validationMiddleware");
-const { applyJobValidator } = require("../validators/jobValidator");
+
+// Mounted at /api/v1/applications
+// (apply / view-applications-for-a-job now live in jobRoutes.js, under /api/v1/jobs)
 
 // Citizen's own applications
 router.get("/my", protect, getMyApplications);
-
-// Apply for a job (nested under jobs)
-router.post("/jobs/:jobId/apply", protect, uploadResume, applyJobValidator, validate, applyForJob);
-
-// View applications for a job (owner / admin)
-router.get("/jobs/:jobId/applications", protect, authorize("citizen", "admin"), getJobApplications);
 
 // Update / withdraw application
 router.patch("/:id/status", protect, authorize("citizen", "admin"), updateApplicationStatus);
