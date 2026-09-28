@@ -132,6 +132,14 @@ const MyComplaints = lazy(
   () => import("../pages/citizen/MyComplaints")
 );
 
+const RequestCertificate = lazy(
+  () => import("../pages/citizen/RequestCertificate")
+);
+
+const MyCertificates = lazy(
+  () => import("../pages/citizen/MyCertificates")
+);
+
 const MyPosts = lazy(
   () => import("../pages/citizen/MyPosts")
 );
@@ -186,6 +194,10 @@ const AdminUserDetail = lazy(
 
 const AdminComplaints = lazy(
   () => import("../pages/admin/Complaints")
+);
+
+const AdminCertificates = lazy(
+  () => import("../pages/admin/CertificateRequests")
 );
 
 const AdminBusinesses = lazy(
@@ -417,6 +429,17 @@ export default function AppRoutes() {
             element={<MyComplaints />}
           />
 
+          {/* Certificates */}
+          <Route
+            path="/citizen/certificates"
+            element={<MyCertificates />}
+          />
+
+          <Route
+            path="/citizen/certificates/request"
+            element={<RequestCertificate />}
+          />
+
           {/* My Posts */}
           <Route
             path="/citizen/posts"
@@ -501,6 +524,12 @@ export default function AppRoutes() {
           <Route
             path="/admin/complaints"
             element={<AdminComplaints />}
+          />
+
+          {/* Certificate Requests */}
+          <Route
+            path="/admin/certificates"
+            element={<AdminCertificates />}
           />
 
           {/* Businesses */}

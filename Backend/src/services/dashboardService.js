@@ -6,6 +6,7 @@ const Job = require("../models/Job");
 const Business = require("../models/Business");
 const CommunityPost = require("../models/CommunityPost");
 const JobApplication = require("../models/JobApplication");
+const CertificateRequest = require("../models/CertificateRequest");
 
 /*
 |--------------------------------------------------------------------------
@@ -223,6 +224,9 @@ const getCitizenStats = async (userId) => {
     pendingApplications,
     shortlistedApplications,
     totalPosts,
+    totalCertificates,
+    pendingCertificates,
+    approvedCertificates,
   ] = await Promise.all([
     Complaint.countDocuments({
       submittedBy: userId,
@@ -256,6 +260,10 @@ const getCitizenStats = async (userId) => {
       createdBy: userId,
       isActive: true,
     }),
+
+    CertificateRequest.countDocuments({ submittedBy: userId }),
+    CertificateRequest.countDocuments({ submittedBy: userId, status: { $in: ["pending", "in_progress"] } }),
+    CertificateRequest.countDocuments({ submittedBy: userId, status: "approved" }),
   ]);
 
   const recentComplaints =
@@ -269,6 +277,12 @@ const getCitizenStats = async (userId) => {
       .lean();
 
   return {
+    certificates: {
+      total: totalCertificates,
+      pending: pendingCertificates,
+      approved: approvedCertificates,
+    },
+
     complaints: {
       total: totalComplaints,
       pending: pendingComplaints,

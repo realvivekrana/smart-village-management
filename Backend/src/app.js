@@ -14,6 +14,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
+const certificateRoutes = require("./routes/certificateRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const emergencyRoutes = require("./routes/emergencyRoutes");
@@ -246,6 +247,14 @@ app.use("/api/v1/comments", commentRoutes);
 */
 
 app.use("/api/v1/complaints", complaintRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Certificate Requests
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/v1/certificates", certificateRoutes);
 
 /*
 |--------------------------------------------------------------------------
