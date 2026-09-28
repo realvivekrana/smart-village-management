@@ -25,6 +25,11 @@ const noticeRoutes = require("./routes/noticeRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 
+// NEW VILLAGE MANAGEMENT FEATURE ROUTES
+const villageFeatureRoutes = require("./routes/villageFeatureRoutes");
+const householdRoutes = require("./routes/householdRoutes");
+const sosRoutes = require("./routes/sosRoutes");
+
 const app = express();
 
 /*
@@ -320,6 +325,57 @@ app.use("/api/v1/notifications", notificationRoutes);
 */
 
 app.use("/api/v1/users", userRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Village Features
+|--------------------------------------------------------------------------
+|
+| Government schemes
+| Gram Sabha
+| Mandi Bhav
+| Weather / Crop Advice
+| Equipment Rental
+| Fertilizer / Seed Availability
+| Health Camps
+| Vaccination
+| Transport
+| Scholarship
+| Skill Training
+| Volunteer / Shramdaan
+| Lost & Found
+| Buy / Sell
+| etc.
+|
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/village-features",
+  villageFeatureRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Household / Family Members
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/households",
+  householdRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Emergency SOS
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/sos",
+  sosRoutes
+);
 
 /*
 |--------------------------------------------------------------------------

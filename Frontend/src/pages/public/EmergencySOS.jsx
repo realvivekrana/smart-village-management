@@ -1,0 +1,1068 @@
+
+import React, { useEffect, useState } from "react";
+import {
+  AlertTriangle,
+  Ambulance,
+  Flame,
+  MapPin,
+  Phone,
+  ShieldAlert,
+  Navigation,
+  X,
+  Loader2,
+  CheckCircle2,
+  RefreshCw,
+} from "lucide-react";
+
+import {
+  createSOSAlert,
+} from "../../services/sosService";
+
+/*
+|--------------------------------------------------------------------------
+| Emergency Numbers
+|--------------------------------------------------------------------------
+|
+| These can later be moved to the database/admin settings.
+|
+*/
+
+const EMERGENCY_NUMBERS = {
+  ambulance: "108",
+  police: "112",
+  fire: "101",
+  emergency: "112",
+};
+
+/*
+|--------------------------------------------------------------------------
+| EmergencySOS
+|--------------------------------------------------------------------------
+*/
+
+export default function EmergencySOS() {
+  const [location, setLocation] =
+    useState(null);
+
+  const [locationLoading, setLocationLoading] =
+    useState(false);
+
+  const [locationError, setLocationError] =
+    useState("");
+
+  const [showConfirm, setShowConfirm] =
+    useState(false);
+
+  const [sending, setSending] =
+    useState(false);
+
+  const [success, setSuccess] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [message, setMessage] =
+    useState("");
+
+  const [sosId, setSosId] =
+    useState("");
+
+  /*
+   * ----------------------------------------------------------------------
+   * Get current location
+   * ----------------------------------------------------------------------
+   */
+
+  const getCurrentLocation = () => {
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError(
+        "Aapke browser mein location service available nahi hai."
+      );
+
+      return;
+    }
+
+    setLocationLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const {
+          latitude,
+          longitude,
+          accuracy,
+        } = position.coords;
+
+        setLocation({
+          latitude,
+          longitude,
+          accuracy,
+        });
+
+        setLocationLoading(false);
+      },
+      (geoError) => {
+        console.error(
+          "Location error:",
+          geoError
+        );
+
+        let errorMessage =
+          "Current location nahi mil paayi.";
+
+        if (
+          geoError.code ===
+          geoError.PERMISSION_DENIED
+        ) {
+          errorMessage =
+            "Location permission allow karein.";
+        }
+
+        if (
+          geoError.code ===
+          geoError.POSITION_UNAVAILABLE
+        ) {
+          errorMessage =
+            "Location temporarily unavailable hai.";
+        }
+
+        if (
+          geoError.code ===
+          geoError.TIMEOUT
+        ) {
+          errorMessage =
+            "Location request timeout ho gayi.";
+        }
+
+        setLocationError(
+          errorMessage
+        );
+
+        setLocationLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 30000,
+      }
+    );
+  };
+
+  /*
+   * ----------------------------------------------------------------------
+   * Get location on page load
+   * ----------------------------------------------------------------------
+   */
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  /*
+   * ----------------------------------------------------------------------
+   * Open confirmation
+   * ----------------------------------------------------------------------
+   */
+
+  const handleSOSClick = () => {
+    setError("");
+
+    setSuccess(false);
+
+    setShowConfirm(true);
+  };
+
+  /*
+   * ----------------------------------------------------------------------
+   * Send SOS
+   * ----------------------------------------------------------------------
+   */
+
+  const handleSendSOS = async () => {
+    try {
+      setSending(true);
+
+      setError("");
+
+      /*
+       * Try getting fresh location
+       * before sending SOS.
+       */
+
+      let currentLocation =
+        location;
+
+      if (
+        navigator.geolocation &&
+        !currentLocation
+      ) {
+        currentLocation =
+          await getLocationPromise();
+      }
+
+      const payload = {
+        message:
+          message.trim() ||
+          "Emergency SOS alert from village citizen.",
+
+        latitude:
+          currentLocation?.latitude ||
+          null,
+
+        longitude:
+          currentLocation?.longitude ||
+          null,
+
+        accuracy:
+          currentLocation?.accuracy ||
+          null,
+
+        location:
+          currentLocation
+            ? {
+                latitude:
+                  currentLocation.latitude,
+                longitude:
+                  currentLocation.longitude,
+                accuracy:
+                  currentLocation.accuracy,
+              }
+            : null,
+
+        emergencyContacts:
+          EMERGENCY_NUMBERS,
+      };
+
+      const response =
+        await createSOSAlert(
+          payload
+        );
+
+      /*
+       * Support common API response shapes.
+       */
+
+      const createdSOS =
+        response?.data?.data ||
+        response?.data ||
+        response?.sos ||
+        response;
+
+      setSosId(
+        createdSOS?._id ||
+          createdSOS?.id ||
+          ""
+      );
+
+      setSuccess(true);
+
+      setShowConfirm(false);
+    } catch (err) {
+      console.error(
+        "SOS error:",
+        err
+      );
+
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "SOS alert send nahi ho paaya. Please dobara try karein."
+      );
+    } finally {
+      setSending(false);
+    }
+  };
+
+  /*
+   * ----------------------------------------------------------------------
+   * Call emergency number
+   * ----------------------------------------------------------------------
+   */
+
+  const callNumber = (number) => {
+    window.location.href =
+      `tel:${number}`;
+  };
+
+  /*
+   * ----------------------------------------------------------------------
+   * Open location in map
+   * ----------------------------------------------------------------------
+   */
+
+  const openMap = () => {
+    if (!location) {
+      getCurrentLocation();
+
+      return;
+    }
+
+    const url =
+      `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+
+    window.open(
+      url,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  /*
+   * ----------------------------------------------------------------------
+   * Success screen
+   * ----------------------------------------------------------------------
+   */
+
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gray-50 px-4 py-8 sm:py-12">
+        <div className="mx-auto max-w-2xl">
+          <div className="rounded-3xl border border-green-200 bg-white p-6 text-center shadow-lg sm:p-10">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle2 className="h-10 w-10 text-green-600" />
+            </div>
+
+            <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl">
+              SOS Alert Sent
+            </h1>
+
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-gray-600 sm:text-base">
+              Emergency alert village admin ko
+              send kar diya gaya hai. Agar
+              situation serious hai to emergency
+              number par direct call bhi karein.
+            </p>
+
+            {sosId && (
+              <div className="mt-5 rounded-xl bg-gray-50 p-3 text-left">
+                <p className="text-xs text-gray-500">
+                  SOS Reference ID
+                </p>
+
+                <p className="mt-1 break-all font-mono text-sm text-gray-800">
+                  {sosId}
+                </p>
+              </div>
+            )}
+
+            {location && (
+              <div className="mt-5 rounded-xl border border-green-100 bg-green-50 p-4 text-left">
+                <div className="flex items-start gap-3">
+                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+
+                  <div>
+                    <p className="font-semibold text-green-900">
+                      Location shared
+                    </p>
+
+                    <p className="mt-1 text-xs text-green-700">
+                      Latitude:{" "}
+                      {location.latitude.toFixed(
+                        6
+                      )}
+                      <br />
+                      Longitude:{" "}
+                      {location.longitude.toFixed(
+                        6
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={openMap}
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-green-700 shadow-sm hover:bg-green-100"
+                >
+                  <Navigation className="h-4 w-4" />
+
+                  Open Map
+                </button>
+              </div>
+            )}
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <EmergencyCallButton
+                icon={
+                  <Ambulance className="h-5 w-5" />
+                }
+                label="Ambulance"
+                number={
+                  EMERGENCY_NUMBERS.ambulance
+                }
+                onClick={() =>
+                  callNumber(
+                    EMERGENCY_NUMBERS.ambulance
+                  )
+                }
+              />
+
+              <EmergencyCallButton
+                icon={
+                  <ShieldAlert className="h-5 w-5" />
+                }
+                label="Police"
+                number={
+                  EMERGENCY_NUMBERS.police
+                }
+                onClick={() =>
+                  callNumber(
+                    EMERGENCY_NUMBERS.police
+                  )
+                }
+              />
+
+              <EmergencyCallButton
+                icon={
+                  <Flame className="h-5 w-5" />
+                }
+                label="Fire"
+                number={
+                  EMERGENCY_NUMBERS.fire
+                }
+                onClick={() =>
+                  callNumber(
+                    EMERGENCY_NUMBERS.fire
+                  )
+                }
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSuccess(false);
+                setSosId("");
+                setMessage("");
+                setError("");
+              }}
+              className="mt-6 w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            >
+              Back to Emergency Page
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * ----------------------------------------------------------------------
+   * Main page
+   * ----------------------------------------------------------------------
+   */
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* ================================================================ */}
+      {/* HEADER */}
+      {/* ================================================================ */}
+
+      <section className="bg-gradient-to-br from-red-700 via-red-600 to-orange-600 text-white">
+        <div className="mx-auto max-w-5xl px-4 py-10 text-center sm:px-6 sm:py-14">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur">
+            <AlertTriangle className="h-8 w-8" />
+          </div>
+
+          <h1 className="mt-5 text-3xl font-bold sm:text-4xl">
+            Emergency SOS
+          </h1>
+
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/90 sm:text-base">
+            Emergency situation mein village
+            admin ko alert bhejein aur ambulance,
+            police ya fire service ko ek tap mein
+            call karein.
+          </p>
+        </div>
+      </section>
+
+      {/* ================================================================ */}
+      {/* MAIN */}
+      {/* ================================================================ */}
+
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+        {/* Error */}
+        {error && (
+          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4">
+            <div className="flex gap-3">
+              <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
+
+              <div>
+                <p className="font-semibold text-red-800">
+                  SOS Error
+                </p>
+
+                <p className="mt-1 text-sm text-red-700">
+                  {error}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* SOS CARD */}
+        {/* ============================================================ */}
+
+        <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+          <div className="text-center">
+            <p className="text-sm font-medium text-gray-500">
+              Need immediate help?
+            </p>
+
+            <h2 className="mt-2 text-xl font-bold text-gray-900 sm:text-2xl">
+              Emergency Alert Send Karein
+            </h2>
+
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500">
+              SOS button sirf genuine emergency
+              mein use karein. Alert ke saath
+              available location information admin
+              ko send ki ja sakti hai.
+            </p>
+
+            {/* Big SOS button */}
+            <button
+              type="button"
+              onClick={handleSOSClick}
+              disabled={sending}
+              className="group relative mx-auto mt-8 flex h-48 w-48 items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-200 transition hover:scale-105 hover:bg-red-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:h-56 sm:w-56"
+            >
+              <span className="absolute inset-3 rounded-full border-2 border-white/20" />
+
+              <span className="relative flex flex-col items-center">
+                <AlertTriangle className="h-12 w-12 sm:h-14 sm:w-14" />
+
+                <span className="mt-2 text-3xl font-black tracking-wide">
+                  SOS
+                </span>
+
+                <span className="mt-1 text-xs font-medium text-white/85">
+                  TAP FOR HELP
+                </span>
+              </span>
+            </button>
+          </div>
+
+          {/* ========================================================== */}
+          {/* LOCATION */}
+          {/* ========================================================== */}
+
+          <div className="mt-10 rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                  <MapPin className="h-5 w-5" />
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    Current Location
+                  </h3>
+
+                  {locationLoading ? (
+                    <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+
+                      Location detect ho rahi hai...
+                    </div>
+                  ) : location ? (
+                    <p className="mt-1 text-sm text-green-700">
+                      Location available
+                      {location.accuracy
+                        ? ` • Accuracy ~${Math.round(
+                            location.accuracy
+                          )}m`
+                        : ""}
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-sm text-gray-500">
+                      Location available nahi hai.
+                    </p>
+                  )}
+
+                  {locationError && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {locationError}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={
+                    getCurrentLocation
+                  }
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <RefreshCw className="h-4 w-4" />
+
+                  Refresh
+                </button>
+
+                {location && (
+                  <button
+                    type="button"
+                    onClick={openMap}
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  >
+                    <Navigation className="h-4 w-4" />
+
+                    Map
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {location && (
+              <div className="mt-4 grid gap-3 border-t border-gray-200 pt-4 sm:grid-cols-2">
+                <LocationValue
+                  label="Latitude"
+                  value={location.latitude.toFixed(
+                    6
+                  )}
+                />
+
+                <LocationValue
+                  label="Longitude"
+                  value={location.longitude.toFixed(
+                    6
+                  )}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ========================================================== */}
+          {/* MESSAGE */}
+          {/* ========================================================== */}
+
+          <div className="mt-6">
+            <label
+              htmlFor="sos-message"
+              className="block text-sm font-semibold text-gray-900"
+            >
+              Emergency Message{" "}
+              <span className="font-normal text-gray-400">
+                (optional)
+              </span>
+            </label>
+
+            <textarea
+              id="sos-message"
+              value={message}
+              onChange={(event) =>
+                setMessage(
+                  event.target.value
+                )
+              }
+              maxLength={500}
+              rows={4}
+              placeholder="Emergency ke baare mein short information likhein..."
+              className="mt-2 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
+            />
+
+            <div className="mt-1 text-right text-xs text-gray-400">
+              {message.length}/500
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* EMERGENCY CONTACTS */}
+        {/* ============================================================ */}
+
+        <section className="mt-8">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-gray-900">
+              Emergency Contacts
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Direct call ke liye neeche diye gaye
+              numbers use karein.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <EmergencyContactCard
+              icon={
+                <Ambulance className="h-6 w-6" />
+              }
+              title="Ambulance"
+              number={
+                EMERGENCY_NUMBERS.ambulance
+              }
+              onCall={() =>
+                callNumber(
+                  EMERGENCY_NUMBERS.ambulance
+                )
+              }
+            />
+
+            <EmergencyContactCard
+              icon={
+                <ShieldAlert className="h-6 w-6" />
+              }
+              title="Police"
+              number={
+                EMERGENCY_NUMBERS.police
+              }
+              onCall={() =>
+                callNumber(
+                  EMERGENCY_NUMBERS.police
+                )
+              }
+            />
+
+            <EmergencyContactCard
+              icon={
+                <Flame className="h-6 w-6" />
+              }
+              title="Fire"
+              number={
+                EMERGENCY_NUMBERS.fire
+              }
+              onCall={() =>
+                callNumber(
+                  EMERGENCY_NUMBERS.fire
+                )
+              }
+            />
+
+            <EmergencyContactCard
+              icon={
+                <Phone className="h-6 w-6" />
+              }
+              title="Emergency"
+              number={
+                EMERGENCY_NUMBERS.emergency
+              }
+              onCall={() =>
+                callNumber(
+                  EMERGENCY_NUMBERS.emergency
+                )
+              }
+            />
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/* SAFETY NOTICE */}
+        {/* ============================================================ */}
+
+        <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+
+            <div>
+              <h3 className="font-semibold text-amber-900">
+                Important
+              </h3>
+
+              <p className="mt-1 text-sm leading-6 text-amber-800">
+                SOS alert ko genuine emergency ke
+                liye use karein. Life-threatening
+                situation mein local emergency
+                services ko direct call karna bhi
+                zaroori hai.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* ================================================================ */}
+      {/* CONFIRM MODAL */}
+      {/* ================================================================ */}
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 text-red-600">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    Send SOS Alert?
+                  </h2>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Ye alert village admin ko
+                    emergency notification ke roop
+                    mein bheja jayega.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirm(false)
+                }
+                disabled={sending}
+                className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Location status */}
+            <div className="mt-5 rounded-xl bg-gray-50 p-4">
+              <div className="flex items-center gap-3">
+                <MapPin className="h-5 w-5 text-blue-600" />
+
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    Location
+                  </p>
+
+                  <p className="text-xs text-gray-500">
+                    {location
+                      ? "Current location available"
+                      : "Location unavailable"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              <QuickNumber
+                label="Ambulance"
+                number={
+                  EMERGENCY_NUMBERS.ambulance
+                }
+              />
+
+              <QuickNumber
+                label="Police"
+                number={
+                  EMERGENCY_NUMBERS.police
+                }
+              />
+
+              <QuickNumber
+                label="Fire"
+                number={
+                  EMERGENCY_NUMBERS.fire
+                }
+              />
+            </div>
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirm(false)
+                }
+                disabled={sending}
+                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSendSOS}
+                disabled={sending}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {sending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="h-4 w-4" />
+
+                    Confirm SOS
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Promise based geolocation helper
+|--------------------------------------------------------------------------
+*/
+
+function getLocationPromise() {
+  return new Promise(
+    (resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(
+          new Error(
+            "Geolocation is not supported."
+          )
+        );
+
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude:
+              position.coords.latitude,
+            longitude:
+              position.coords.longitude,
+            accuracy:
+              position.coords.accuracy,
+          });
+        },
+        (error) => {
+          reject(error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    }
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Location Value
+|--------------------------------------------------------------------------
+*/
+
+function LocationValue({
+  label,
+  value,
+}) {
+  return (
+    <div>
+      <p className="text-xs text-gray-500">
+        {label}
+      </p>
+
+      <p className="mt-1 font-mono text-sm text-gray-800">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Emergency Contact Card
+|--------------------------------------------------------------------------
+*/
+
+function EmergencyContactCard({
+  icon,
+  title,
+  number,
+  onCall,
+}) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600">
+          {icon}
+        </div>
+
+        <span className="text-xs font-medium text-gray-400">
+          24/7
+        </span>
+      </div>
+
+      <h3 className="mt-4 font-semibold text-gray-900">
+        {title}
+      </h3>
+
+      <p className="mt-1 text-xl font-bold text-gray-800">
+        {number}
+      </p>
+
+      <button
+        type="button"
+        onClick={onCall}
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700"
+      >
+        <Phone className="h-4 w-4" />
+
+        Call Now
+      </button>
+    </div>
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Emergency Call Button
+|--------------------------------------------------------------------------
+*/
+
+function EmergencyCallButton({
+  icon,
+  label,
+  number,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-xl border border-gray-200 bg-white p-4 text-left transition hover:bg-gray-50"
+    >
+      <div className="flex items-center gap-2 text-gray-700">
+        {icon}
+
+        <span className="text-sm font-semibold">
+          {label}
+        </span>
+      </div>
+
+      <p className="mt-1 text-lg font-bold text-gray-900">
+        {number}
+      </p>
+    </button>
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Quick Number
+|--------------------------------------------------------------------------
+*/
+
+function QuickNumber({
+  label,
+  number,
+}) {
+  return (
+    <a
+      href={`tel:${number}`}
+      className="rounded-lg border border-gray-200 bg-white p-2 text-center hover:bg-gray-50"
+    >
+      <p className="text-[11px] text-gray-500">
+        {label}
+      </p>
+
+      <p className="mt-0.5 text-sm font-bold text-gray-800">
+        {number}
+      </p>
+    </a>
+  );
+}
