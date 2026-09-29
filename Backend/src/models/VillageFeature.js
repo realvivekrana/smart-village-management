@@ -20,6 +20,21 @@ const villageFeatureSchema = new mongoose.Schema(
       default: "",
     },
 
+    slug: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: "",
+      index: true,
+    },
+
+    shortDescription: {
+      type: String,
+      trim: true,
+      maxlength: 400,
+      default: "",
+    },
+
     category: {
       type: String,
       required: [true, "Feature category is required"],
@@ -91,6 +106,74 @@ const villageFeatureSchema = new mongoose.Schema(
     helplineNumber: {
       type: String,
       trim: true,
+      default: "",
+    },
+
+    // Step-by-step "How it works" list shown to citizens
+    instructions: {
+      type: [String],
+      default: [],
+    },
+
+    // Citizen can apply / register from the portal itself
+    applicationEnabled: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Useful links: official portals, guidelines, app downloads,
+    // and internal pages of this portal (e.g. /notices).
+    links: [
+      {
+        _id: false,
+        label: {
+          type: String,
+          trim: true,
+          required: true,
+          maxlength: 120,
+        },
+        url: {
+          type: String,
+          trim: true,
+          required: true,
+          maxlength: 500,
+        },
+        type: {
+          type: String,
+          enum: [
+            "official",
+            "apply",
+            "guideline",
+            "status",
+            "app",
+            "helpline",
+            "internal",
+            "other",
+          ],
+          default: "official",
+        },
+      },
+    ],
+
+    // Office / contact details
+    contactEmail: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: "",
+    },
+
+    officeAddress: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: "",
+    },
+
+    officeTimings: {
+      type: String,
+      trim: true,
+      maxlength: 200,
       default: "",
     },
 

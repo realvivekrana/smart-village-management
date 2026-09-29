@@ -33,12 +33,12 @@ const Empty = ({ text }) => (
 /* ------------------------------------------------------------------ */
 
 const QUICK_ITEMS = [
-  { to: "/citizen/village-services", icon: "🌾", key: "quick.mandi", fb: "Mandi Bhav & Kheti" },
-  { to: "/citizen/village-services", icon: "🏛️", key: "quick.schemes", fb: "Sarkari Yojana" },
-  { to: "/citizen/village-services", icon: "🗳️", key: "quick.gramSabha", fb: "Gram Sabha" },
-  { to: "/citizen/village-services", icon: "🩺", key: "quick.health", fb: "Health Camp & Teeka" },
-  { to: "/citizen/village-services", icon: "🧾", key: "quick.bills", fb: "Kar aur Bill" },
-  { to: "/citizen/village-services", icon: "🚌", key: "quick.transport", fb: "Bus / Gaadi Time" },
+  { to: "/citizen/village-services?category=farmer", icon: "🌾", key: "quick.mandi", fb: "Mandi Bhav & Kheti" },
+  { to: "/citizen/village-services?category=scheme", icon: "🏛️", key: "quick.schemes", fb: "Sarkari Yojana" },
+  { to: "/citizen/village-services?category=gram-sabha", icon: "🗳️", key: "quick.gramSabha", fb: "Gram Sabha" },
+  { to: "/citizen/village-services?category=health-camp", icon: "🩺", key: "quick.health", fb: "Health Camp & Teeka" },
+  { to: "/citizen/village-services?category=bill-tax", icon: "🧾", key: "quick.bills", fb: "Kar aur Bill" },
+  { to: "/citizen/village-services?category=transport", icon: "🚌", key: "quick.transport", fb: "Bus / Gaadi Time" },
   { to: "/notices", icon: "📢", key: "quick.notices", fb: "Suchnayein" },
   { to: "/events", icon: "📅", key: "quick.events", fb: "Karyakram" },
   { to: "/gaon-bazaar", icon: "🛒", key: "quick.bazaar", fb: "Gaon Bazaar" },

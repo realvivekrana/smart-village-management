@@ -125,7 +125,78 @@ const emptyForm = {
   requiredDocuments: "",
   instructions: "",
   applicationEnabled: false,
+  department: "",
+  applicationUrl: "",
+  helplineNumber: "",
+  contactEmail: "",
+  officeAddress: "",
+  officeTimings: "",
+  links: "",
 };
+
+/*
+|--------------------------------------------------------------------------
+| Links helpers
+|--------------------------------------------------------------------------
+| Textarea format (ek line = ek link):
+|   Label | URL | type(optional)
+| type: official, apply, guideline, status, app, helpline, internal, other
+|--------------------------------------------------------------------------
+*/
+
+const LINK_TYPES = [
+  "official",
+  "apply",
+  "guideline",
+  "status",
+  "app",
+  "helpline",
+  "internal",
+  "other",
+];
+
+const isAllowedLinkUrl = (url) =>
+  (url.startsWith("/") && !url.startsWith("//")) ||
+  /^https?:\/\//i.test(url) ||
+  /^tel:/i.test(url) ||
+  /^mailto:/i.test(url);
+
+function linksToText(links) {
+  if (!Array.isArray(links)) return "";
+
+  return links
+    .map((link) =>
+      [link.label, link.url, link.type || "official"].join(" | ")
+    )
+    .join("\n");
+}
+
+function textToLinks(text) {
+  if (Array.isArray(text)) return text;
+  if (typeof text !== "string") return [];
+
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split("|").map((part) => part.trim());
+
+      // Sirf URL likha ho to label = URL
+      if (parts.length === 1) {
+        return { label: parts[0], url: parts[0], type: "official" };
+      }
+
+      const [label, url, type] = parts;
+
+      return {
+        label: label || url,
+        url,
+        type: LINK_TYPES.includes(type) ? type : "official",
+      };
+    })
+    .filter((link) => link.url && isAllowedLinkUrl(link.url));
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -271,7 +342,7 @@ export default function VillageFeatures() {
       setError("");
 
       const response =
-        await getVillageFeatures();
+        await getVillageFeatures({ limit: 100, status: "" });
 
       setFeatures(
         normalizeFeatures(response)
@@ -534,6 +605,8 @@ export default function VillageFeatures() {
                 )
                 .filter(Boolean)
             : formData.instructions,
+
+        links: textToLinks(formData.links),
 
         slug:
           formData.slug?.trim() ||
@@ -1272,6 +1345,28 @@ function FeatureFormModal({
       applicationEnabled:
         feature?.applicationEnabled ??
         false,
+
+      department:
+        feature?.department || "",
+
+      applicationUrl:
+        feature?.applicationUrl || "",
+
+      helplineNumber:
+        feature?.helplineNumber || "",
+
+      contactEmail:
+        feature?.contactEmail || "",
+
+      officeAddress:
+        feature?.officeAddress || "",
+
+      officeTimings:
+        feature?.officeTimings || "",
+
+      links: linksToText(
+        feature?.links
+      ),
     });
 
     setAutoSlug(false);
@@ -1582,6 +1677,132 @@ Keep documents ready
 Submit application
 Track status`}
                 className="input resize-none"
+              />
+            </Field>
+
+            {/* Department */}
+            <Field label="Department">
+              <input
+                type="text"
+                value={form.department}
+                onChange={(event) =>
+                  updateField(
+                    "department",
+                    event.target.value
+                  )
+                }
+                placeholder="e.g. Ministry of Rural Development"
+                className="input"
+              />
+            </Field>
+
+            {/* Helpline */}
+            <Field label="Helpline Number">
+              <input
+                type="text"
+                value={form.helplineNumber}
+                onChange={(event) =>
+                  updateField(
+                    "helplineNumber",
+                    event.target.value
+                  )
+                }
+                placeholder="e.g. 1800-11-6446"
+                className="input"
+              />
+            </Field>
+
+            {/* Official website */}
+            <Field
+              label="Official Website / Apply URL"
+              hint="https:// se shuru hona chahiye"
+              className="sm:col-span-2"
+            >
+              <input
+                type="url"
+                value={form.applicationUrl}
+                onChange={(event) =>
+                  updateField(
+                    "applicationUrl",
+                    event.target.value
+                  )
+                }
+                placeholder="https://pmkisan.gov.in"
+                className="input"
+              />
+            </Field>
+
+            {/* Useful links */}
+            <Field
+              label="Useful Links"
+              hint="Ek line = ek link:  Label | URL | type (official, apply, guideline, status, app, helpline, internal)"
+              className="sm:col-span-2"
+            >
+              <textarea
+                rows={5}
+                value={form.links}
+                onChange={(event) =>
+                  updateField(
+                    "links",
+                    event.target.value
+                  )
+                }
+                placeholder={`PM-KISAN Portal | https://pmkisan.gov.in | official
+Beneficiary Status | https://pmkisan.gov.in/BeneficiaryStatus_New.aspx | status
+Kisan Call Centre | tel:18001801551 | helpline
+Notices | /notices | internal`}
+                className="input resize-none font-mono text-xs"
+              />
+            </Field>
+
+            {/* Contact email */}
+            <Field label="Contact Email">
+              <input
+                type="email"
+                value={form.contactEmail}
+                onChange={(event) =>
+                  updateField(
+                    "contactEmail",
+                    event.target.value
+                  )
+                }
+                placeholder="office@example.gov.in"
+                className="input"
+              />
+            </Field>
+
+            {/* Office timings */}
+            <Field label="Office Timings">
+              <input
+                type="text"
+                value={form.officeTimings}
+                onChange={(event) =>
+                  updateField(
+                    "officeTimings",
+                    event.target.value
+                  )
+                }
+                placeholder="Mon–Sat, 10 AM – 5 PM"
+                className="input"
+              />
+            </Field>
+
+            {/* Office address */}
+            <Field
+              label="Office Address"
+              className="sm:col-span-2"
+            >
+              <input
+                type="text"
+                value={form.officeAddress}
+                onChange={(event) =>
+                  updateField(
+                    "officeAddress",
+                    event.target.value
+                  )
+                }
+                placeholder="Panchayat Bhawan, Kakarcholi"
+                className="input"
               />
             </Field>
 
