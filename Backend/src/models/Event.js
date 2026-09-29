@@ -63,12 +63,18 @@ const eventSchema = new mongoose.Schema(
 
     images: [
       {
-        url: { type: String, trim: true },
-        publicId: { type: String, trim: true },
+        url: {
+          type: String,
+          trim: true,
+        },
+
+        publicId: {
+          type: String,
+          trim: true,
+        },
       },
     ],
 
-    // Interested / attending users (simple count, not full list for privacy)
     attendeeCount: {
       type: Number,
       default: 0,
@@ -83,7 +89,7 @@ const eventSchema = new mongoose.Schema(
 
     maxAttendees: {
       type: Number,
-      default: null, // null = unlimited
+      default: null,
     },
 
     isActive: {
@@ -107,30 +113,132 @@ const eventSchema = new mongoose.Schema(
   }
 );
 
-// Validate endDate is after startDate
+/*
+|--------------------------------------------------------------------------
+| Validate Event Dates
+|--------------------------------------------------------------------------
+*/
+
 eventSchema.pre("validate", function (next) {
-  if (this.startDate && this.endDate && this.endDate < this.startDate) {
-    this.invalidate("endDate", "End date must be after start date");
+  if (
+    this.startDate &&
+    this.endDate &&
+    this.endDate < this.startDate
+  ) {
+    this.invalidate(
+      "endDate",
+      "End date must be after start date"
+    );
   }
+
   next();
 });
+
+/*
+|--------------------------------------------------------------------------
+| Virtual: Is Upcoming
+|--------------------------------------------------------------------------
+*/
 
 eventSchema.virtual("isUpcoming").get(function () {
   return new Date() < this.startDate;
 });
 
+/*
+|--------------------------------------------------------------------------
+| Virtual: Is Ongoing
+|--------------------------------------------------------------------------
+*/
+
 eventSchema.virtual("isOngoing").get(function () {
   const now = new Date();
-  return now >= this.startDate && now <= this.endDate;
+
+  return (
+    now >= this.startDate &&
+    now <= this.endDate
+  );
 });
 
-eventSchema.set("toJSON", { virtuals: true });
-eventSchema.set("toObject", { virtuals: true });
+/*
+|--------------------------------------------------------------------------
+| JSON / Object Virtuals
+|--------------------------------------------------------------------------
+*/
 
-eventSchema.index({ startDate: 1, isActive: 1 });
-eventSchema.index({ category: 1, isActive: 1 });
-eventSchema.index({ title: "text", description: "text" });
+eventSchema.set("toJSON", {
+  virtuals: true,
+});
 
-const Event = mongoose.model("Event", eventSchema);
+eventSchema.set("toObject", {
+  virtuals: true,
+});
+
+/*
+|--------------------------------------------------------------------------
+| DATABASE INDEXES
+|--------------------------------------------------------------------------
+|
+| IMPORTANT PERFORMANCE INDEX
+|
+| Homepage query:
+|
+| isActive = true
+| endDate >= currentDate
+| sort startDate ASC
+|
+| Isliye ye compound index add kiya gaya hai.
+|--------------------------------------------------------------------------
+*/
+
+eventSchema.index({
+  isActive: 1,
+  startDate: 1,
+  endDate: 1,
+});
+
+/*
+|--------------------------------------------------------------------------
+| Category Filtering
+|--------------------------------------------------------------------------
+*/
+
+eventSchema.index({
+  category: 1,
+  isActive: 1,
+});
+
+/*
+|--------------------------------------------------------------------------
+| Featured Events
+|--------------------------------------------------------------------------
+*/
+
+eventSchema.index({
+  isFeatured: 1,
+  isActive: 1,
+  startDate: 1,
+});
+
+/*
+|--------------------------------------------------------------------------
+| Text Search
+|--------------------------------------------------------------------------
+*/
+
+eventSchema.index({
+  title: "text",
+  description: "text",
+});
+
+/*
+|--------------------------------------------------------------------------
+| Model
+|--------------------------------------------------------------------------
+*/
+
+const Event = mongoose.model(
+  "Event",
+  eventSchema
+);
 
 module.exports = Event;

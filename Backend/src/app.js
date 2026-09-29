@@ -3,7 +3,14 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+
 const { apiLimiter } = require("./middleware/rateLimitMiddleware");
+
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+*/
 
 const authRoutes = require("./routes/authRoutes");
 const governmentContactRoutes = require("./routes/governmentContactRoutes");
@@ -24,18 +31,43 @@ const noticeRoutes = require("./routes/noticeRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-// NEW VILLAGE MANAGEMENT FEATURE ROUTES
+/*
+|--------------------------------------------------------------------------
+| Village Management Feature Routes
+|--------------------------------------------------------------------------
+*/
+
 const villageFeatureRoutes = require("./routes/villageFeatureRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const sosRoutes = require("./routes/sosRoutes");
 const listingRoutes = require("./routes/listingRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 
+/*
+|--------------------------------------------------------------------------
+| Home API
+|--------------------------------------------------------------------------
+*/
+
+const homeRoutes = require("./routes/homeRoutes");
+
 const app = express();
 
-// Render/Railway/Nginx ke peeche deploy karo to real client IP ke liye zaroori hai
+/*
+|--------------------------------------------------------------------------
+| Trust Proxy
+|--------------------------------------------------------------------------
+|
+| Required when deployed behind Render / Railway / Nginx.
+| This allows Express to correctly identify the client IP.
+|--------------------------------------------------------------------------
+*/
+
 if (process.env.TRUST_PROXY) {
-  app.set("trust proxy", Number(process.env.TRUST_PROXY) || 1);
+  app.set(
+    "trust proxy",
+    Number(process.env.TRUST_PROXY) || 1
+  );
 }
 
 /*
@@ -65,8 +97,17 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests without an origin
-      // such as Postman or server-to-server requests.
+      /*
+      |--------------------------------------------------------------------------
+      | Allow requests without an origin
+      |--------------------------------------------------------------------------
+      |
+      | Examples:
+      | Postman
+      | Server-to-server requests
+      |--------------------------------------------------------------------------
+      */
+
       if (!origin) {
         return callback(null, true);
       }
@@ -75,8 +116,11 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(new Error("Not allowed by CORS"));
+      return callback(
+        new Error("Not allowed by CORS")
+      );
     },
+
     credentials: true,
   })
 );
@@ -87,26 +131,33 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
-
-
-app.use("/api/", apiLimiter);
+app.use(
+  "/api/",
+  apiLimiter
+);
 
 /*
 |--------------------------------------------------------------------------
 | Body Parsers
 |--------------------------------------------------------------------------
+|
+| Reduced from 10MB to 2MB.
+|
+| File/image uploads using multipart/form-data are handled separately
+| by upload middleware, so this does not affect those uploads.
+|--------------------------------------------------------------------------
 */
 
 app.use(
   express.json({
-    limit: "10mb",
+    limit: "2mb",
   })
 );
 
 app.use(
   express.urlencoded({
     extended: true,
-    limit: "10mb",
+    limit: "2mb",
   })
 );
 
@@ -122,9 +173,16 @@ app.use(cookieParser());
 |--------------------------------------------------------------------------
 | Logging
 |--------------------------------------------------------------------------
+|
+| Morgan is useful during development but unnecessary for every request
+| in production. Reducing production logging lowers console overhead.
+|--------------------------------------------------------------------------
 */
 
-if (process.env.NODE_ENV !== "test") {
+if (
+  process.env.NODE_ENV !== "production" &&
+  process.env.NODE_ENV !== "test"
+) {
   app.use(morgan("dev"));
 }
 
@@ -137,9 +195,12 @@ if (process.env.NODE_ENV !== "test") {
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Smart Village Management API is running",
-    environment: process.env.NODE_ENV || "development",
-    timestamp: new Date().toISOString(),
+    message:
+      "Smart Village Management API is running",
+    environment:
+      process.env.NODE_ENV || "development",
+    timestamp:
+      new Date().toISOString(),
   });
 });
 
@@ -147,8 +208,10 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
     message: "API is healthy",
-    environment: process.env.NODE_ENV || "development",
-    timestamp: new Date().toISOString(),
+    environment:
+      process.env.NODE_ENV || "development",
+    timestamp:
+      new Date().toISOString(),
   });
 });
 
@@ -171,19 +234,26 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| Government Contacts
+| Home
 |--------------------------------------------------------------------------
 |
-| Public:
-| GET    /api/v1/government-contacts
-| GET    /api/v1/government-contacts/:id
+| Combined homepage API:
 |
-| Admin:
-| POST   /api/v1/government-contacts
-| PUT    /api/v1/government-contacts/:id
-| PATCH  /api/v1/government-contacts/:id/status
-| DELETE /api/v1/government-contacts/:id
+| GET /api/v1/home
 |
+| Events + Notices are fetched together instead of making separate
+| homepage requests.
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/home",
+  homeRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Government Contacts
 |--------------------------------------------------------------------------
 */
 
@@ -196,17 +266,6 @@ app.use(
 |--------------------------------------------------------------------------
 | Government / Village Services
 |--------------------------------------------------------------------------
-|
-| Public:
-| GET    /api/v1/services
-| GET    /api/v1/services/:id
-|
-| Admin:
-| POST   /api/v1/services
-| PUT    /api/v1/services/:id
-| DELETE /api/v1/services/:id
-|
-|--------------------------------------------------------------------------
 */
 
 app.use(
@@ -216,35 +275,78 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| Village (about village + village places/directory)
+| Village
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/village", villageRoutes);
+app.use(
+  "/api/v1/village",
+  villageRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
-| Businesses + Reviews (nested + standalone)
+| Businesses + Reviews
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/businesses", businessRoutes);
-app.use("/api/v1/businesses/:businessId/reviews", reviewRoutes);
-app.use("/api/v1/reviews", reviewRoutes);
+app.use(
+  "/api/v1/businesses",
+  businessRoutes
+);
+
+app.use(
+  "/api/v1/businesses/:businessId/reviews",
+  reviewRoutes
+);
+
+app.use(
+  "/api/v1/reviews",
+  reviewRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
-| Community Posts + Comments (nested + standalone)
+| Community Posts + Comments
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/community", communityRoutes);
+app.use(
+  "/api/v1/community",
+  communityRoutes
+);
 
-// Gaon Bazaar (buy-sell, lost-found, rental) + citizen gallery photos — admin approval ke baad public
-app.use("/api/v1/listings", listingRoutes);
-app.use("/api/v1/gallery", galleryRoutes);
-app.use("/api/v1/community/:postId/comments", commentRoutes);
-app.use("/api/v1/comments", commentRoutes);
+/*
+|--------------------------------------------------------------------------
+| Village Bazaar / Listings
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/listings",
+  listingRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Citizen Gallery
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/gallery",
+  galleryRoutes
+);
+
+app.use(
+  "/api/v1/community/:postId/comments",
+  commentRoutes
+);
+
+app.use(
+  "/api/v1/comments",
+  commentRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -252,7 +354,10 @@ app.use("/api/v1/comments", commentRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/complaints", complaintRoutes);
+app.use(
+  "/api/v1/complaints",
+  complaintRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -260,7 +365,10 @@ app.use("/api/v1/complaints", complaintRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/contact", contactRoutes);
+app.use(
+  "/api/v1/contact",
+  contactRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -268,7 +376,10 @@ app.use("/api/v1/contact", contactRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/dashboard", dashboardRoutes);
+app.use(
+  "/api/v1/dashboard",
+  dashboardRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -276,7 +387,10 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/emergency", emergencyRoutes);
+app.use(
+  "/api/v1/emergency",
+  emergencyRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -284,16 +398,32 @@ app.use("/api/v1/emergency", emergencyRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/events", eventRoutes);
+app.use(
+  "/api/v1/events",
+  eventRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
-| Jobs + Job Applications
+| Jobs
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/jobs", jobRoutes);
-app.use("/api/v1/applications", jobApplicationRoutes);
+app.use(
+  "/api/v1/jobs",
+  jobRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Job Applications
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/applications",
+  jobApplicationRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -301,7 +431,10 @@ app.use("/api/v1/applications", jobApplicationRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/notices", noticeRoutes);
+app.use(
+  "/api/v1/notices",
+  noticeRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -309,7 +442,10 @@ app.use("/api/v1/notices", noticeRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/notifications", notificationRoutes);
+app.use(
+  "/api/v1/notifications",
+  notificationRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -317,7 +453,10 @@ app.use("/api/v1/notifications", notificationRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use("/api/v1/users", userRoutes);
+app.use(
+  "/api/v1/users",
+  userRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -339,7 +478,6 @@ app.use("/api/v1/users", userRoutes);
 | Lost & Found
 | Buy / Sell
 | etc.
-|
 |--------------------------------------------------------------------------
 */
 
@@ -379,7 +517,8 @@ app.use(
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: `Route not found: ${req.method} ${req.originalUrl}`,
+    message:
+      `Route not found: ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -391,21 +530,34 @@ app.use((req, res) => {
 
 app.use(
   (err, req, res, next) => {
-    console.error("Global Error:", err);
+    console.error(
+      "Global Error:",
+      err
+    );
 
     /*
-     * CORS error
-     */
-    if (err.message === "Not allowed by CORS") {
+    |--------------------------------------------------------------------------
+    | CORS Error
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      err.message ===
+      "Not allowed by CORS"
+    ) {
       return res.status(403).json({
         success: false,
-        message: "CORS policy blocked this request",
+        message:
+          "CORS policy blocked this request",
       });
     }
 
     /*
-     * JSON parsing error
-     */
+    |--------------------------------------------------------------------------
+    | JSON Parsing Error
+    |--------------------------------------------------------------------------
+    */
+
     if (
       err instanceof SyntaxError &&
       err.status === 400 &&
@@ -413,54 +565,94 @@ app.use(
     ) {
       return res.status(400).json({
         success: false,
-        message: "Invalid JSON request body",
+        message:
+          "Invalid JSON request body",
       });
     }
 
     /*
-     * Mongoose validation error
-     */
-    if (err.name === "ValidationError") {
+    |--------------------------------------------------------------------------
+    | Mongoose Validation Error
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      err.name ===
+      "ValidationError"
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Validation failed",
-        errors: Object.values(err.errors).map(
-          (error) => error.message
-        ),
+        message:
+          "Validation failed",
+
+        errors:
+          Object.values(
+            err.errors
+          ).map(
+            (error) =>
+              error.message
+          ),
       });
     }
 
     /*
-     * Mongoose CastError
-     */
-    if (err.name === "CastError") {
+    |--------------------------------------------------------------------------
+    | Mongoose Cast Error
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      err.name ===
+      "CastError"
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Invalid resource ID",
+        message:
+          "Invalid resource ID",
       });
     }
 
     /*
-     * Duplicate key error
-     */
+    |--------------------------------------------------------------------------
+    | Duplicate Key Error
+    |--------------------------------------------------------------------------
+    */
+
     if (err.code === 11000) {
       return res.status(409).json({
         success: false,
-        message: "Duplicate record already exists",
+        message:
+          "Duplicate record already exists",
       });
     }
 
     /*
-     * Default error
-     */
-    return res.status(err.statusCode || 500).json({
+    |--------------------------------------------------------------------------
+    | Default Error
+    |--------------------------------------------------------------------------
+    */
+
+    return res.status(
+      err.statusCode || 500
+    ).json({
       success: false,
-      message: err.message || "Internal server error",
-      ...(process.env.NODE_ENV === "development" && {
+
+      message:
+        err.message ||
+        "Internal server error",
+
+      ...(process.env.NODE_ENV ===
+        "development" && {
         stack: err.stack,
       }),
     });
   }
 );
+
+/*
+|--------------------------------------------------------------------------
+| Export App
+|--------------------------------------------------------------------------
+*/
 
 module.exports = app;

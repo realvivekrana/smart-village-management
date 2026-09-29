@@ -1,33 +1,129 @@
 import axios from "axios";
 import { API_URL } from "../utils/constants";
 
+/*
+|--------------------------------------------------------------------------
+| Axios API Instance
+|--------------------------------------------------------------------------
+*/
+
 const api = axios.create({
   baseURL: API_URL,
-  headers: { "Content-Type": "application/json" },
+
+  /*
+  |--------------------------------------------------------------------------
+  | Credentials
+  |--------------------------------------------------------------------------
+  |
+  | Cookies / authentication ke liye.
+  |--------------------------------------------------------------------------
+  */
+
   withCredentials: true,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Request Timeout
+  |--------------------------------------------------------------------------
+  |
+  | Agar backend response nahi karta to request indefinitely pending
+  | nahi rahegi.
+  |--------------------------------------------------------------------------
+  */
+
+  timeout: 15000,
 });
 
-// Attach JWT from localStorage on every request
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+/*
+|--------------------------------------------------------------------------
+| Attach JWT from localStorage
+|--------------------------------------------------------------------------
+*/
 
-// Global response error handler
-api.interceptors.response.use(
-  (res) => res,
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Content-Type
+    |--------------------------------------------------------------------------
+    |
+    | GET requests ke liye manually Content-Type set nahi kar rahe.
+    |
+    | Axios POST/PUT/PATCH JSON body ke according automatically
+    | Content-Type set kar deta hai.
+    |--------------------------------------------------------------------------
+    */
+
+    return config;
+  },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+/*
+|--------------------------------------------------------------------------
+| Global Response Error Handler
+|--------------------------------------------------------------------------
+*/
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+
+  (error) => {
+    /*
+    |--------------------------------------------------------------------------
+    | Request Timeout
+    |--------------------------------------------------------------------------
+    */
+
+    if (error.code === "ECONNABORTED") {
+      console.error(
+        "API request timeout:",
+        error.config?.url
+      );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Unauthorized
+    |--------------------------------------------------------------------------
+    |
+    | Token expired / invalid.
+    |--------------------------------------------------------------------------
+    */
+
     if (error.response?.status === 401) {
-      // Token expired / invalid — clear storage and redirect
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // Only redirect if not already on auth pages
-      if (!window.location.pathname.startsWith("/login") &&
-          !window.location.pathname.startsWith("/register")) {
+
+      /*
+      |--------------------------------------------------------------------------
+      | Redirect only when not already on auth pages
+      |--------------------------------------------------------------------------
+      */
+
+      const currentPath =
+        window.location.pathname;
+
+      const isAuthPage =
+        currentPath.startsWith("/login") ||
+        currentPath.startsWith("/register");
+
+      if (!isAuthPage) {
         window.location.href = "/login";
       }
     }
+
     return Promise.reject(error);
   }
 );

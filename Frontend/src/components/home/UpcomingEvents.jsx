@@ -1,46 +1,12 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getEvents } from "../../services/eventService";
 import { formatDateRange } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
 
-export default function UpcomingEvents() {
+export default function UpcomingEvents({
+  events = [],
+  loading = false,
+}) {
   const { villageName } = useVillage();
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    getEvents({
-      page: 1,
-      limit: 3,
-      upcoming: "true",
-    })
-      .then((res) => {
-        if (!mounted) return;
-
-        const data = res?.data?.data;
-
-        setEvents(
-          Array.isArray(data?.events)
-            ? data.events
-            : Array.isArray(data)
-              ? data
-              : []
-        );
-      })
-      .catch(() => {
-        if (mounted) setEvents([]);
-      })
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   return (
     <section className="relative overflow-hidden bg-slate-50 py-16 dark:bg-slate-950">
@@ -73,6 +39,7 @@ export default function UpcomingEvents() {
             className="group inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-600 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-blue-500 dark:hover:text-blue-400"
           >
             View all events
+
             <span className="transition-transform group-hover:translate-x-1">
               →
             </span>
@@ -91,8 +58,11 @@ export default function UpcomingEvents() {
 
                 <div className="space-y-4 p-6">
                   <div className="h-5 w-24 rounded bg-slate-200 dark:bg-slate-800" />
+
                   <div className="h-6 w-4/5 rounded bg-slate-200 dark:bg-slate-800" />
+
                   <div className="h-4 w-full rounded bg-slate-200 dark:bg-slate-800" />
+
                   <div className="h-4 w-2/3 rounded bg-slate-200 dark:bg-slate-800" />
                 </div>
               </div>
@@ -144,10 +114,13 @@ export default function UpcomingEvents() {
                         alt={event.title || "Village event"}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center">
-                        <span className="text-6xl drop-shadow-lg">📅</span>
+                        <span className="text-6xl drop-shadow-lg">
+                          📅
+                        </span>
                       </div>
                     )}
 

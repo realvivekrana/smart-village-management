@@ -1,6 +1,9 @@
 const Notice = require("../models/Notice");
 const User = require("../models/User");
-const { getPagination, getPaginationMeta } = require("../utils/pagination");
+const {
+  getPagination,
+  getPaginationMeta,
+} = require("../utils/pagination");
 const notificationService = require("../services/notificationService");
 const emailService = require("../services/emailService");
 
@@ -11,28 +14,105 @@ const emailService = require("../services/emailService");
 */
 const getNotices = async (req, res, next) => {
   try {
-    const { page, limit, skip } = getPagination(req.query);
-    const { category, priority, search } = req.query;
+    const {
+      page,
+      limit,
+      skip,
+    } = getPagination(req.query);
 
-    const filter = { isActive: true };
-    if (category) filter.category = category;
-    if (priority) filter.priority = priority;
-    if (search) filter.$text = { $search: search };
+    const {
+      category,
+      priority,
+      search,
+    } = req.query;
 
-    const [notices, total] = await Promise.all([
-      Notice.find(filter)
-        .populate("createdBy", "name")
-        .sort({ priority: -1, publishedAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Notice.countDocuments(filter),
-    ]);
+    const filter = {
+      isActive: true,
+    };
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (priority) {
+      filter.priority = priority;
+    }
+
+    if (search) {
+      filter.$text = {
+        $search: search,
+      };
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notices + Count in Parallel
+    |--------------------------------------------------------------------------
+    */
+
+    const [notices, total] =
+      await Promise.all([
+        Notice.find(filter)
+
+          /*
+          |--------------------------------------------------------------------------
+          | Only fields required for notice listing
+          |--------------------------------------------------------------------------
+          */
+
+          .select(
+            "_id title content category priority publishedAt expiresAt isActive createdBy createdAt"
+          )
+
+          /*
+          |--------------------------------------------------------------------------
+          | Lightweight creator data
+          |--------------------------------------------------------------------------
+          */
+
+          .populate(
+            "createdBy",
+            "name"
+          )
+
+          /*
+          |--------------------------------------------------------------------------
+          | Important notices first
+          |--------------------------------------------------------------------------
+          */
+
+          .sort({
+            priority: -1,
+            publishedAt: -1,
+          })
+
+          .skip(skip)
+          .limit(limit)
+
+          /*
+          |--------------------------------------------------------------------------
+          | Faster plain objects
+          |--------------------------------------------------------------------------
+          */
+
+          .lean(),
+
+        Notice.countDocuments(filter),
+      ]);
 
     return res.status(200).json({
       success: true,
-      data: { notices },
-      pagination: getPaginationMeta(total, page, limit),
+
+      data: {
+        notices,
+      },
+
+      pagination:
+        getPaginationMeta(
+          total,
+          page,
+          limit
+        ),
     });
   } catch (error) {
     next(error);
@@ -44,17 +124,57 @@ const getNotices = async (req, res, next) => {
 | GET /api/v1/notices/:id  (public)
 |--------------------------------------------------------------------------
 */
-const getNoticeById = async (req, res, next) => {
+const getNoticeById = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const notice = await Notice.findById(req.params.id).populate("createdBy", "name").lean();
-    if (!notice || !notice.isActive) {
-      return res.status(404).json({ success: false, message: "Notice not found" });
+    const notice =
+      await Notice.findById(
+        req.params.id
+      )
+        .populate(
+          "createdBy",
+          "name"
+        )
+        .lean();
+
+    if (
+      !notice ||
+      !notice.isActive
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "Notice not found",
+      });
     }
 
-    // Increment view count
-    await Notice.findByIdAndUpdate(req.params.id, { $inc: { viewCount: 1 } });
+    /*
+    |--------------------------------------------------------------------------
+    | Increment view count
+    |--------------------------------------------------------------------------
+    |
+    | Do not make the user wait for the counter update.
+    |--------------------------------------------------------------------------
+    */
 
-    return res.status(200).json({ success: true, data: { notice } });
+    Notice.findByIdAndUpdate(
+      req.params.id,
+      {
+        $inc: {
+          viewCount: 1,
+        },
+      }
+    ).catch(() => {});
+
+    return res.status(200).json({
+      success: true,
+
+      data: {
+        notice,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -65,20 +185,60 @@ const getNoticeById = async (req, res, next) => {
 | POST /api/v1/notices  (admin)
 |--------------------------------------------------------------------------
 */
-const createNotice = async (req, res, next) => {
+const createNotice = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const notice = await Notice.create({ ...req.body, createdBy: req.user._id });
+    const notice =
+      await Notice.create({
+        ...req.body,
+        createdBy:
+          req.user._id,
+      });
 
-    // Notify all active users (background, non-blocking)
-    User.find({ isActive: true }).select("_id email").lean().then(async (users) => {
-      const ids = users.map((u) => u._id);
-      await notificationService.notifyNewNotice(ids, notice);
-      if (req.body.sendEmail) {
-        await emailService.sendNewNoticeEmail(users, notice);
-      }
-    }).catch(() => {});
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications in background
+    |--------------------------------------------------------------------------
+    |
+    | API response notification/email processing ka wait nahi karega.
+    |--------------------------------------------------------------------------
+    */
 
-    return res.status(201).json({ success: true, message: "Notice created", data: { notice } });
+    User.find({
+      isActive: true,
+    })
+      .select("_id email")
+      .lean()
+      .then(async (users) => {
+        const ids = users.map(
+          (user) => user._id
+        );
+
+        await notificationService.notifyNewNotice(
+          ids,
+          notice
+        );
+
+        if (req.body.sendEmail) {
+          await emailService.sendNewNoticeEmail(
+            users,
+            notice
+          );
+        }
+      })
+      .catch(() => {});
+
+    return res.status(201).json({
+      success: true,
+      message: "Notice created",
+
+      data: {
+        notice,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -89,15 +249,39 @@ const createNotice = async (req, res, next) => {
 | PUT /api/v1/notices/:id  (admin)
 |--------------------------------------------------------------------------
 */
-const updateNotice = async (req, res, next) => {
+const updateNotice = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const notice = await Notice.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true, runValidators: true }
-    );
-    if (!notice) return res.status(404).json({ success: false, message: "Notice not found" });
-    return res.status(200).json({ success: true, message: "Notice updated", data: { notice } });
+    const notice =
+      await Notice.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: req.body,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+    if (!notice) {
+      return res.status(404).json({
+        success: false,
+        message: "Notice not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Notice updated",
+
+      data: {
+        notice,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -108,18 +292,43 @@ const updateNotice = async (req, res, next) => {
 | DELETE /api/v1/notices/:id  (admin)
 |--------------------------------------------------------------------------
 */
-const deleteNotice = async (req, res, next) => {
+const deleteNotice = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const notice = await Notice.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false },
-      { new: true }
-    );
-    if (!notice) return res.status(404).json({ success: false, message: "Notice not found" });
-    return res.status(200).json({ success: true, message: "Notice deleted" });
+    const notice =
+      await Notice.findByIdAndUpdate(
+        req.params.id,
+        {
+          isActive: false,
+        },
+        {
+          new: true,
+        }
+      );
+
+    if (!notice) {
+      return res.status(404).json({
+        success: false,
+        message: "Notice not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Notice deleted",
+    });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { getNotices, getNoticeById, createNotice, updateNotice, deleteNotice };
+module.exports = {
+  getNotices,
+  getNoticeById,
+  createNotice,
+  updateNotice,
+  deleteNotice,
+};

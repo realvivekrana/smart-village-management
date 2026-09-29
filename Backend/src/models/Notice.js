@@ -15,44 +15,41 @@ const noticeSchema = new mongoose.Schema(
       required: [true, "Notice content is required"],
       trim: true,
       minlength: [10, "Content must be at least 10 characters"],
-      maxlength: [5000, "Content cannot exceed 5000 characters"],
+      maxlength: [10000, "Content cannot exceed 10000 characters"],
     },
 
     category: {
       type: String,
       enum: {
         values: [
-          "general",
-          "health",
+          "government",
           "education",
+          "health",
           "agriculture",
-          "infrastructure",
-          "water",
-          "electricity",
-          "sanitation",
-          "disaster",
-          "government_scheme",
+          "employment",
+          "social",
+          "emergency",
+          "general",
           "other",
         ],
-        message: "Invalid category",
+        message: "Invalid notice category",
       },
       default: "general",
     },
 
     priority: {
       type: String,
-      enum: ["low", "normal", "high", "urgent"],
+      enum: {
+        values: [
+          "urgent",
+          "high",
+          "normal",
+          "low",
+        ],
+        message: "Invalid notice priority",
+      },
       default: "normal",
     },
-
-    attachments: [
-      {
-        url: { type: String, trim: true },
-        publicId: { type: String, trim: true },
-        fileName: { type: String, trim: true },
-        fileType: { type: String, trim: true },
-      },
-    ],
 
     publishedAt: {
       type: Date,
@@ -64,14 +61,33 @@ const noticeSchema = new mongoose.Schema(
       default: null,
     },
 
+    attachments: [
+      {
+        name: {
+          type: String,
+          trim: true,
+        },
+
+        url: {
+          type: String,
+          trim: true,
+        },
+
+        publicId: {
+          type: String,
+          trim: true,
+        },
+
+        type: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+
     isActive: {
       type: Boolean,
       default: true,
-    },
-
-    viewCount: {
-      type: Number,
-      default: 0,
     },
 
     createdBy: {
@@ -85,20 +101,121 @@ const noticeSchema = new mongoose.Schema(
   }
 );
 
-// Virtual: is the notice currently valid (not expired)
-noticeSchema.virtual("isValid").get(function () {
-  if (!this.expiresAt) return true;
-  return new Date() < this.expiresAt;
+/*
+|--------------------------------------------------------------------------
+| Validate Expiry Date
+|--------------------------------------------------------------------------
+*/
+
+noticeSchema.pre("validate", function (next) {
+  if (
+    this.expiresAt &&
+    this.publishedAt &&
+    this.expiresAt < this.publishedAt
+  ) {
+    this.invalidate(
+      "expiresAt",
+      "Expiry date must be after published date"
+    );
+  }
+
+  next();
 });
 
-noticeSchema.set("toJSON", { virtuals: true });
-noticeSchema.set("toObject", { virtuals: true });
+/*
+|--------------------------------------------------------------------------
+| Virtual: Is Expired
+|--------------------------------------------------------------------------
+*/
 
-// Index
-noticeSchema.index({ title: "text", content: "text" });
-noticeSchema.index({ isActive: 1, publishedAt: -1 });
-noticeSchema.index({ category: 1, isActive: 1 });
+noticeSchema.virtual("isExpired").get(function () {
+  if (!this.expiresAt) {
+    return false;
+  }
 
-const Notice = mongoose.model("Notice", noticeSchema);
+  return new Date() > this.expiresAt;
+});
+
+/*
+|--------------------------------------------------------------------------
+| JSON / Object Virtuals
+|--------------------------------------------------------------------------
+*/
+
+noticeSchema.set("toJSON", {
+  virtuals: true,
+});
+
+noticeSchema.set("toObject", {
+  virtuals: true,
+});
+
+/*
+|--------------------------------------------------------------------------
+| PERFORMANCE INDEX
+|--------------------------------------------------------------------------
+|
+| Homepage query:
+|
+| isActive: true
+| expiresAt >= currentDate OR expiresAt = null
+| sort publishedAt DESC
+|
+|--------------------------------------------------------------------------
+*/
+
+noticeSchema.index({
+  isActive: 1,
+  publishedAt: -1,
+});
+
+/*
+|--------------------------------------------------------------------------
+| Category + Date
+|--------------------------------------------------------------------------
+*/
+
+noticeSchema.index({
+  category: 1,
+  isActive: 1,
+  publishedAt: -1,
+});
+
+/*
+|--------------------------------------------------------------------------
+| Priority + Date
+|--------------------------------------------------------------------------
+|
+| Notices page / dashboard ke liye useful.
+|--------------------------------------------------------------------------
+*/
+
+noticeSchema.index({
+  priority: 1,
+  isActive: 1,
+  publishedAt: -1,
+});
+
+/*
+|--------------------------------------------------------------------------
+| Text Search
+|--------------------------------------------------------------------------
+*/
+
+noticeSchema.index({
+  title: "text",
+  content: "text",
+});
+
+/*
+|--------------------------------------------------------------------------
+| Model
+|--------------------------------------------------------------------------
+*/
+
+const Notice = mongoose.model(
+  "Notice",
+  noticeSchema
+);
 
 module.exports = Notice;
