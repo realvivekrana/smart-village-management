@@ -28,8 +28,8 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  if (loading && !data) return <Page title="Admin Dashboard"><Loading text="Loading live dashboard..." /></Page>;
-  if (error && !data) return <Page title="Admin Dashboard"><ErrorBox message={error} retry={load} /></Page>;
+  if (loading && !data) return <Page title="Admin Dashboard" showBack={false}><Loading text="Loading live dashboard..." /></Page>;
+  if (error && !data) return <Page title="Admin Dashboard" showBack={false}><ErrorBox message={error} retry={load} /></Page>;
 
   const overview = data?.overview || {};
   const recent = data?.recent || {};
@@ -37,6 +37,7 @@ export default function Dashboard() {
   return (
     <Page
       title="Admin Dashboard"
+      showBack={false}
       subtitle={`Live overview of the ${villageName} Village system. Auto-refreshes every 30 seconds.`}
       actions={<><button className="btn-secondary" onClick={load} type="button">↻ Refresh now</button><Link className="btn-primary" to="/admin/complaints">Review Complaints</Link></>}
     >

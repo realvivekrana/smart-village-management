@@ -10,6 +10,7 @@ import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import { COMPLAINT_STATUSES } from "../../utils/constants";
+import BackButton from "../../components/common/BackButton";
 
 export default function MyComplaints() {
   const [status, setStatus] = useState("");
@@ -56,6 +57,7 @@ export default function MyComplaints() {
 
   return (
     <div className="page-container">
+      <div className="mb-4"><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
       <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
         <h1 className="section-title">📋 My Complaints</h1>
         <Link to="/citizen/complaints/create" className="btn-primary">➕ File a Complaint</Link>

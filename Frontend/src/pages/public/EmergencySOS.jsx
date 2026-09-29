@@ -18,6 +18,7 @@ import {
 } from "../../services/sosService";
 import VoiceInput from "../../components/common/VoiceInput";
 import { useLanguage } from "../../context/LanguageContext";
+import BackButton from "../../components/common/BackButton";
 
 /*
 |--------------------------------------------------------------------------
@@ -464,6 +465,10 @@ export default function EmergencySOS() {
 
       <section className="bg-gradient-to-br from-red-700 via-red-600 to-orange-600 text-white">
         <div className="mx-auto max-w-5xl px-4 py-10 text-center sm:px-6 sm:py-14">
+          <div className="mb-5 text-left">
+            <BackButton to="/citizen/dashboard" label="Back to Dashboard" variant="onDark" />
+          </div>
+
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/15 backdrop-blur">
             <AlertTriangle className="h-8 w-8" />
           </div>

@@ -47,6 +47,7 @@ import {
 import { useVillage } from "../../context/VillageContext";
 import useAuth from "../../hooks/useAuth";
 import { formatDate } from "../../utils/formatDate";
+import BackButton from "../../components/common/BackButton";
 
 /*
 |--------------------------------------------------------------------------
@@ -314,6 +315,7 @@ function SmartLink({ url, className = "", children }) {
 
 export default function VillageServices() {
   const { villageName } = useVillage();
+  const isDashboard = useLocation().pathname.startsWith("/citizen");
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [features, setFeatures] = useState([]);
@@ -451,6 +453,11 @@ export default function VillageServices() {
       {/* HEADER */}
       <section className="bg-gradient-to-br from-green-700 via-emerald-700 to-teal-700 text-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          {isDashboard && (
+            <div className="mb-5">
+              <BackButton to="/citizen/dashboard" label="Back to Dashboard" variant="onDark" />
+            </div>
+          )}
           <div className="max-w-3xl">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm backdrop-blur">
               <Landmark className="h-4 w-4" />

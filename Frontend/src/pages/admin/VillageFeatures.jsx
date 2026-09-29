@@ -34,6 +34,7 @@ import {
   deleteVillageFeature,
 } from "../../services/villageFeatureService";
 import { useVillage } from "../../context/VillageContext";
+import BackButton from "../../components/common/BackButton";
 
 /*
 |--------------------------------------------------------------------------
@@ -688,6 +689,7 @@ export default function VillageFeatures() {
 
       <section className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mb-4"><BackButton to="/admin/dashboard" label="Back to Dashboard" /></div>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-medium text-green-600 dark:text-green-400">

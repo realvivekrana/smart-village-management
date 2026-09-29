@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { createBusiness } from "../../services/businessService";
 import BusinessForm from "../../components/business/BusinessForm";
+import BackButton from "../../components/common/BackButton";
 
 export default function AddBusiness() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function AddBusiness() {
   return (
     <div className="page-container max-w-2xl">
       <div className="mb-6">
-        <Link to="/business-owner/my-business" className="text-sm text-primary-600 hover:underline">← My Businesses</Link>
+        <BackButton to="/business-owner/my-business" label="Back to My Businesses" />
         <h1 className="section-title mt-2">➕ Register a Business</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
           Tell villagers about your business. Your listing goes live once an admin approves it.

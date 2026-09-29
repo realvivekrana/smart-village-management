@@ -10,6 +10,7 @@ import EventDetailsView from "../../components/events/EventDetails";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { useVillage } from "../../context/VillageContext";
+import BackButton from "../../components/common/BackButton";
 
 export default function EventDetails() {
   const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
@@ -172,8 +173,13 @@ export default function EventDetails() {
 
         <div className="relative page-container max-w-5xl">
 
+          {/* Back */}
+          <div className="pt-6">
+            <BackButton to={`${base}/events`} label="Back to Events" />
+          </div>
+
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 pt-6 mb-6 text-sm">
+          <div className="flex items-center gap-2 pt-4 mb-6 text-sm">
             <Link
               to={base ? "/citizen/dashboard" : "/"}
               className="text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"

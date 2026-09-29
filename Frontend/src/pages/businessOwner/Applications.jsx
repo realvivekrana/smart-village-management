@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getJobById, getJobApplications, updateApplicationStatus } from "../../services/jobService";
 import { formatDate, formatRelative } from "../../utils/formatDate";
@@ -7,6 +7,7 @@ import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import Pagination from "../../components/common/Pagination";
+import BackButton from "../../components/common/BackButton";
 
 const STATUS_OPTIONS = ["pending", "reviewed", "shortlisted", "rejected", "hired"];
 
@@ -65,7 +66,7 @@ export default function Applications() {
   return (
     <div className="page-container space-y-6">
       <div>
-        <Link to="/business-owner/my-jobs" className="text-sm text-primary-600 hover:underline">← My Jobs</Link>
+        <BackButton to="/business-owner/my-jobs" label="Back to My Jobs" />
         <h1 className="section-title mt-2">📥 Applications{job ? ` — ${job.title}` : ""}</h1>
         {job && <p className="text-gray-500 dark:text-gray-400 mt-1">{job.company} · {job.location}</p>}
       </div>

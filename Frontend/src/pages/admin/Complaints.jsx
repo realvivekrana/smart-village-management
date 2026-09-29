@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import BackButton from "../../components/common/BackButton";
 
 const Complaints = () => {
   const [complaints, setComplaints] = useState([]);
@@ -171,6 +172,7 @@ const Complaints = () => {
 
   return (
     <div className="page-container space-y-6">
+      <div><BackButton to="/admin/dashboard" label="Back to Dashboard" /></div>
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

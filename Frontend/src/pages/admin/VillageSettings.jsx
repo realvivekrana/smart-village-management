@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import BackButton from "../../components/common/BackButton";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
@@ -334,6 +335,7 @@ const VillageSettings = () => {
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mb-4"><BackButton to="/admin/dashboard" label="Back to Dashboard" /></div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">

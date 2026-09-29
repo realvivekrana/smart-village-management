@@ -9,6 +9,7 @@ import ConfirmDialog from "../../components/common/ConfirmDialog";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import BackButton from "../../components/common/BackButton";
 
 export default function MyPosts() {
   const [posts, setPosts] = useState([]);
@@ -76,6 +77,7 @@ export default function MyPosts() {
 
   return (
     <div className="page-container max-w-2xl">
+      <div className="mb-4"><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
       <h1 className="section-title mb-6">💬 My Community Posts</h1>
 
       <div className="mb-6">

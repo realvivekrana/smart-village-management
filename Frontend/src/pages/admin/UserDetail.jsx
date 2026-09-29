@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteUser,
   getUserById,
@@ -79,7 +79,7 @@ export default function UserDetail() {
 
   if (loading) {
     return (
-      <Page title="User Details">
+      <Page title="User Details" backTo="/admin/users" backLabel="Back to Users">
         <Loading text="Loading user..." />
       </Page>
     );
@@ -87,7 +87,7 @@ export default function UserDetail() {
 
   if (error && !user) {
     return (
-      <Page title="User Details">
+      <Page title="User Details" backTo="/admin/users" backLabel="Back to Users">
         <ErrorBox message={error} retry={load} />
       </Page>
     );
@@ -95,7 +95,7 @@ export default function UserDetail() {
 
   if (!user) {
     return (
-      <Page title="User Details">
+      <Page title="User Details" backTo="/admin/users" backLabel="Back to Users">
         <ErrorBox message="User not found" />
       </Page>
     );
@@ -116,11 +116,8 @@ export default function UserDetail() {
     <Page
       title="User Details"
       subtitle="View and manage this user's account."
-      actions={
-        <Link className="btn-secondary" to="/admin/users">
-          ← Back to Users
-        </Link>
-      }
+      backTo="/admin/users"
+      backLabel="Back to Users"
     >
       {error ? <ErrorBox message={error} retry={load} /> : null}
 

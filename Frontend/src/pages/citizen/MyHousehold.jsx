@@ -12,6 +12,7 @@ import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import Modal from "../../components/common/Modal";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import BackButton from "../../components/common/BackButton";
 
 const FAMILY_TYPES = ["nuclear", "joint", "extended", "other"];
 const HOUSE_TYPES = ["kutcha", "semi-pucca", "pucca", "other"];
@@ -135,6 +136,7 @@ export default function MyHousehold() {
 
   return (
     <div className="page-container max-w-3xl">
+      <div className="mb-4"><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
       <h1 className="section-title mb-1">🏠 Mera Parivar</h1>
       <p className="mb-6 text-sm text-gray-500">
         {villageName} ke records ke liye apne ghar aur parivar ki jaankari.

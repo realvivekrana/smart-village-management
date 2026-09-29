@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { getNotices } from "../../services/noticeService";
 import { formatRelative } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
+import BackButton from "../../components/common/BackButton";
 
 const priorityConfig = {
   urgent: {
@@ -133,6 +134,11 @@ export default function Notices() {
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-purple-400/20 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          {base && (
+            <div className="mb-6">
+              <BackButton to="/citizen/dashboard" label="Back to Dashboard" variant="onDark" />
+            </div>
+          )}
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />

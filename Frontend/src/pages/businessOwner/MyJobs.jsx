@@ -11,6 +11,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import Pagination from "../../components/common/Pagination";
+import BackButton from "../../components/common/BackButton";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState([]);
@@ -74,6 +75,7 @@ export default function MyJobs() {
 
   return (
     <div className="page-container space-y-6">
+      <div><BackButton to="/business-owner/dashboard" label="Back to Business Dashboard" /></div>
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="section-title">💼 My Job Posts</h1>

@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import { updateMyProfile, changePassword } from "../../services/userService";
 import Button from "../../components/common/Button";
+import BackButton from "../../components/common/BackButton";
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
@@ -58,6 +59,7 @@ export default function Profile() {
 
   return (
     <div className="page-container max-w-2xl space-y-6">
+      <div><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
       <h1 className="section-title">👤 My Profile</h1>
 
       <form onSubmit={handleProfileSubmit} className="card p-6 space-y-4">

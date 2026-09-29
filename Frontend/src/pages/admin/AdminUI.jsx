@@ -1,9 +1,23 @@
 import { useState } from "react";
 import Pagination from "../../components/common/Pagination";
+import BackButton from "../../components/common/BackButton";
 
-export function Page({ title, subtitle, actions, children }) {
+export function Page({
+  title,
+  subtitle,
+  actions,
+  children,
+  backTo = "/admin/dashboard",
+  backLabel = "Back to Dashboard",
+  showBack = true,
+}) {
   return (
     <div className="page-container space-y-6">
+      {showBack ? (
+        <div>
+          <BackButton to={backTo} label={backLabel} />
+        </div>
+      ) : null}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="section-title">{title}</h1>

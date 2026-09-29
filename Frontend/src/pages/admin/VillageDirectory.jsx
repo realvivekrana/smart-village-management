@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import BackButton from "../../components/common/BackButton";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
@@ -575,6 +576,7 @@ const VillageDirectory = () => {
 
   return (
     <div className="page-container space-y-6">
+      <div><BackButton to="/admin/dashboard" label="Back to Dashboard" /></div>
       {/* Header */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>

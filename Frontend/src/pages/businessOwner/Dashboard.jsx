@@ -6,6 +6,7 @@ import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import useAuth from "../../hooks/useAuth";
+import BackButton from "../../components/common/BackButton";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ export default function Dashboard() {
 
   return (
     <div className="page-container space-y-8">
+      <div><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
       <div>
         <h1 className="section-title">👋 Welcome, {user?.name}</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">Here's an overview of your business and job postings.</p>

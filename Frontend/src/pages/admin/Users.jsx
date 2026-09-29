@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
+import BackButton from "../../components/common/BackButton";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -147,6 +148,7 @@ const Users = () => {
 
   return (
     <div className="page-container space-y-6">
+      <div><BackButton to="/admin/dashboard" label="Back to Dashboard" /></div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">

@@ -15,6 +15,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import Pagination from "../../components/common/Pagination";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import BackButton from "../../components/common/BackButton";
 
 /*
  * Citizen ki daali hui cheezein (Gaon Bazaar + Gallery photos)
@@ -137,6 +138,7 @@ export default function Submissions() {
 
   return (
     <div className="page-container space-y-6">
+      <div><BackButton to="/admin/dashboard" label="Back to Dashboard" /></div>
       <div>
         <h1 className="section-title">✅ Citizen Approvals</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">

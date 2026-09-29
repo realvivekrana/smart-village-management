@@ -4,6 +4,7 @@ import { formatRelative } from "../../utils/formatDate";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import Button from "../../components/common/Button";
+import BackButton from "../../components/common/BackButton";
 
 const typeIcons = {
   complaint_update: "📋", job_application: "💼", new_notice: "📢",
@@ -17,6 +18,7 @@ export default function Notifications() {
 
   return (
     <div className="page-container max-w-2xl">
+      <div className="mb-4"><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="section-title">🔔 Notifications {unreadCount > 0 && `(${unreadCount} unread)`}</h1>
         {notifications.length > 0 && (

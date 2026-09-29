@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getBusinessById, updateBusiness } from "../../services/businessService";
 import BusinessForm from "../../components/business/BusinessForm";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import BackButton from "../../components/common/BackButton";
 
 export default function EditBusiness() {
   const { id } = useParams();
@@ -43,7 +44,7 @@ export default function EditBusiness() {
   return (
     <div className="page-container max-w-2xl">
       <div className="mb-6">
-        <Link to="/business-owner/my-business" className="text-sm text-primary-600 hover:underline">← My Businesses</Link>
+        <BackButton to="/business-owner/my-business" label="Back to My Businesses" />
         <h1 className="section-title mt-2">✏️ Edit Business</h1>
       </div>
 
