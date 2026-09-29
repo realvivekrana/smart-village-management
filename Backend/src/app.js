@@ -29,6 +29,8 @@ const userRoutes = require("./routes/userRoutes");
 const villageFeatureRoutes = require("./routes/villageFeatureRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const sosRoutes = require("./routes/sosRoutes");
+const listingRoutes = require("./routes/listingRoutes");
+const galleryRoutes = require("./routes/galleryRoutes");
 
 const app = express();
 
@@ -238,6 +240,10 @@ app.use("/api/v1/reviews", reviewRoutes);
 */
 
 app.use("/api/v1/community", communityRoutes);
+
+// Gaon Bazaar (buy-sell, lost-found, rental) + citizen gallery photos — admin approval ke baad public
+app.use("/api/v1/listings", listingRoutes);
+app.use("/api/v1/gallery", galleryRoutes);
 app.use("/api/v1/community/:postId/comments", commentRoutes);
 app.use("/api/v1/comments", commentRoutes);
 

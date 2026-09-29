@@ -1,0 +1,119 @@
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getListings } from "../../services/listingService";
+import { LISTING_TYPES } from "../../utils/bazaar";
+import useDebounce from "../../hooks/useDebounce";
+import { useLanguage } from "../../context/LanguageContext";
+import ListingCard from "../../components/bazaar/ListingCard";
+import Loader from "../../components/common/Loader";
+import EmptyState from "../../components/common/EmptyState";
+import ErrorMessage from "../../components/common/ErrorMessage";
+import Pagination from "../../components/common/Pagination";
+
+const PAGE_SIZE = 12;
+
+export default function GaonBazaar() {
+  const { t } = useLanguage();
+  const [listings, setListings] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [page, setPage] = useState(1);
+  const [type, setType] = useState("");
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    setError(null);
+
+    const params = { page, limit: PAGE_SIZE };
+    if (type) params.type = type;
+    if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
+
+    getListings(params)
+      .then((res) => {
+        setListings(res.data?.data?.listings || []);
+        setPagination(res.data?.pagination || null);
+      })
+      .catch((err) => setError(err.response?.data?.message || "Bazaar load nahi ho paya"))
+      .finally(() => setLoading(false));
+  }, [page, type, debouncedSearch]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const changeType = (value) => {
+    setType(value);
+    setPage(1);
+  };
+
+  return (
+    <div className="page-container space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h1 className="section-title">🛒 {t("bazaar.title", "Gaon Bazaar")}</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            {t(
+              "bazaar.subtitle",
+              "Gaon walon ki khareed-bikri, khoya-paya aur kheti ke saman ka kiraya — sab ek jagah."
+            )}
+          </p>
+        </div>
+        <Link to="/citizen/bazaar" className="btn-primary">
+          ➕ {t("bazaar.post", "Apna vigyapan daalein")}
+        </Link>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          className="input sm:max-w-xs"
+          placeholder="Dhundhein (jaise trolley, chaabi, bakri)"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+        />
+        <div className="flex flex-wrap gap-2">
+          {[{ value: "", label: "Sabhi", icon: "🏘️" }, ...LISTING_TYPES].map((tp) => (
+            <button
+              key={tp.value}
+              onClick={() => changeType(tp.value)}
+              className={`rounded-full px-3 py-1.5 text-sm font-medium border transition-colors ${
+                type === tp.value
+                  ? "bg-primary-600 text-white border-primary-600"
+                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700"
+              }`}
+            >
+              {tp.icon} {tp.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <ErrorMessage message={error} onRetry={load} />
+      ) : listings.length === 0 ? (
+        <EmptyState
+          icon="🛒"
+          title="Abhi koi vigyapan nahi"
+          description="Pehla vigyapan aap daalein — admin ki manjoori ke baad sabko dikhega."
+        />
+      ) : (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {listings.map((l) => (
+              <ListingCard key={l._id} listing={l} />
+            ))}
+          </div>
+          <Pagination pagination={pagination} onPageChange={setPage} />
+        </>
+      )}
+    </div>
+  );
+}

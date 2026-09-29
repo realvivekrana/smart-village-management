@@ -9,6 +9,15 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import useAuth from "../../hooks/useAuth";
+import {
+  QuickAccessGrid,
+  MandiWidget,
+  GramSabhaCard,
+  NoticesWidget,
+  EventsWidget,
+  FamilyCard,
+  HelplineWidget,
+} from "../../components/citizen/DashboardSections";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -97,6 +106,33 @@ export default function Dashboard() {
           <p className="text-xs text-gray-500 mb-1">Certificates Approved</p>
           <p className="text-2xl font-bold text-green-600">{stats.certificates?.approved ?? 0}</p>
         </div>
+        <Link to="/citizen/applications" className="card p-5 hover:shadow-md transition-shadow">
+          <p className="text-xs text-gray-500 mb-1">Yojana / Seva Applications</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.featureApplications?.total ?? 0}</p>
+        </Link>
+        <Link to="/citizen/applications" className="card p-5 hover:shadow-md transition-shadow">
+          <p className="text-xs text-gray-500 mb-1">Applications In Process</p>
+          <p className="text-2xl font-bold text-yellow-600">{stats.featureApplications?.pending ?? 0}</p>
+        </Link>
+        <Link to="/citizen/applications" className="card p-5 hover:shadow-md transition-shadow">
+          <p className="text-xs text-gray-500 mb-1">Applications Approved</p>
+          <p className="text-2xl font-bold text-green-600">{stats.featureApplications?.approved ?? 0}</p>
+        </Link>
+        <div className="card p-5">
+          <p className="text-xs text-gray-500 mb-1">Family Members</p>
+          <p className="text-2xl font-bold text-primary-600">{stats.household?.memberCount ?? 0}</p>
+        </div>
+      </div>
+
+      <QuickAccessGrid />
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <MandiWidget prices={stats.mandiPrices || []} />
+        <GramSabhaCard meeting={stats.nextGramSabha} />
+        <NoticesWidget notices={stats.latestNotices || []} />
+        <EventsWidget events={stats.upcomingEvents || []} />
+        <FamilyCard household={stats.household} />
+        <HelplineWidget contacts={stats.emergencyContacts || []} />
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -104,6 +140,8 @@ export default function Dashboard() {
         <Link to="/citizen/certificates/request" className="btn-primary">📜 Request Certificate</Link>
         <Link to="/citizen/certificates" className="btn-secondary">📜 My Certificates</Link>
         <Link to="/citizen/posts" className="btn-secondary">💬 Community Posts</Link>
+        <Link to="/citizen/applications" className="btn-secondary">🌾 My Yojana Applications</Link>
+        <Link to="/citizen/job-applications" className="btn-secondary">💼 My Job Applications</Link>
         <Link to="/jobs" className="btn-secondary">💼 Browse Jobs</Link>
       </div>
 

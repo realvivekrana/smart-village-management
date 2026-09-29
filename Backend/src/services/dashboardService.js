@@ -7,6 +7,10 @@ const Business = require("../models/Business");
 const CommunityPost = require("../models/CommunityPost");
 const JobApplication = require("../models/JobApplication");
 const CertificateRequest = require("../models/CertificateRequest");
+const FeatureApplication = require("../models/FeatureApplication");
+const VillageFeature = require("../models/VillageFeature");
+const Household = require("../models/Household");
+const EmergencyContact = require("../models/EmergencyContact");
 
 /*
 |--------------------------------------------------------------------------
@@ -227,6 +231,15 @@ const getCitizenStats = async (userId) => {
     totalCertificates,
     pendingCertificates,
     approvedCertificates,
+    totalFeatureApps,
+    pendingFeatureApps,
+    approvedFeatureApps,
+    household,
+    latestNotices,
+    upcomingEvents,
+    nextGramSabha,
+    mandiPrices,
+    emergencyContacts,
   ] = await Promise.all([
     Complaint.countDocuments({
       submittedBy: userId,
@@ -264,7 +277,74 @@ const getCitizenStats = async (userId) => {
     CertificateRequest.countDocuments({ submittedBy: userId }),
     CertificateRequest.countDocuments({ submittedBy: userId, status: { $in: ["pending", "in_progress"] } }),
     CertificateRequest.countDocuments({ submittedBy: userId, status: "approved" }),
+
+    // Scheme / village-service applications
+    FeatureApplication.countDocuments({ applicant: userId }),
+    FeatureApplication.countDocuments({
+      applicant: userId,
+      status: { $in: ["submitted", "under-review", "documents-required"] },
+    }),
+    FeatureApplication.countDocuments({
+      applicant: userId,
+      status: { $in: ["approved", "completed"] },
+    }),
+
+    // Household (parivar) summary
+    Household.findOne({ user: userId })
+      .select("householdHeadName members houseNumber ward")
+      .lean(),
+
+    // Latest active notices (expired ones hidden)
+    Notice.find({
+      isActive: true,
+      $or: [{ expiresAt: null }, { expiresAt: { $gte: new Date() } }],
+    })
+      .sort({ publishedAt: -1 })
+      .limit(4)
+      .select("title category priority publishedAt")
+      .lean(),
+
+    // Upcoming events
+    Event.find({ isActive: true, endDate: { $gte: new Date() } })
+      .sort({ startDate: 1 })
+      .limit(3)
+      .select("title startDate endDate location category")
+      .lean(),
+
+    // Next Gram Sabha meeting
+    VillageFeature.findOne({
+      category: "gram-sabha",
+      status: "active",
+      isPublished: true,
+      meetingDate: { $gte: new Date() },
+    })
+      .sort({ meetingDate: 1 })
+      .select("title meetingDate meetingLocation agenda")
+      .lean(),
+
+    // Latest mandi prices (admin-managed crop rows)
+    VillageFeature.find({
+      status: "active",
+      isPublished: true,
+      cropName: { $ne: "" },
+      modalPrice: { $ne: null },
+    })
+      .sort({ priceDate: -1, updatedAt: -1 })
+      .limit(6)
+      .select("cropName cropUnit minPrice maxPrice modalPrice mandiName priceDate")
+      .lean(),
+
+    // Important helpline numbers
+    EmergencyContact.find({ isActive: true })
+      .sort({ order: 1 })
+      .limit(5)
+      .select("name designation phone category")
+      .lean(),
   ]);
+
+  const activeMembers = Array.isArray(household?.members)
+    ? household.members.filter((m) => m.isActive !== false)
+    : [];
 
   const recentComplaints =
     await Complaint.find({
@@ -282,6 +362,28 @@ const getCitizenStats = async (userId) => {
       pending: pendingCertificates,
       approved: approvedCertificates,
     },
+
+    featureApplications: {
+      total: totalFeatureApps,
+      pending: pendingFeatureApps,
+      approved: approvedFeatureApps,
+    },
+
+    household: household
+      ? {
+          exists: true,
+          headName: household.householdHeadName,
+          houseNumber: household.houseNumber || "",
+          ward: household.ward || "",
+          memberCount: activeMembers.length,
+        }
+      : { exists: false, memberCount: 0 },
+
+    latestNotices,
+    upcomingEvents,
+    nextGramSabha: nextGramSabha || null,
+    mandiPrices,
+    emergencyContacts,
 
     complaints: {
       total: totalComplaints,

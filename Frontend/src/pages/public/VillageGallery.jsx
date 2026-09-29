@@ -77,7 +77,30 @@ const VillageGallery = () => {
           })
           .filter(Boolean);
 
-        setImages(normalizedImages);
+        // Citizen ki daali hui (admin-approved) photos bhi jod do
+        let citizenImages = [];
+        try {
+          const galleryRes = await fetch(`${API_URL}/gallery?limit=60`);
+          if (galleryRes.ok) {
+            const galleryJson = await galleryRes.json();
+            const photos = galleryJson?.data?.photos || [];
+            citizenImages = photos
+              .filter((p) => p?.image?.url)
+              .map((p) => ({
+                id: `photo-${p._id}`,
+                url: p.image.url,
+                title: p.caption || "Gaon ki photo",
+                caption: p.createdBy?.name ? `Photo by ${p.createdBy.name}` : "",
+                category: p.category
+                  ? p.category.charAt(0).toUpperCase() + p.category.slice(1)
+                  : "Village",
+              }));
+          }
+        } catch (galleryErr) {
+          console.error("Citizen gallery error:", galleryErr);
+        }
+
+        setImages([...normalizedImages, ...citizenImages]);
       } catch (err) {
         console.error("Village gallery error:", err);
 

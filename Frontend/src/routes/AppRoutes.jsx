@@ -168,6 +168,30 @@ const CitizenNotifications = lazy(
   () => import("../pages/citizen/Notifications")
 );
 
+const MyApplications = lazy(
+  () => import("../pages/citizen/MyApplications")
+);
+
+const MyJobApplications = lazy(
+  () => import("../pages/citizen/MyJobApplications")
+);
+
+const MyBazaar = lazy(
+  () => import("../pages/citizen/MyBazaar")
+);
+
+const MyPhotos = lazy(
+  () => import("../pages/citizen/MyPhotos")
+);
+
+const GaonBazaar = lazy(
+  () => import("../pages/public/GaonBazaar")
+);
+
+const AdminSubmissions = lazy(
+  () => import("../pages/admin/Submissions")
+);
+
 // ============================================================
 // Business Owner Pages
 // ============================================================
@@ -427,6 +451,12 @@ export default function AppRoutes() {
             element={<VillageServices />}
           />
 
+          {/* Gaon Bazaar: buy-sell, lost-found, rental (public read, approved only) */}
+          <Route
+            path="/gaon-bazaar"
+            element={<GaonBazaar />}
+          />
+
         </Route>
 
         {/* ================================================== */}
@@ -504,6 +534,30 @@ export default function AppRoutes() {
           <Route
             path="/citizen/notifications"
             element={<CitizenNotifications />}
+          />
+
+          {/* My Yojana / Village Service Applications */}
+          <Route
+            path="/citizen/applications"
+            element={<MyApplications />}
+          />
+
+          {/* My Job Applications */}
+          <Route
+            path="/citizen/job-applications"
+            element={<MyJobApplications />}
+          />
+
+          {/* My Gaon Bazaar posts */}
+          <Route
+            path="/citizen/bazaar"
+            element={<MyBazaar />}
+          />
+
+          {/* My Gallery photos */}
+          <Route
+            path="/citizen/photos"
+            element={<MyPhotos />}
           />
 
           {/* ================================================== */}
@@ -662,6 +716,12 @@ export default function AppRoutes() {
           <Route
             path="/admin/households"
             element={<AdminHouseholds />}
+          />
+
+          {/* Citizen submissions: Gaon Bazaar + Gallery approvals */}
+          <Route
+            path="/admin/submissions"
+            element={<AdminSubmissions />}
           />
 
         </Route>
