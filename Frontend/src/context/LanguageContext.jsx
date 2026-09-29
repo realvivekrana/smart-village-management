@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import extraTranslations from "./extraTranslations";
+import { useVillage } from "./VillageContext";
 
 /*
 |--------------------------------------------------------------------------
@@ -56,10 +57,10 @@ const translations = {
 
     common: {
       appName:
-        "Kakarcholi Village Management",
+        "{village} Village Management",
 
       village:
-        "Kakarcholi",
+        "{village}",
 
       home: "Home",
 
@@ -1043,10 +1044,10 @@ const translations = {
   hi: {
     common: {
       appName:
-        "ककरचोली ग्राम प्रबंधन",
+        "{village} ग्राम प्रबंधन",
 
       village:
-        "ककरचोली",
+        "{village}",
 
       home:
         "होम",
@@ -1989,6 +1990,8 @@ function getNestedValue(
 export function LanguageProvider({
   children,
 }) {
+  const { villageName, villageLocalName } = useVillage();
+
   const getInitialLanguage =
     () => {
       try {
@@ -2115,6 +2118,18 @@ export function LanguageProvider({
    *
    */
 
+  /*
+   * {village} token har translation me available hai:
+   * Hindi me local naam, English me English naam.
+   */
+  const withVillage = (vars) => ({
+    village:
+      language === "hi"
+        ? villageLocalName
+        : villageName,
+    ...vars,
+  });
+
   const t = useCallback(
     (
       key,
@@ -2139,7 +2154,7 @@ export function LanguageProvider({
         value !== undefined &&
         value !== null
       ) {
-        return interpolate(value, vars);
+        return interpolate(value, withVillage(vars));
       }
 
       /*
@@ -2157,7 +2172,7 @@ export function LanguageProvider({
           undefined &&
         englishValue !== null
       ) {
-        return interpolate(englishValue, vars);
+        return interpolate(englishValue, withVillage(vars));
       }
 
       /*
@@ -2166,10 +2181,10 @@ export function LanguageProvider({
       return interpolate(
         fallback ||
         key,
-        vars
+        withVillage(vars)
       );
     },
-    [language]
+    [language, villageName, villageLocalName]
   );
 
   /*

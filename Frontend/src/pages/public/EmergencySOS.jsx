@@ -319,18 +319,18 @@ export default function EmergencySOS() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8 sm:py-12">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40 px-4 py-8 sm:py-12">
         <div className="mx-auto max-w-2xl">
-          <div className="rounded-3xl border border-green-200 bg-white p-6 text-center shadow-lg sm:p-10">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle2 className="h-10 w-10 text-green-600" />
+          <div className="rounded-3xl border border-green-200 dark:border-green-800 bg-white dark:bg-gray-800 p-6 text-center shadow-lg sm:p-10">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+              <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
             </div>
 
-            <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h1 className="mt-6 text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
               SOS Alert Sent
             </h1>
 
-            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-gray-600 sm:text-base">
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-gray-600 dark:text-gray-300 sm:text-base">
               Emergency alert village admin ko
               send kar diya gaya hai. Agar
               situation serious hai to emergency
@@ -338,28 +338,28 @@ export default function EmergencySOS() {
             </p>
 
             {sosId && (
-              <div className="mt-5 rounded-xl bg-gray-50 p-3 text-left">
-                <p className="text-xs text-gray-500">
+              <div className="mt-5 rounded-xl bg-gray-50 dark:bg-gray-700/40 p-3 text-left">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   SOS Reference ID
                 </p>
 
-                <p className="mt-1 break-all font-mono text-sm text-gray-800">
+                <p className="mt-1 break-all font-mono text-sm text-gray-800 dark:text-gray-100">
                   {sosId}
                 </p>
               </div>
             )}
 
             {location && (
-              <div className="mt-5 rounded-xl border border-green-100 bg-green-50 p-4 text-left">
+              <div className="mt-5 rounded-xl border border-green-100 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-4 text-left">
                 <div className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
 
                   <div>
-                    <p className="font-semibold text-green-900">
+                    <p className="font-semibold text-green-900 dark:text-green-200">
                       Location shared
                     </p>
 
-                    <p className="mt-1 text-xs text-green-700">
+                    <p className="mt-1 text-xs text-green-700 dark:text-green-300">
                       Latitude:{" "}
                       {location.latitude.toFixed(
                         6
@@ -376,7 +376,7 @@ export default function EmergencySOS() {
                 <button
                   type="button"
                   onClick={openMap}
-                  className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-green-700 shadow-sm hover:bg-green-100"
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-green-700 dark:text-green-300 shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40"
                 >
                   <Navigation className="h-4 w-4" />
 
@@ -440,7 +440,7 @@ export default function EmergencySOS() {
                 setMessage("");
                 setError("");
               }}
-              className="mt-6 w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+              className="mt-6 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Back to Emergency Page
             </button>
@@ -457,7 +457,7 @@ export default function EmergencySOS() {
    */
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40">
       {/* ================================================================ */}
       {/* HEADER */}
       {/* ================================================================ */}
@@ -488,16 +488,16 @@ export default function EmergencySOS() {
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
         {/* Error */}
         {error && (
-          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="mb-5 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
             <div className="flex gap-3">
-              <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
+              <AlertTriangle className="h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
 
               <div>
-                <p className="font-semibold text-red-800">
+                <p className="font-semibold text-red-800 dark:text-red-200">
                   SOS Error
                 </p>
 
-                <p className="mt-1 text-sm text-red-700">
+                <p className="mt-1 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </p>
               </div>
@@ -509,17 +509,17 @@ export default function EmergencySOS() {
         {/* SOS CARD */}
         {/* ============================================================ */}
 
-        <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+        <div className="rounded-3xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm sm:p-8">
           <div className="text-center">
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Need immediate help?
             </p>
 
-            <h2 className="mt-2 text-xl font-bold text-gray-900 sm:text-2xl">
+            <h2 className="mt-2 text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">
               Emergency Alert Send Karein
             </h2>
 
-            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500">
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500 dark:text-gray-400">
               SOS button sirf genuine emergency
               mein use karein. Alert ke saath
               available location information admin
@@ -553,26 +553,26 @@ export default function EmergencySOS() {
           {/* LOCATION */}
           {/* ========================================================== */}
 
-          <div className="mt-10 rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5">
+          <div className="mt-10 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 p-4 sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                   <MapPin className="h-5 w-5" />
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                     Current Location
                   </h3>
 
                   {locationLoading ? (
-                    <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
+                    <div className="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Loader2 className="h-4 w-4 animate-spin" />
 
                       Location detect ho rahi hai...
                     </div>
                   ) : location ? (
-                    <p className="mt-1 text-sm text-green-700">
+                    <p className="mt-1 text-sm text-green-700 dark:text-green-300">
                       Location available
                       {location.accuracy
                         ? ` • Accuracy ~${Math.round(
@@ -581,13 +581,13 @@ export default function EmergencySOS() {
                         : ""}
                     </p>
                   ) : (
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                       Location available nahi hai.
                     </p>
                   )}
 
                   {locationError && (
-                    <p className="mt-1 text-xs text-red-600">
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
                       {locationError}
                     </p>
                   )}
@@ -600,7 +600,7 @@ export default function EmergencySOS() {
                   onClick={
                     getCurrentLocation
                   }
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <RefreshCw className="h-4 w-4" />
 
@@ -622,7 +622,7 @@ export default function EmergencySOS() {
             </div>
 
             {location && (
-              <div className="mt-4 grid gap-3 border-t border-gray-200 pt-4 sm:grid-cols-2">
+              <div className="mt-4 grid gap-3 border-t border-gray-200 dark:border-gray-700 pt-4 sm:grid-cols-2">
                 <LocationValue
                   label="Latitude"
                   value={location.latitude.toFixed(
@@ -647,7 +647,7 @@ export default function EmergencySOS() {
           <div className="mt-6">
             <label
               htmlFor="sos-message"
-              className="block text-sm font-semibold text-gray-900"
+              className="block text-sm font-semibold text-gray-900 dark:text-gray-100"
             >
               Emergency Message{" "}
               <span className="font-normal text-gray-400">
@@ -677,11 +677,11 @@ export default function EmergencySOS() {
 
         <section className="mt-8">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
               Emergency Contacts
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Direct call ke liye neeche diye gaye
               numbers use karein.
             </p>
@@ -754,16 +754,16 @@ export default function EmergencySOS() {
         {/* SAFETY NOTICE */}
         {/* ============================================================ */}
 
-        <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <div className="mt-8 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-5">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
 
             <div>
-              <h3 className="font-semibold text-amber-900">
+              <h3 className="font-semibold text-amber-900 dark:text-amber-200">
                 Important
               </h3>
 
-              <p className="mt-1 text-sm leading-6 text-amber-800">
+              <p className="mt-1 text-sm leading-6 text-amber-800 dark:text-amber-200">
                 SOS alert ko genuine emergency ke
                 liye use karein. Life-threatening
                 situation mein local emergency
@@ -781,19 +781,19 @@ export default function EmergencySOS() {
 
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 text-red-600">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
                   <AlertTriangle className="h-6 w-6" />
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
                     Send SOS Alert?
                   </h2>
 
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     Ye alert village admin ko
                     emergency notification ke roop
                     mein bheja jayega.
@@ -807,23 +807,23 @@ export default function EmergencySOS() {
                   setShowConfirm(false)
                 }
                 disabled={sending}
-                className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Location status */}
-            <div className="mt-5 rounded-xl bg-gray-50 p-4">
+            <div className="mt-5 rounded-xl bg-gray-50 dark:bg-gray-700/40 p-4">
               <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-blue-600" />
+                <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
 
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Location
                   </p>
 
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {location
                       ? "Current location available"
                       : "Location unavailable"}
@@ -862,7 +862,7 @@ export default function EmergencySOS() {
                   setShowConfirm(false)
                 }
                 disabled={sending}
-                className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -950,11 +950,11 @@ function LocationValue({
 }) {
   return (
     <div>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-gray-500 dark:text-gray-400">
         {label}
       </p>
 
-      <p className="mt-1 font-mono text-sm text-gray-800">
+      <p className="mt-1 font-mono text-sm text-gray-800 dark:text-gray-100">
         {value}
       </p>
     </div>
@@ -974,9 +974,9 @@ function EmergencyContactCard({
   onCall,
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
       <div className="flex items-center justify-between">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
           {icon}
         </div>
 
@@ -985,11 +985,11 @@ function EmergencyContactCard({
         </span>
       </div>
 
-      <h3 className="mt-4 font-semibold text-gray-900">
+      <h3 className="mt-4 font-semibold text-gray-900 dark:text-gray-100">
         {title}
       </h3>
 
-      <p className="mt-1 text-xl font-bold text-gray-800">
+      <p className="mt-1 text-xl font-bold text-gray-800 dark:text-gray-100">
         {number}
       </p>
 
@@ -1022,9 +1022,9 @@ function EmergencyCallButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-xl border border-gray-200 bg-white p-4 text-left transition hover:bg-gray-50"
+      className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 text-left transition hover:bg-gray-50 dark:hover:bg-gray-700"
     >
-      <div className="flex items-center gap-2 text-gray-700">
+      <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
         {icon}
 
         <span className="text-sm font-semibold">
@@ -1032,7 +1032,7 @@ function EmergencyCallButton({
         </span>
       </div>
 
-      <p className="mt-1 text-lg font-bold text-gray-900">
+      <p className="mt-1 text-lg font-bold text-gray-900 dark:text-gray-100">
         {number}
       </p>
     </button>
@@ -1052,13 +1052,13 @@ function QuickNumber({
   return (
     <a
       href={`tel:${number}`}
-      className="rounded-lg border border-gray-200 bg-white p-2 text-center hover:bg-gray-50"
+      className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-2 text-center hover:bg-gray-50 dark:hover:bg-gray-700"
     >
-      <p className="text-[11px] text-gray-500">
+      <p className="text-[11px] text-gray-500 dark:text-gray-400">
         {label}
       </p>
 
-      <p className="mt-0.5 text-sm font-bold text-gray-800">
+      <p className="mt-0.5 text-sm font-bold text-gray-800 dark:text-gray-100">
         {number}
       </p>
     </a>

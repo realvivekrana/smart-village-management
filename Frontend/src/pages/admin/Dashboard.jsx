@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAdminDashboard } from "../../services/dashboardService";
 import { AdminPagination, Badge, ErrorBox, fmtDate, Loading, Page, StatCard, Table, toneForStatus } from "./AdminUI";
+import { useVillage } from "../../context/VillageContext";
 
 export default function Dashboard() {
+  const { villageName } = useVillage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -35,7 +37,7 @@ export default function Dashboard() {
   return (
     <Page
       title="Admin Dashboard"
-      subtitle="Live overview of the Kakarcholi Village system. Auto-refreshes every 30 seconds."
+      subtitle={`Live overview of the ${villageName} Village system. Auto-refreshes every 30 seconds.`}
       actions={<><button className="btn-secondary" onClick={load} type="button">↻ Refresh now</button><Link className="btn-primary" to="/admin/complaints">Review Complaints</Link></>}
     >
       {error ? <ErrorBox message={error} retry={load} /> : null}

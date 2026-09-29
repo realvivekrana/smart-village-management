@@ -1,5 +1,6 @@
 const Village = require("../models/Village");
 const cloudinaryService = require("../services/cloudinaryService");
+const { clearVillageNameCache } = require("../utils/villageHelper");
 
 /*
 |--------------------------------------------------------------------------
@@ -437,6 +438,8 @@ const updateVillage = async (req, res) => {
 
     await village.save();
 
+    clearVillageNameCache();
+
     return res.status(200).json({
       success: true,
       message: "Village updated successfully",
@@ -488,6 +491,8 @@ const updateActiveVillage = async (
     );
 
     await village.save();
+
+    clearVillageNameCache();
 
     return res.status(200).json({
       success: true,
@@ -666,6 +671,8 @@ const addVillagePlace = async (
 
     await village.save();
 
+    clearVillageNameCache();
+
     const newPlace =
       village.places[
         village.places.length - 1
@@ -743,6 +750,8 @@ const updateVillagePlace = async (
 
     await village.save();
 
+    clearVillageNameCache();
+
     return res.status(200).json({
       success: true,
       message:
@@ -804,6 +813,8 @@ const deleteVillagePlace = async (
     place.deleteOne();
 
     await village.save();
+
+    clearVillageNameCache();
 
     return res.status(200).json({
       success: true,
@@ -909,6 +920,8 @@ const uploadVillageImages = async (
 
     await village.save();
 
+    clearVillageNameCache();
+
     return res.status(200).json({
       success: true,
       message:
@@ -992,6 +1005,8 @@ const deleteVillageImage = async (
     image.deleteOne();
 
     await village.save();
+
+    clearVillageNameCache();
 
     return res.status(200).json({
       success: true,

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Search,
@@ -34,6 +33,7 @@ import {
   updateVillageFeature,
   deleteVillageFeature,
 } from "../../services/villageFeatureService";
+import { useVillage } from "../../context/VillageContext";
 
 /*
 |--------------------------------------------------------------------------
@@ -116,7 +116,7 @@ const emptyForm = {
   category: "scheme",
   description: "",
   shortDescription: "",
-  villageName: "Kakarcholi",
+  villageName: "",
   status: "active",
   isPublished: true,
   featured: false,
@@ -222,6 +222,7 @@ function getCategoryIcon(category) {
 */
 
 export default function VillageFeatures() {
+  const { villageName } = useVillage();
   const [features, setFeatures] =
     useState([]);
 
@@ -589,7 +590,7 @@ export default function VillageFeatures() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-gray-600">
+        <div className="flex flex-col items-center gap-3 text-gray-600 dark:text-gray-300">
           <Loader2 className="h-8 w-8 animate-spin" />
 
           <p className="text-sm">
@@ -607,24 +608,24 @@ export default function VillageFeatures() {
    */
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40">
       {/* ================================================================ */}
       {/* HEADER */}
       {/* ================================================================ */}
 
-      <section className="border-b border-gray-200 bg-white">
+      <section className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm font-medium text-green-600">
-                Kakarcholi Village Management
+              <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                {villageName} Village Management
               </p>
 
-              <h1 className="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">
+              <h1 className="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
                 Village Features
               </h1>
 
-              <p className="mt-2 max-w-2xl text-sm text-gray-500">
+              <p className="mt-2 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
                 Government schemes, farmer
                 services, health, education,
                 Gram Sabha, bills, emergency
@@ -637,7 +638,7 @@ export default function VillageFeatures() {
               <button
                 type="button"
                 onClick={loadFeatures}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <RefreshCw className="h-4 w-4" />
 
@@ -720,7 +721,7 @@ export default function VillageFeatures() {
         {/* FILTERS */}
         {/* ============================================================ */}
 
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="mt-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
           <div className="grid gap-3 lg:grid-cols-[1fr_220px_180px]">
             {/* Search */}
             <div className="relative">
@@ -735,7 +736,7 @@ export default function VillageFeatures() {
                   )
                 }
                 placeholder="Feature search karein..."
-                className="w-full rounded-xl border border-gray-300 py-3 pl-10 pr-4 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 py-3 pl-10 pr-4 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900"
               />
             </div>
 
@@ -747,7 +748,7 @@ export default function VillageFeatures() {
                   event.target.value
                 )
               }
-              className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-green-500"
+              className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm outline-none focus:border-green-500 dark:text-gray-100 dark:placeholder-gray-400"
             >
               <option value="all">
                 All Categories
@@ -773,7 +774,7 @@ export default function VillageFeatures() {
                   event.target.value
                 )
               }
-              className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-green-500"
+              className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm outline-none focus:border-green-500 dark:text-gray-100 dark:placeholder-gray-400"
             >
               <option value="all">
                 All Status
@@ -802,38 +803,38 @@ export default function VillageFeatures() {
         {/* FEATURE TABLE */}
         {/* ============================================================ */}
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
           <div className="overflow-x-auto">
             <table className="min-w-[1050px] w-full">
-              <thead className="border-b border-gray-200 bg-gray-50">
+              <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40">
                 <tr>
-                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Feature
                   </th>
 
-                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Category
                   </th>
 
-                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Status
                   </th>
 
-                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Application
                   </th>
 
-                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Priority
                   </th>
 
-                  <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     Actions
                   </th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {filteredFeatures.map(
                   (feature) => {
                     const Icon =
@@ -851,27 +852,27 @@ export default function VillageFeatures() {
                           id ||
                           feature?.slug
                         }
-                        className="transition hover:bg-gray-50"
+                        className="transition hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         {/* Feature */}
                         <td className="px-5 py-4">
                           <div className="flex items-start gap-3">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-700">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300">
                               <Icon className="h-5 w-5" />
                             </div>
 
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="font-semibold text-gray-900">
+                                <p className="font-semibold text-gray-900 dark:text-gray-100">
                                   {feature?.title}
                                 </p>
 
                                 {feature?.featured && (
-                                  <Star className="h-4 w-4 fill-current text-amber-500" />
+                                  <Star className="h-4 w-4 fill-current text-amber-500 dark:text-amber-400" />
                                 )}
                               </div>
 
-                              <p className="mt-1 max-w-md truncate text-xs text-gray-500">
+                              <p className="mt-1 max-w-md truncate text-xs text-gray-500 dark:text-gray-400">
                                 {feature?.shortDescription ||
                                   feature?.description ||
                                   "No description"}
@@ -886,7 +887,7 @@ export default function VillageFeatures() {
 
                         {/* Category */}
                         <td className="px-5 py-4">
-                          <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700">
+                          <span className="rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200">
                             {getCategoryLabel(
                               feature?.category
                             )}
@@ -918,7 +919,7 @@ export default function VillageFeatures() {
                         {/* Application */}
                         <td className="px-5 py-4">
                           {feature?.applicationEnabled ? (
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 dark:bg-green-900/20 px-3 py-1.5 text-xs font-medium text-green-700 dark:text-green-300">
                               <CheckCircle2 className="h-3.5 w-3.5" />
 
                               Enabled
@@ -932,7 +933,7 @@ export default function VillageFeatures() {
 
                         {/* Priority */}
                         <td className="px-5 py-4">
-                          <span className="font-semibold text-gray-800">
+                          <span className="font-semibold text-gray-800 dark:text-gray-100">
                             {feature?.priority ??
                               0}
                           </span>
@@ -949,7 +950,7 @@ export default function VillageFeatures() {
                                 )
                               }
                               title="View"
-                              className="rounded-lg border border-gray-200 p-2 text-gray-600 hover:bg-gray-100"
+                              className="rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
                               <Eye className="h-4 w-4" />
                             </button>
@@ -962,7 +963,7 @@ export default function VillageFeatures() {
                                 )
                               }
                               title="Edit"
-                              className="rounded-lg border border-blue-200 p-2 text-blue-600 hover:bg-blue-50"
+                              className="rounded-lg border border-blue-200 dark:border-blue-800 p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                             >
                               <Pencil className="h-4 w-4" />
                             </button>
@@ -979,7 +980,7 @@ export default function VillageFeatures() {
                                 id
                               }
                               title="Delete"
-                              className="rounded-lg border border-red-200 p-2 text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                              className="rounded-lg border border-red-200 dark:border-red-800 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               {deletingId ===
                               id ? (
@@ -1004,11 +1005,11 @@ export default function VillageFeatures() {
                     >
                       <Landmark className="mx-auto h-10 w-10 text-gray-300" />
 
-                      <p className="mt-3 font-semibold text-gray-700">
+                      <p className="mt-3 font-semibold text-gray-700 dark:text-gray-200">
                         No village features found
                       </p>
 
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         Search ya filters change
                         karein.
                       </p>
@@ -1019,13 +1020,13 @@ export default function VillageFeatures() {
             </table>
           </div>
 
-          <div className="border-t border-gray-200 px-5 py-3 text-sm text-gray-500">
+          <div className="border-t border-gray-200 dark:border-gray-700 px-5 py-3 text-sm text-gray-500 dark:text-gray-400">
             Showing{" "}
-            <span className="font-semibold text-gray-800">
+            <span className="font-semibold text-gray-800 dark:text-gray-100">
               {filteredFeatures.length}
             </span>{" "}
             of{" "}
-            <span className="font-semibold text-gray-800">
+            <span className="font-semibold text-gray-800 dark:text-gray-100">
               {features.length}
             </span>{" "}
             features
@@ -1079,19 +1080,19 @@ function Stat({
   icon,
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {label}
           </p>
 
-          <p className="mt-1 text-2xl font-bold text-gray-900">
+          <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
             {value}
           </p>
         </div>
 
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-green-600">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
           {icon}
         </div>
       </div>
@@ -1117,21 +1118,21 @@ function Alert({
     <div
       className={`mb-5 flex items-start gap-3 rounded-xl border p-4 ${
         success
-          ? "border-green-200 bg-green-50"
-          : "border-red-200 bg-red-50"
+          ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20"
+          : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20"
       }`}
     >
       {success ? (
-        <CheckCircle2 className="h-5 w-5 shrink-0 text-green-600" />
+        <CheckCircle2 className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
       ) : (
-        <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
+        <AlertTriangle className="h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
       )}
 
       <p
         className={`flex-1 text-sm ${
           success
-            ? "text-green-800"
-            : "text-red-800"
+            ? "text-green-800 dark:text-green-200"
+            : "text-red-800 dark:text-red-200"
         }`}
       >
         {message}
@@ -1140,7 +1141,7 @@ function Alert({
       <button
         type="button"
         onClick={onClose}
-        className="text-gray-400 hover:text-gray-700"
+        className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
       >
         <X className="h-4 w-4" />
       </button>
@@ -1163,8 +1164,8 @@ function StatusBadge({
     <span
       className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
         active
-          ? "bg-green-50 text-green-700"
-          : "bg-gray-100 text-gray-500"
+          ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
+          : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
       }`}
     >
       {active ? (
@@ -1228,7 +1229,7 @@ function FeatureFormModal({
 
       villageName:
         feature?.villageName ||
-        "Kakarcholi",
+        "",
 
       status:
         feature?.status ||
@@ -1312,17 +1313,17 @@ function FeatureFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
-      <div className="flex max-h-[95vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:max-w-3xl sm:rounded-2xl">
+      <div className="flex max-h-[95vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white dark:bg-gray-800 shadow-2xl sm:max-w-3xl sm:rounded-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-5 py-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
               {feature
                 ? "Edit Village Feature"
                 : "Add Village Feature"}
             </h2>
 
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Feature information manage karein.
             </p>
           </div>
@@ -1331,7 +1332,7 @@ function FeatureFormModal({
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200"
           >
             <X className="h-5 w-5" />
           </button>
@@ -1396,7 +1397,7 @@ function FeatureFormModal({
                       makeSlug(form.title)
                     );
                   }}
-                  className="rounded-xl border border-gray-300 px-3 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                  className="rounded-xl border border-gray-300 dark:border-gray-600 px-3 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Auto
                 </button>
@@ -1607,7 +1608,7 @@ Track status`}
             </Field>
 
             {/* Toggles */}
-            <div className="space-y-3 rounded-xl border border-gray-200 p-4">
+            <div className="space-y-3 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
               <Toggle
                 checked={
                   form.isPublished
@@ -1653,12 +1654,12 @@ Track status`}
           </div>
 
           {/* Footer */}
-          <div className="mt-7 flex flex-col-reverse gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:justify-end">
+          <div className="mt-7 flex flex-col-reverse gap-3 border-t border-gray-200 dark:border-gray-700 pt-5 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
             >
               Cancel
             </button>
@@ -1709,11 +1710,11 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="mb-2 block text-sm font-semibold text-gray-800">
+      <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-100">
         {label}
 
         {required && (
-          <span className="ml-1 text-red-500">
+          <span className="ml-1 text-red-500 dark:text-red-400">
             *
           </span>
         )}
@@ -1754,7 +1755,7 @@ function Toggle({
         className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition ${
           checked
             ? "bg-green-600"
-            : "bg-gray-300"
+            : "bg-gray-300 dark:bg-gray-600"
         }`}
       >
         <span
@@ -1767,11 +1768,11 @@ function Toggle({
       </button>
 
       <span>
-        <span className="block text-sm font-medium text-gray-800">
+        <span className="block text-sm font-medium text-gray-800 dark:text-gray-100">
           {label}
         </span>
 
-        <span className="mt-0.5 block text-xs text-gray-500">
+        <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">
           {description}
         </span>
       </span>
@@ -1810,19 +1811,19 @@ function FeatureViewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-        <div className="sticky top-0 flex items-start justify-between border-b border-gray-200 bg-white p-5">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl">
+        <div className="sticky top-0 flex items-start justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100 text-green-700">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
               <Icon className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {feature?.title}
               </h2>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {getCategoryLabel(
                   feature?.category
                 )}
@@ -1833,7 +1834,7 @@ function FeatureViewModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200"
           >
             <X className="h-5 w-5" />
           </button>
@@ -1852,7 +1853,7 @@ function FeatureViewModal({
             label="Village"
             value={
               feature?.villageName ||
-              "Kakarcholi"
+              "-"
             }
           />
 
@@ -1932,11 +1933,11 @@ function Info({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-900">
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
         {label}
       </h3>
 
-      <p className="mt-2 whitespace-pre-line text-sm leading-6 text-gray-600">
+      <p className="mt-2 whitespace-pre-line text-sm leading-6 text-gray-600 dark:text-gray-300">
         {value}
       </p>
     </div>
@@ -1955,7 +1956,7 @@ function ListSection({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-900">
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
         {title}
       </h3>
 
@@ -1964,7 +1965,7 @@ function ListSection({
           (item, index) => (
             <li
               key={`${item}-${index}`}
-              className="flex gap-2 text-sm text-gray-600"
+              className="flex gap-2 text-sm text-gray-600 dark:text-gray-300"
             >
               <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-green-600" />
 
@@ -1988,12 +1989,12 @@ function MiniInfo({
   value,
 }) {
   return (
-    <div className="rounded-xl bg-gray-50 p-4">
-      <p className="text-xs text-gray-500">
+    <div className="rounded-xl bg-gray-50 dark:bg-gray-700/40 p-4">
+      <p className="text-xs text-gray-500 dark:text-gray-400">
         {label}
       </p>
 
-      <p className="mt-1 font-semibold capitalize text-gray-900">
+      <p className="mt-1 font-semibold capitalize text-gray-900 dark:text-gray-100">
         {String(value)}
       </p>
     </div>

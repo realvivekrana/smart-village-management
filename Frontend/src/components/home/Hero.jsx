@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { getDashboardPath } from "../../utils/permissions";
+import { useVillage } from "../../context/VillageContext";
 
 export default function Hero() {
+  const { villageName } = useVillage();
   const { user } = useAuth();
 
   return (
@@ -31,18 +33,18 @@ export default function Hero() {
             {/* Location badge */}
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-emerald-50 shadow-lg backdrop-blur-md">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
-              <span>Welcome to Kakarcholi</span>
+              <span>Welcome to {villageName}</span>
             </div>
 
             <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl">
               Discover
               <span className="block bg-gradient-to-r from-emerald-200 via-green-100 to-teal-200 bg-clip-text text-transparent">
-                Kakarcholi
+                {villageName}
               </span>
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-emerald-50/80 sm:text-lg lg:text-xl">
-              Your digital gateway to Kakarcholi — explore village life,
+              Your digital gateway to {villageName} — explore village life,
               important places, local businesses, community events, notices,
               services and opportunities, all in one place.
             </p>
@@ -63,7 +65,7 @@ export default function Hero() {
                     to="/about"
                     className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 font-semibold text-emerald-800 shadow-xl transition duration-200 hover:-translate-y-0.5 hover:bg-emerald-50"
                   >
-                    Explore Kakarcholi
+                    Explore {villageName}
                     <span className="ml-2">→</span>
                   </Link>
 
@@ -118,7 +120,7 @@ export default function Hero() {
                   </div>
 
                   <h2 className="mt-6 text-center text-3xl font-bold">
-                    Kakarcholi
+                    {villageName}
                   </h2>
 
                   <p className="mt-2 text-center text-sm leading-6 text-emerald-50/70">
@@ -131,7 +133,7 @@ export default function Hero() {
                       <div className="text-2xl">🏡</div>
                       <p className="mt-2 text-sm font-semibold">Village</p>
                       <p className="mt-1 text-xs text-white/50">
-                        Explore Kakarcholi
+                        Explore {villageName}
                       </p>
                     </div>
 
@@ -170,7 +172,7 @@ export default function Hero() {
                   </div>
                   <div>
                     <p className="text-xs text-white/50">Digital Village</p>
-                    <p className="font-semibold">Kakarcholi</p>
+                    <p className="font-semibold">{villageName}</p>
                   </div>
                 </div>
               </div>

@@ -9,8 +9,10 @@ import {
 import EventDetailsView from "../../components/events/EventDetails";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import { useVillage } from "../../context/VillageContext";
 
 export default function EventDetails() {
+  const { villageName } = useVillage();
   const { id } = useParams();
 
   const [event, setEvent] = useState(null);
@@ -271,7 +273,7 @@ export default function EventDetails() {
               <span>
                 Discover events in{" "}
                 <strong className="text-gray-700 dark:text-gray-200">
-                  Kakarcholi
+                  {villageName}
                 </strong>
               </span>
             </div>

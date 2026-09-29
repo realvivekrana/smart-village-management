@@ -9,6 +9,7 @@ const {
 } = require("../controllers/contactController");
 
 const { protect } = require("../middleware/authMiddleware");
+const { contactLimiter } = require("../middleware/rateLimitMiddleware");
 const { adminOnly } = require("../middleware/roleMiddleware");
 
 const router = express.Router();
@@ -22,6 +23,7 @@ const router = express.Router();
 // POST /api/v1/contact
 router.post(
   "/",
+  contactLimiter,
   createContactMessage
 );
 

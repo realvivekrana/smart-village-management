@@ -7,8 +7,10 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import useDebounce from "../../hooks/useDebounce";
+import { useVillage } from "../../context/VillageContext";
 
 export default function Jobs() {
+  const { villageName } = useVillage();
   const [filters, setFilters] = useState({
     search: "",
     category: "",
@@ -103,7 +105,7 @@ export default function Jobs() {
           <div className="max-w-3xl">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
               <span className="text-lg">💼</span>
-              <span>Kakarcholi Career Opportunities</span>
+              <span>{villageName} Career Opportunities</span>
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
@@ -115,7 +117,7 @@ export default function Jobs() {
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-blue-100 sm:text-lg">
               Discover local jobs, employment opportunities and career openings
-              available for the Kakarcholi community.
+              available for the {villageName} community.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -318,7 +320,7 @@ export default function Jobs() {
               </h2>
 
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-blue-100 sm:text-base">
-                Keep checking the Kakarcholi job portal for new local
+                Keep checking the {villageName} job portal for new local
                 opportunities and career openings.
               </p>
             </div>

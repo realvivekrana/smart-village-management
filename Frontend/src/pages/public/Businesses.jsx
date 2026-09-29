@@ -7,8 +7,10 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import useDebounce from "../../hooks/useDebounce";
+import { useVillage } from "../../context/VillageContext";
 
 export default function Businesses() {
+  const { villageName } = useVillage();
   const [filters, setFilters] = useState({
     search: "",
     category: "",
@@ -101,7 +103,7 @@ export default function Businesses() {
             {/* Badge */}
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white shadow-sm backdrop-blur-md">
               <span className="text-lg">🏪</span>
-              <span>Kakarcholi Local Business Directory</span>
+              <span>{villageName} Local Business Directory</span>
             </div>
 
             {/* Heading */}
@@ -115,7 +117,7 @@ export default function Businesses() {
             {/* Description */}
             <p className="mt-5 max-w-2xl text-base leading-7 text-orange-50 sm:text-lg">
               Explore shops, services, professionals and local businesses
-              around the Kakarcholi community — all in one place.
+              around the {villageName} community — all in one place.
             </p>
 
             {/* Feature pills */}
@@ -153,7 +155,7 @@ export default function Businesses() {
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-400 sm:text-base">
               Find useful shops, services and businesses available in and
-              around Kakarcholi.
+              around {villageName}.
             </p>
           </div>
 
@@ -262,7 +264,7 @@ export default function Businesses() {
                   </h3>
 
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Discover businesses serving the Kakarcholi community.
+                    Discover businesses serving the {villageName} community.
                   </p>
                 </div>
 
@@ -329,7 +331,7 @@ export default function Businesses() {
               </h2>
 
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-orange-100 sm:text-base">
-                Local businesses are an important part of the Kakarcholi
+                Local businesses are an important part of the {villageName}
                 community. Discover, connect and support businesses around you.
               </p>
             </div>

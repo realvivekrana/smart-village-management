@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Search,
@@ -28,6 +27,7 @@ import {
 import {
   getVillageFeatures,
 } from "../../services/villageFeatureService";
+import { useVillage } from "../../context/VillageContext";
 
 /*
 |--------------------------------------------------------------------------
@@ -130,6 +130,7 @@ const normalizeFeatures = (response) => {
 */
 
 export default function VillageServices() {
+  const { villageName } = useVillage();
   const [features, setFeatures] = useState([]);
 
   const [loading, setLoading] =
@@ -313,7 +314,7 @@ export default function VillageServices() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="flex flex-col items-center gap-3 text-gray-600">
+        <div className="flex flex-col items-center gap-3 text-gray-600 dark:text-gray-300">
           <Loader2
             className="h-8 w-8 animate-spin"
           />
@@ -333,7 +334,7 @@ export default function VillageServices() {
    */
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40">
       {/* ================================================================ */}
       {/* HEADER */}
       {/* ================================================================ */}
@@ -344,7 +345,7 @@ export default function VillageServices() {
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm backdrop-blur">
               <Landmark className="h-4 w-4" />
 
-              Kakarcholi Village Services
+              {villageName} Village Services
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
@@ -399,16 +400,16 @@ export default function VillageServices() {
         {/* ============================================================ */}
 
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="mb-6 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
 
               <div className="flex-1">
-                <p className="font-medium text-red-800">
+                <p className="font-medium text-red-800 dark:text-red-200">
                   Services load nahi ho paayi
                 </p>
 
-                <p className="mt-1 text-sm text-red-700">
+                <p className="mt-1 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </p>
               </div>
@@ -416,7 +417,7 @@ export default function VillageServices() {
               <button
                 type="button"
                 onClick={loadFeatures}
-                className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100"
+                className="inline-flex items-center gap-2 rounded-lg border border-red-300 dark:border-red-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40"
               >
                 <RefreshCw className="h-4 w-4" />
 
@@ -430,7 +431,7 @@ export default function VillageServices() {
         {/* SEARCH */}
         {/* ============================================================ */}
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row">
             {/* Search */}
             <div className="relative flex-1">
@@ -445,7 +446,7 @@ export default function VillageServices() {
                   )
                 }
                 placeholder="Service, yojana, farmer, scholarship search karein..."
-                className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-10 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-3 pl-10 pr-10 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 dark:text-gray-100 dark:placeholder-gray-400"
               />
 
               {search && (
@@ -454,7 +455,7 @@ export default function VillageServices() {
                   onClick={() =>
                     setSearch("")
                   }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                   aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
@@ -466,7 +467,7 @@ export default function VillageServices() {
             <button
               type="button"
               onClick={loadFeatures}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <RefreshCw className="h-4 w-4" />
 
@@ -479,7 +480,7 @@ export default function VillageServices() {
           {/* ========================================================== */}
 
           <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1">
-            <Filter className="h-4 w-4 shrink-0 text-gray-500" />
+            <Filter className="h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400" />
 
             {categories.map((category) => {
               const active =
@@ -498,7 +499,7 @@ export default function VillageServices() {
                   className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition ${
                     active
                       ? "bg-green-600 text-white shadow-sm"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
                   }`}
                 >
                   {category === "all"
@@ -518,11 +519,11 @@ export default function VillageServices() {
 
         <div className="mt-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
               Village Services
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {filteredFeatures.length}{" "}
               service
               {filteredFeatures.length !==
@@ -539,7 +540,7 @@ export default function VillageServices() {
             <button
               type="button"
               onClick={clearSearch}
-              className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:self-auto"
+              className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 sm:self-auto"
             >
               <X className="h-4 w-4" />
 
@@ -554,16 +555,16 @@ export default function VillageServices() {
 
         {filteredFeatures.length ===
           0 && (
-          <div className="mt-8 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-              <Search className="h-6 w-6 text-gray-500" />
+          <div className="mt-8 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-6 py-16 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+              <Search className="h-6 w-6 text-gray-500 dark:text-gray-400" />
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-900">
+            <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
               Koi service nahi mili
             </h3>
 
-            <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">
+            <p className="mx-auto mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
               Search ya category filter
               change karke dobara try karein.
             </p>
@@ -671,10 +672,10 @@ function ServiceCard({
 
   return (
     <article
-      className={`group flex h-full flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+      className={`group flex h-full flex-col rounded-2xl border bg-white dark:bg-gray-800 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
         isEmergency
-          ? "border-red-200"
-          : "border-gray-200"
+          ? "border-red-200 dark:border-red-800"
+          : "border-gray-200 dark:border-gray-700"
       }`}
     >
       {/* Icon + Category */}
@@ -682,8 +683,8 @@ function ServiceCard({
         <div
           className={`flex h-12 w-12 items-center justify-center rounded-xl ${
             isEmergency
-              ? "bg-red-100 text-red-600"
-              : "bg-green-100 text-green-700"
+              ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+              : "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
           }`}
         >
           <Icon className="h-6 w-6" />
@@ -692,8 +693,8 @@ function ServiceCard({
         <span
           className={`rounded-full px-2.5 py-1 text-xs font-medium ${
             isEmergency
-              ? "bg-red-50 text-red-700"
-              : "bg-gray-100 text-gray-600"
+              ? "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300"
+              : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
           }`}
         >
           {categoryLabel}
@@ -702,12 +703,12 @@ function ServiceCard({
 
       {/* Content */}
       <div className="mt-5 flex-1">
-        <h3 className="text-lg font-bold text-gray-900">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
           {feature?.title ||
             "Village Service"}
         </h3>
 
-        <p className="mt-2 line-clamp-3 text-sm leading-6 text-gray-600">
+        <p className="mt-2 line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
           {feature?.shortDescription ||
             feature?.description ||
             "Service information available here."}
@@ -717,20 +718,20 @@ function ServiceCard({
       {/* Badges */}
       <div className="mt-5 flex flex-wrap gap-2">
         {feature?.applicationEnabled && (
-          <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+          <span className="rounded-full bg-green-50 dark:bg-green-900/20 px-2.5 py-1 text-xs font-medium text-green-700 dark:text-green-300">
             Apply Online
           </span>
         )}
 
         {feature?.featured && (
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+          <span className="rounded-full bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-300">
             Featured
           </span>
         )}
 
         {feature?.status ===
           "active" && (
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+          <span className="rounded-full bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 text-xs font-medium text-blue-700 dark:text-blue-300">
             Active
           </span>
         )}
@@ -803,32 +804,32 @@ function FeatureModal({
         }
       }}
     >
-      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:max-w-2xl sm:rounded-2xl">
+      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white dark:bg-gray-800 shadow-2xl sm:max-w-2xl sm:rounded-2xl">
         {/* Header */}
         <div
           className={`sticky top-0 z-10 flex items-start justify-between border-b p-5 ${
             isEmergency
-              ? "bg-red-50"
-              : "bg-white"
+              ? "bg-red-50 dark:bg-red-900/20"
+              : "bg-white dark:bg-gray-800"
           }`}
         >
           <div className="flex items-start gap-3">
             <div
               className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
                 isEmergency
-                  ? "bg-red-100 text-red-600"
-                  : "bg-green-100 text-green-700"
+                  ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                  : "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
               }`}
             >
               <Icon className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {feature?.title}
               </h2>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {getCategoryLabel(
                   feature?.category
                 )}
@@ -839,7 +840,7 @@ function FeatureModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+            className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -850,11 +851,11 @@ function FeatureModal({
         <div className="space-y-6 p-5">
           {/* Description */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
               About Service
             </h3>
 
-            <p className="mt-2 text-sm leading-6 text-gray-700">
+            <p className="mt-2 text-sm leading-6 text-gray-700 dark:text-gray-200">
               {feature?.description ||
                 feature?.shortDescription ||
                 "No description available."}
@@ -864,11 +865,11 @@ function FeatureModal({
           {/* Eligibility */}
           {feature?.eligibility && (
             <div>
-              <h3 className="text-base font-semibold text-gray-900">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
                 Eligibility
               </h3>
 
-              <p className="mt-2 text-sm leading-6 text-gray-600">
+              <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
                 {feature.eligibility}
               </p>
             </div>
@@ -878,7 +879,7 @@ function FeatureModal({
           {requiredDocuments.length >
             0 && (
             <div>
-              <h3 className="text-base font-semibold text-gray-900">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
                 Required Documents
               </h3>
 
@@ -887,7 +888,7 @@ function FeatureModal({
                   (document, index) => (
                     <li
                       key={`${document}-${index}`}
-                      className="flex items-start gap-2 text-sm text-gray-600"
+                      className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300"
                     >
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-green-600" />
 
@@ -903,7 +904,7 @@ function FeatureModal({
           {instructions.length >
             0 && (
             <div>
-              <h3 className="text-base font-semibold text-gray-900">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
                 How It Works
               </h3>
 
@@ -914,11 +915,11 @@ function FeatureModal({
                       key={`${instruction}-${index}`}
                       className="flex gap-3"
                     >
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 text-xs font-bold text-green-700 dark:text-green-300">
                         {index + 1}
                       </span>
 
-                      <span className="text-sm leading-6 text-gray-600">
+                      <span className="text-sm leading-6 text-gray-600 dark:text-gray-300">
                         {instruction}
                       </span>
                     </li>
@@ -931,8 +932,8 @@ function FeatureModal({
           {/* Emergency Numbers */}
           {isEmergency &&
             emergencyNumbers && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-                <h3 className="font-semibold text-red-900">
+              <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
+                <h3 className="font-semibold text-red-900 dark:text-red-200">
                   Emergency Numbers
                 </h3>
 
@@ -1000,7 +1001,7 @@ function FeatureModal({
               {emergencyNumbers?.ambulance && (
                 <a
                   href={`tel:${emergencyNumbers.ambulance}`}
-                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Call Ambulance
                 </a>
@@ -1009,7 +1010,7 @@ function FeatureModal({
               {emergencyNumbers?.police && (
                 <a
                   href={`tel:${emergencyNumbers.police}`}
-                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Call Police
                 </a>
@@ -1018,7 +1019,7 @@ function FeatureModal({
               {emergencyNumbers?.fire && (
                 <a
                   href={`tel:${emergencyNumbers.fire}`}
-                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   Call Fire
                 </a>
@@ -1048,13 +1049,13 @@ function EmergencyNumber({
   return (
     <a
       href={`tel:${number}`}
-      className="rounded-lg bg-white p-3 text-center shadow-sm transition hover:shadow"
+      className="rounded-lg bg-white dark:bg-gray-800 p-3 text-center shadow-sm transition hover:shadow"
     >
-      <div className="text-xs text-gray-500">
+      <div className="text-xs text-gray-500 dark:text-gray-400">
         {label}
       </div>
 
-      <div className="mt-1 font-bold text-red-700">
+      <div className="mt-1 font-bold text-red-700 dark:text-red-300">
         {number}
       </div>
     </a>

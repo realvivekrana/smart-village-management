@@ -2,20 +2,8 @@ import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
+import { allNavLinks } from "../../utils/navLinks";
 
-const links = [
-  { to: "/", label: "Home", key: "nav.home", end: true },
-  { to: "/notices", label: "Notices", key: "nav.notices" },
-  { to: "/events", label: "Events", key: "nav.events" },
-  { to: "/jobs", label: "Jobs", key: "nav.jobs" },
-  { to: "/businesses", label: "Businesses", key: "nav.businesses" },
-  { to: "/services", label: "Services", key: "nav.services" },
-  { to: "/emergency", label: "Emergency", key: "nav.emergency" },
-  { to: "/government-contacts", label: "Govt. Contacts", key: "nav.govtContacts" },
-  { to: "/gallery", label: "Gallery", key: "nav.gallery" },
-  { to: "/about", label: "About Village", key: "nav.about" },
-  { to: "/contact", label: "Contact", key: "nav.contact" },
-];
 
 export default function MobileMenu({ isOpen, onClose }) {
   const { user, logout } = useAuth();
@@ -37,7 +25,7 @@ export default function MobileMenu({ isOpen, onClose }) {
         </div>
 
         <div className="py-3 px-2">
-          {links.map((link) => (
+          {allNavLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}

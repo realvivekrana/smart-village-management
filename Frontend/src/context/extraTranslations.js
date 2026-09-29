@@ -12,6 +12,9 @@ const en = {
   },
 
   nav: {
+    villageServices: "Village Services",
+    community: "Community",
+    more: "More",
     home: "Home",
     notices: "Notices",
     events: "Events",
@@ -26,7 +29,7 @@ const en = {
   },
 
   layout: {
-    brand: "Kakarcholi",
+    brand: "{village}",
     login: "Login",
     register: "Register",
     logout: "Logout",
@@ -57,6 +60,7 @@ const en = {
     reports: "Reports",
     villageSettings: "Village Settings",
     villageDirectory: "Village Directory",
+    households: "Households",
     myComplaints: "My Complaints",
     fileComplaint: "File Complaint",
     myCertificates: "My Certificates",
@@ -75,12 +79,12 @@ const en = {
     explore: "Explore",
     villageConnect: "Village Connect",
     about: "About",
-    tagline: "A digital platform connecting the people of Kakarcholi with village information, local services, community updates, businesses, jobs and important public resources.",
+    tagline: "A digital platform connecting the people of {village} with village information, local services, community updates, businesses, jobs and important public resources.",
     connectedVillage: "A connected village community",
     emergencyHelpline: "Emergency Helpline",
     rights: "All rights reserved.",
     builtFor: "Built to connect, inform and empower the village community.",
-    aboutKakarcholi: "About Kakarcholi",
+    aboutVillage: "About {village}",
     villageGallery: "Village Gallery",
     localBusinesses: "Local Businesses",
     jobsOpportunities: "Jobs & Opportunities",
@@ -187,6 +191,9 @@ const hi = {
   },
 
   nav: {
+    villageServices: "ग्राम सेवाएँ",
+    community: "समुदाय",
+    more: "और देखें",
     home: "होम",
     notices: "सूचनाएँ",
     events: "कार्यक्रम",
@@ -201,7 +208,7 @@ const hi = {
   },
 
   layout: {
-    brand: "ककरचोली",
+    brand: "{village}",
     login: "लॉगिन",
     register: "रजिस्टर करें",
     logout: "लॉगआउट",
@@ -232,6 +239,7 @@ const hi = {
     reports: "रिपोर्ट",
     villageSettings: "गाँव की सेटिंग",
     villageDirectory: "गाँव की निर्देशिका",
+    households: "परिवार / घर",
     myComplaints: "मेरी शिकायतें",
     fileComplaint: "शिकायत दर्ज करें",
     myCertificates: "मेरे प्रमाणपत्र",
@@ -250,12 +258,12 @@ const hi = {
     explore: "देखें",
     villageConnect: "विलेज कनेक्ट",
     about: "परिचय",
-    tagline: "ककरचोली के लोगों को गाँव की जानकारी, स्थानीय सेवाओं, सामुदायिक अपडेट, व्यवसायों, रोज़गार और ज़रूरी सार्वजनिक संसाधनों से जोड़ने वाला डिजिटल मंच।",
+    tagline: "{village} के लोगों को गाँव की जानकारी, स्थानीय सेवाओं, सामुदायिक अपडेट, व्यवसायों, रोज़गार और ज़रूरी सार्वजनिक संसाधनों से जोड़ने वाला डिजिटल मंच।",
     connectedVillage: "एक जुड़ा हुआ ग्रामीण समुदाय",
     emergencyHelpline: "आपातकालीन हेल्पलाइन",
     rights: "सर्वाधिकार सुरक्षित।",
     builtFor: "गाँव के समुदाय को जोड़ने, जानकारी देने और सशक्त बनाने के लिए बनाया गया।",
-    aboutKakarcholi: "ककरचोली के बारे में",
+    aboutVillage: "{village} के बारे में",
     villageGallery: "गाँव की गैलरी",
     localBusinesses: "स्थानीय व्यवसाय",
     jobsOpportunities: "रोज़गार और अवसर",

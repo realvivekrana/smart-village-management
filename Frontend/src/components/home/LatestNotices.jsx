@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getNotices } from "../../services/noticeService";
 import { formatRelative } from "../../utils/formatDate";
+import { useVillage } from "../../context/VillageContext";
 
 const priorityConfig = {
   urgent: {
@@ -35,6 +36,7 @@ const priorityConfig = {
 };
 
 export default function LatestNotices() {
+  const { villageName } = useVillage();
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,7 +93,7 @@ export default function LatestNotices() {
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400 sm:text-base">
               Stay informed about important announcements, government
-              updates and community information from Kakarcholi.
+              updates and community information from {villageName}.
             </p>
           </div>
 

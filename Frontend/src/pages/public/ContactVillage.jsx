@@ -144,7 +144,7 @@ const ContactVillage = () => {
         )}`
       : "";
 
-  const villageName = village?.name || "Kakarcholi";
+  const villageName = village?.name || "Village";
 
   const initials = useMemo(
     () =>

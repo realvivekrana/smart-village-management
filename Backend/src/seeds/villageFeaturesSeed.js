@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const VillageFeature = require("../models/VillageFeature");
@@ -11,7 +10,7 @@ require("dotenv").config();
 |--------------------------------------------------------------------------
 */
 
-const VILLAGE_NAME = "Kakarcholi";
+const VILLAGE_NAME = process.env.VILLAGE_NAME || "Kakarcholi";
 
 /*
 |--------------------------------------------------------------------------

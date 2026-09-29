@@ -32,8 +32,24 @@ const emailLimiter = createLimiter({
   message: "Too many email requests. Please try again after an hour.",
 });
 
+// Contact form spam rokne ke liye (public endpoint)
+const contactLimiter = createLimiter({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  message: "Too many messages sent. Please try again after an hour.",
+});
+
+// SOS prank / galti se baar-baar dabne se bachane ke liye
+const sosLimiter = createLimiter({
+  windowMs: 10 * 60 * 1000,
+  limit: 5,
+  message: "Too many SOS alerts sent. If this is a real emergency, call 112 directly.",
+});
+
 module.exports = {
   apiLimiter,
   authLimiter,
   emailLimiter,
+  contactLimiter,
+  sosLimiter,
 };

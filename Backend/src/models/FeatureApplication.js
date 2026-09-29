@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const featureApplicationSchema = new mongoose.Schema(
@@ -239,7 +238,7 @@ const featureApplicationSchema = new mongoose.Schema(
     villageName: {
       type: String,
       trim: true,
-      default: "Kakarcholi",
+      default: "",
       index: true,
     },
 

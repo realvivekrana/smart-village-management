@@ -3,6 +3,7 @@ import { getGovernmentContacts } from "../../services/governmentContactService";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import { useVillage } from "../../context/VillageContext";
 
 const categoryIcons = {
   Emergency: "🆘",
@@ -24,6 +25,7 @@ const categoryIcons = {
 const getIcon = (category) => categoryIcons[category] || "🏢";
 
 export default function GovernmentContacts() {
+  const { villageName } = useVillage();
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -90,7 +92,7 @@ export default function GovernmentContacts() {
               </div>
 
               <span className="text-green-100 font-medium">
-                Kakarcholi Village
+                {villageName} Village
               </span>
             </div>
 
@@ -101,7 +103,7 @@ export default function GovernmentContacts() {
             <p className="mt-5 text-lg text-green-50 leading-8">
               Important government officers, departments, emergency services
               and public assistance contacts useful for the residents of
-              Kakarcholi and nearby areas — including BDO, CO, DC and other
+              {villageName} and nearby areas — including BDO, CO, DC and other
               officials.
             </p>
           </div>

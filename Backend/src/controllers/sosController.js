@@ -1,5 +1,5 @@
-
 const mongoose = require("mongoose");
+const { getActiveVillageName } = require("../utils/villageHelper");
 
 const SOSAlert = require("../models/SOSAlert");
 
@@ -136,8 +136,7 @@ const createSOSAlert = async (
         location.address || "",
 
       villageName:
-        location.villageName ||
-        "Kakarcholi",
+        location.villageName || (await getActiveVillageName()),
 
       landmark:
         location.landmark || "",
@@ -163,8 +162,7 @@ const createSOSAlert = async (
             : [],
 
         villageName:
-          normalizedLocation.villageName ||
-          "Kakarcholi",
+          normalizedLocation.villageName || (await getActiveVillageName()),
 
         deviceInfo,
         metadata,
@@ -437,7 +435,7 @@ const getAllSOSAlerts = async (
     const {
       status,
       emergencyType,
-      villageName = "Kakarcholi",
+      villageName,
       search,
       page = 1,
       limit = 20,
@@ -457,8 +455,11 @@ const getAllSOSAlerts = async (
     );
 
     const filter = {
-      villageName,
     };
+
+    if (villageName) {
+      filter.villageName = villageName;
+    }
 
     if (status) {
       filter.status = status;

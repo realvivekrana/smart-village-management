@@ -3,7 +3,7 @@ import { useLanguage } from "../../context/LanguageContext";
 
 const quickLinks = [
   { to: "/", label: "Home", key: "nav.home", icon: "🏠" },
-  { to: "/about", label: "About Kakarcholi", key: "footer.aboutKakarcholi", icon: "🏘️" },
+  { to: "/about", label: "About Village", key: "footer.aboutVillage", icon: "🏘️" },
   { to: "/notices", label: "Notices", key: "nav.notices", icon: "📢" },
   { to: "/events", label: "Events", key: "nav.events", icon: "📅" },
   { to: "/gallery", label: "Village Gallery", key: "footer.villageGallery", icon: "🖼️" },

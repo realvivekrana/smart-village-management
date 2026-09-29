@@ -112,6 +112,10 @@ const GovernmentContacts = lazy(
   () => import("../pages/public/GovernmentContacts")
 );
 
+const Community = lazy(
+  () => import("../pages/public/Community")
+);
+
 // ============================================================
 // Citizen Pages
 // ============================================================
@@ -142,6 +146,10 @@ const MyCertificates = lazy(
 
 const EmergencySOS = lazy(
   () => import("../pages/public/EmergencySOS")
+);
+
+const MyHousehold = lazy(
+  () => import("../pages/citizen/MyHousehold")
 );
 
 const VillageServices = lazy(
@@ -254,6 +262,10 @@ const AdminVillageDirectory = lazy(
 
 const AdminGovernmentContacts = lazy(
   () => import("../pages/admin/GovernmentContacts")
+);
+
+const AdminHouseholds = lazy(
+  () => import("../pages/admin/Households")
 );
 
 // ============================================================
@@ -403,6 +415,18 @@ export default function AppRoutes() {
             element={<GovernmentContacts />}
           />
 
+          {/* Community (public read, login to post) */}
+          <Route
+            path="/community"
+            element={<Community />}
+          />
+
+          {/* Village Services: mandi, schemes, gram sabha (public read, login to apply) */}
+          <Route
+            path="/village-services"
+            element={<VillageServices />}
+          />
+
         </Route>
 
         {/* ================================================== */}
@@ -462,6 +486,12 @@ export default function AppRoutes() {
           <Route
             path="/citizen/village-services"
             element={<VillageServices />}
+          />
+
+          {/* My Household (parivar) */}
+          <Route
+            path="/citizen/household"
+            element={<MyHousehold />}
           />
 
           {/* My Posts */}
@@ -626,6 +656,12 @@ export default function AppRoutes() {
           <Route
             path="/admin/government-contacts"
             element={<AdminGovernmentContacts />}
+          />
+
+          {/* Households (Parivar) */}
+          <Route
+            path="/admin/households"
+            element={<AdminHouseholds />}
           />
 
         </Route>

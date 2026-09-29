@@ -1,5 +1,5 @@
-
 const mongoose = require("mongoose");
+const { getActiveVillageName } = require("../utils/villageHelper");
 
 const VillageFeature = require("../models/VillageFeature");
 const FeatureApplication = require("../models/FeatureApplication");
@@ -42,7 +42,7 @@ const getVillageFeatures = async (req, res, next) => {
       category,
       status = "active",
       search,
-      villageName = "Kakarcholi",
+      villageName,
       page = 1,
       limit = 20,
       featured,
@@ -59,9 +59,12 @@ const getVillageFeatures = async (req, res, next) => {
     );
 
     const filter = {
-      villageName,
       isPublished: true,
     };
+
+    if (villageName) {
+      filter.villageName = villageName;
+    }
 
     if (status) {
       filter.status = status;
@@ -198,8 +201,7 @@ const createVillageFeature = async (
     };
 
     if (!featureData.villageName) {
-      featureData.villageName =
-        "Kakarcholi";
+      featureData.villageName = await getActiveVillageName();
     }
 
     const feature =
@@ -527,8 +529,7 @@ const applyForFeature = async (
             : null,
 
         villageName:
-          feature.villageName ||
-          "Kakarcholi",
+          feature.villageName || (await getActiveVillageName()),
 
         villageId:
           feature.villageId || null,

@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import api from "../../services/api";
+import { useVillage } from "../../context/VillageContext";
 
 const statConfig = [
   {
     key: "population",
     icon: "👥",
     label: "Population",
-    description: "People living in Kakarcholi",
+    description: "People living in this village",
   },
   {
     key: "places",
@@ -29,34 +28,7 @@ const statConfig = [
 ];
 
 export default function VillageStats() {
-  const [village, setVillage] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadVillage = async () => {
-      try {
-        const res = await api.get("/village");
-
-        if (mounted) {
-          setVillage(res.data?.data || null);
-        }
-      } catch (error) {
-        console.error("Failed to load village statistics:", error);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadVillage();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { village, villageName, loading } = useVillage();
 
   if (loading) {
     return (
@@ -169,7 +141,7 @@ export default function VillageStats() {
                     </p>
 
                     <p className="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
-                      {stat.description}
+                      {stat.key === "population" ? `People living in ${villageName}` : stat.description}
                     </p>
                   </div>
                 </div>

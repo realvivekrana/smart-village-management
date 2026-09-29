@@ -19,6 +19,7 @@ const adminLinks = [
   { to: "/admin/reports", icon: "📈", label: "Reports", key: "sidebar.reports" },
   { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings", key: "sidebar.villageSettings" },
   { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory", key: "sidebar.villageDirectory" },
+  { to: "/admin/households", icon: "🏠", label: "Households", key: "sidebar.households" },
 ];
 
 const citizenLinks = [
@@ -29,6 +30,7 @@ const citizenLinks = [
   { to: "/citizen/certificates/request", icon: "➕", label: "Request Certificate", key: "sidebar.requestCertificate" },
   { to: "/citizen/sos", icon: "🆘", label: "Emergency SOS", key: "sidebar.emergencySos" },
   { to: "/citizen/village-services", icon: "🌾", label: "Village Services", key: "sidebar.villageServices" },
+  { to: "/citizen/household", icon: "🏠", label: "My Household", key: "sidebar.myHousehold" },
   { to: "/citizen/posts", icon: "💬", label: "My Posts", key: "sidebar.myPosts" },
   { to: "/business-owner/my-business", icon: "🏪", label: "My Business", key: "sidebar.myBusiness" },
   { to: "/business-owner/add-business", icon: "➕", label: "Add Business", key: "sidebar.addBusiness" },

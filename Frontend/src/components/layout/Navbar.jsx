@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
 import { NotificationContext } from "../../context/NotificationContext";
@@ -7,20 +7,8 @@ import { getDashboardPath } from "../../utils/permissions";
 import toast from "react-hot-toast";
 import { useLanguage } from "../../context/LanguageContext";
 import { LanguageToggle } from "../common/LanguageSwitcher";
+import { primaryNavLinks, moreNavLinks } from "../../utils/navLinks";
 
-const navLinks = [
-  { to: "/", label: "Home", key: "nav.home" },
-  { to: "/notices", label: "Notices", key: "nav.notices" },
-  { to: "/events", label: "Events", key: "nav.events" },
-  { to: "/jobs", label: "Jobs", key: "nav.jobs" },
-  { to: "/businesses", label: "Businesses", key: "nav.businesses" },
-  { to: "/services", label: "Services", key: "nav.services" },
-  { to: "/emergency", label: "Emergency", key: "nav.emergency" },
-  { to: "/government-contacts", label: "Govt. Contacts", key: "nav.govtContacts" },
-  { to: "/gallery", label: "Gallery", key: "nav.gallery" },
-  { to: "/about", label: "About Village", key: "nav.about" },
-  { to: "/contact", label: "Contact", key: "nav.contact" },
-];
 export default function Navbar({ onMenuOpen }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { unreadCount } = useContext(NotificationContext);
@@ -28,6 +16,29 @@ export default function Navbar({ onMenuOpen }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef(null);
+
+  // "More" dropdown: bahar click ya Esc dabane par band ho
+  useEffect(() => {
+    if (!moreOpen) return undefined;
+
+    const onPointerDown = (e) => {
+      if (moreRef.current && !moreRef.current.contains(e.target)) {
+        setMoreOpen(false);
+      }
+    };
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setMoreOpen(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [moreOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -46,11 +57,11 @@ export default function Navbar({ onMenuOpen }) {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {primaryNavLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === "/"}
+                end={link.end}
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive
@@ -62,6 +73,32 @@ export default function Navbar({ onMenuOpen }) {
                 {t(link.key, link.label)}
               </NavLink>
             ))}
+          
+            <div className="relative" ref={moreRef}>
+              <button
+                type="button"
+                onClick={() => setMoreOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={moreOpen}
+                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800"
+              >
+                {t("nav.more", "More")} ▾
+              </button>
+              {moreOpen && (
+                <div className="absolute left-0 mt-1 w-52 card shadow-lg z-50 py-1">
+                  {moreNavLinks.map((link) => (
+                    <NavLink
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setMoreOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      {t(link.key, link.label)}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right side */}

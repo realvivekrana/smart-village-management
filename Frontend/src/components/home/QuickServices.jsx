@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useVillage } from "../../context/VillageContext";
 
 const services = [
   {
@@ -60,7 +61,7 @@ const services = [
   {
     to: "/village-places",
     icon: "🗺️",
-    title: "Explore Kakarcholi",
+    title: "Explore {village}",
     desc: "Important places & village attractions",
     gradient: "from-indigo-500 to-violet-500",
     bg: "bg-indigo-50 dark:bg-indigo-900/20",
@@ -68,6 +69,7 @@ const services = [
 ];
 
 export default function QuickServices() {
+  const { villageName } = useVillage();
   return (
     <section className="relative overflow-hidden bg-slate-50 py-16 dark:bg-slate-950">
       {/* Background decoration */}
@@ -80,7 +82,7 @@ export default function QuickServices() {
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
             <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-            Kakarcholi Digital Services
+            {villageName} Digital Services
           </div>
 
           <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
@@ -118,7 +120,7 @@ export default function QuickServices() {
 
               {/* Title */}
               <h3 className="text-base font-bold text-slate-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 sm:text-lg">
-                {service.title}
+                {service.title.replace("{village}", villageName)}
               </h3>
 
               {/* Description */}
@@ -157,7 +159,7 @@ export default function QuickServices() {
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Built for the people and community of{" "}
             <span className="font-semibold text-slate-800 dark:text-slate-200">
-              Kakarcholi
+              {villageName}
             </span>
           </p>
         </div>

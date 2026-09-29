@@ -6,6 +6,7 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import useDebounce from "../../hooks/useDebounce";
+import { useVillage } from "../../context/VillageContext";
 
 const serviceIcons = {
   certificate: "📜",
@@ -20,6 +21,7 @@ const serviceIcons = {
 };
 
 export default function Services() {
+  const { villageName } = useVillage();
   const [filters, setFilters] = useState({
     search: "",
     category: "",
@@ -103,7 +105,7 @@ export default function Services() {
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-cyan-50 sm:text-lg">
               Explore important government and village services available
-              for the residents of Kakarcholi.
+              for the residents of {villageName}.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">

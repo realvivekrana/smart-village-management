@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const householdMemberSchema = new mongoose.Schema(
@@ -226,7 +225,7 @@ const householdSchema = new mongoose.Schema(
     villageName: {
       type: String,
       trim: true,
-      default: "Kakarcholi",
+      default: "",
       index: true,
     },
 

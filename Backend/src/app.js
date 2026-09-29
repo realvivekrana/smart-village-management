@@ -3,7 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-const rateLimit = require("express-rate-limit");
+const { apiLimiter } = require("./middleware/rateLimitMiddleware");
 
 const authRoutes = require("./routes/authRoutes");
 const governmentContactRoutes = require("./routes/governmentContactRoutes");
@@ -31,6 +31,11 @@ const householdRoutes = require("./routes/householdRoutes");
 const sosRoutes = require("./routes/sosRoutes");
 
 const app = express();
+
+// Render/Railway/Nginx ke peeche deploy karo to real client IP ke liye zaroori hai
+if (process.env.TRUST_PROXY) {
+  app.set("trust proxy", Number(process.env.TRUST_PROXY) || 1);
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -81,16 +86,7 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: "Too many requests. Please try again later.",
-  },
-});
+
 
 app.use("/api/", apiLimiter);
 

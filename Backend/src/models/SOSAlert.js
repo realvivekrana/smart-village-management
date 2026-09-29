@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const sosAlertSchema = new mongoose.Schema(
@@ -88,7 +87,7 @@ const sosAlertSchema = new mongoose.Schema(
       villageName: {
         type: String,
         trim: true,
-        default: "Kakarcholi",
+        default: "",
       },
 
       landmark: {
@@ -249,7 +248,7 @@ const sosAlertSchema = new mongoose.Schema(
     villageName: {
       type: String,
       trim: true,
-      default: "Kakarcholi",
+      default: "",
       index: true,
     },
 

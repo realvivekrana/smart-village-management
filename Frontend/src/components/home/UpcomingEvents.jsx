@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getEvents } from "../../services/eventService";
 import { formatDateRange } from "../../utils/formatDate";
+import { useVillage } from "../../context/VillageContext";
 
 export default function UpcomingEvents() {
+  const { villageName } = useVillage();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +64,7 @@ export default function UpcomingEvents() {
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400 sm:text-base">
               Stay connected with cultural, social and community events
-              happening in Kakarcholi.
+              happening in {villageName}.
             </p>
           </div>
 

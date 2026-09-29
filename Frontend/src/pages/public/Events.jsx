@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { getEvents } from "../../services/eventService";
 import { formatDateRange } from "../../utils/formatDate";
+import { useVillage } from "../../context/VillageContext";
 
 const categoryConfig = {
   cultural: {
@@ -43,6 +44,7 @@ const categoryConfig = {
 };
 
 export default function Events() {
+  const { villageName } = useVillage();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -156,7 +158,7 @@ export default function Events() {
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-              Kakarcholi Community
+              {villageName} Community
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
@@ -165,7 +167,7 @@ export default function Events() {
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-purple-100 sm:text-lg">
               Discover upcoming cultural, religious, educational, sports and
-              community events happening in Kakarcholi.
+              community events happening in {villageName}.
             </p>
           </div>
         </div>
@@ -461,7 +463,7 @@ export default function Events() {
                     {/* Footer */}
                     <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
                       <span className="text-xs text-gray-400">
-                        Kakarcholi Event
+                        {villageName} Event
                       </span>
 
                       <span className="text-sm font-semibold text-purple-600 transition-transform group-hover:translate-x-1 dark:text-purple-400">

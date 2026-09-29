@@ -1,4 +1,3 @@
-
 const express = require("express");
 
 const router = express.Router();
@@ -22,6 +21,7 @@ const {
 
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
+const { sosLimiter } = require("../middleware/rateLimitMiddleware");
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +37,7 @@ const { authorize } = require("../middleware/roleMiddleware");
 router.post(
   "/",
   protect,
+  sosLimiter,
   createSOSAlert
 );
 

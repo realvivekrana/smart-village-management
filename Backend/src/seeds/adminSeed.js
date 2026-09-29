@@ -37,8 +37,12 @@ const seed = async () => {
     ).toLowerCase();
 
     const phone = process.env.ADMIN_PHONE || "9000000000";
+    // Default password hardcode nahi hai. ADMIN_PASSWORD na do to
+    // random strong password ban ke ek baar console me dikhega.
+    const generatedPassword = !process.env.ADMIN_PASSWORD;
     const password =
-      process.env.ADMIN_PASSWORD || "Admin@1234";
+      process.env.ADMIN_PASSWORD ||
+      require("crypto").randomBytes(9).toString("base64url") + "#1";
 
     // --------------------------------------------------
     // Check Existing User
@@ -110,8 +114,12 @@ const seed = async () => {
       `   Email Verified: ${admin.isEmailVerified}`
     );
 
+    if (generatedPassword) {
+      console.log(`   Password: ${password}   (sirf abhi dikh raha hai, note kar lo)`);
+    }
+
     console.log(
-      `\n⚠️  Change the default password immediately after first login!`
+      `\n⚠️  Login ke baad password turant change karo!`
     );
 
     // --------------------------------------------------

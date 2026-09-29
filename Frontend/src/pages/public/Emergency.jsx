@@ -3,6 +3,7 @@ import { getEmergencyContacts } from "../../services/emergencyService";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import { useVillage } from "../../context/VillageContext";
 
 const fallbackContacts = [
   {
@@ -70,6 +71,7 @@ const getIcon = (category = "", name = "") => {
 };
 
 export default function Emergency() {
+  const { villageName } = useVillage();
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -118,7 +120,7 @@ export default function Emergency() {
           <div className="max-w-3xl">
 
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur">
-              🚨 Kakarcholi Emergency Services
+              🚨 {villageName} Emergency Services
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">

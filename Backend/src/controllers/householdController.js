@@ -1,5 +1,5 @@
-
 const mongoose = require("mongoose");
+const { getActiveVillageName } = require("../utils/villageHelper");
 
 const Household = require("../models/Household");
 
@@ -114,8 +114,7 @@ const upsertMyHousehold = async (
     if (
       !householdData.villageName
     ) {
-      householdData.villageName =
-        "Kakarcholi";
+      householdData.villageName = await getActiveVillageName();
     }
 
     let household;
@@ -552,7 +551,7 @@ const getAllHouseholds = async (
 ) => {
   try {
     const {
-      villageName = "Kakarcholi",
+      villageName,
       search,
       verified,
       page = 1,
@@ -573,9 +572,12 @@ const getAllHouseholds = async (
     );
 
     const filter = {
-      villageName,
       isActive: true,
     };
+
+    if (villageName) {
+      filter.villageName = villageName;
+    }
 
     if (verified !== undefined) {
       filter.isVerified =

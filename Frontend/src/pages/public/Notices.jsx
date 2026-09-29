@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { getNotices } from "../../services/noticeService";
 import { formatRelative } from "../../utils/formatDate";
+import { useVillage } from "../../context/VillageContext";
 
 const priorityConfig = {
   urgent: {
@@ -31,6 +32,7 @@ const priorityConfig = {
 };
 
 export default function Notices() {
+  const { villageName } = useVillage();
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -133,7 +135,7 @@ export default function Notices() {
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-              Kakarcholi Community Updates
+              {villageName} Community Updates
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
@@ -142,7 +144,7 @@ export default function Notices() {
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-blue-100 sm:text-lg">
               Stay informed about official announcements, important updates,
-              community information and notices from Kakarcholi.
+              community information and notices from {villageName}.
             </p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useVillage } from "../../context/VillageContext";
 
 const quickContacts = [
   {
@@ -28,6 +29,7 @@ const quickContacts = [
 ];
 
 export default function EmergencySection() {
+  const { villageName } = useVillage();
   return (
     <section className="relative overflow-hidden border-y border-red-100 bg-gradient-to-br from-red-50 via-white to-orange-50 py-16 dark:border-red-900/30 dark:from-red-950/30 dark:via-gray-900 dark:to-orange-950/20">
       {/* Decorative Background */}
@@ -48,7 +50,7 @@ export default function EmergencySection() {
             </h2>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-400 sm:text-base">
-              Important emergency numbers for residents of Kakarcholi.
+              Important emergency numbers for residents of {villageName}.
               Tap any contact to call directly.
             </p>
           </div>
