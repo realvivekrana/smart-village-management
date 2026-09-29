@@ -72,7 +72,10 @@ export default function Home() {
       {/* Critical first-screen content */}
       <Hero />
 
-      <VillageStats />
+      {/* Village Stats - Proper spacing below Hero */}
+      <div className="pt-12 sm:pt-14">
+        <VillageStats />
+      </div>
 
       <QuickServices />
 
