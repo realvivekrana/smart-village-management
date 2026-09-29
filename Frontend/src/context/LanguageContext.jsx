@@ -1,4 +1,3 @@
-
 import React, {
   createContext,
   useCallback,
@@ -7,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import extraTranslations from "./extraTranslations";
 
 /*
 |--------------------------------------------------------------------------
@@ -1935,6 +1935,33 @@ const translations = {
 };
 
 /*
+| Merge extra translations (nav, layout, sidebar, auth, complaint form...)
+| into the main dictionary. Existing keys are kept; new keys are added.
+*/
+const deepMerge = (target, source) => {
+  Object.keys(source).forEach((key) => {
+    const value = source[key];
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      target[key] = deepMerge(target[key] || {}, value);
+    } else if (target[key] === undefined) {
+      target[key] = value;
+    }
+  });
+  return target;
+};
+
+deepMerge(translations.en, extraTranslations.en);
+deepMerge(translations.hi, extraTranslations.hi);
+
+const interpolate = (text, vars) => {
+  if (typeof text !== "string" || !vars) return text;
+  return text.replace(/\{(\w+)\}/g, (match, name) =>
+    vars[name] !== undefined ? vars[name] : match
+  );
+};
+
+
+/*
 |--------------------------------------------------------------------------
 | Deep Translation Helper
 |--------------------------------------------------------------------------
@@ -2091,7 +2118,8 @@ export function LanguageProvider({
   const t = useCallback(
     (
       key,
-      fallback = ""
+      fallback = "",
+      vars
     ) => {
       const currentDictionary =
         translations[
@@ -2111,7 +2139,7 @@ export function LanguageProvider({
         value !== undefined &&
         value !== null
       ) {
-        return value;
+        return interpolate(value, vars);
       }
 
       /*
@@ -2129,15 +2157,16 @@ export function LanguageProvider({
           undefined &&
         englishValue !== null
       ) {
-        return englishValue;
+        return interpolate(englishValue, vars);
       }
 
       /*
        * Final fallback
        */
-      return (
+      return interpolate(
         fallback ||
-        key
+        key,
+        vars
       );
     },
     [language]

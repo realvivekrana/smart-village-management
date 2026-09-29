@@ -22,6 +22,10 @@ const applyForJob = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Application deadline has passed" });
     }
 
+    if (String(job.postedBy) === String(req.user._id)) {
+      return res.status(400).json({ success: false, message: "You cannot apply to your own job" });
+    }
+
     // Check duplicate
     const existing = await JobApplication.findOne({ job: job._id, applicant: req.user._id });
     if (existing) {

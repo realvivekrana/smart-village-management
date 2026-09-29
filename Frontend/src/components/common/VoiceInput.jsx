@@ -1,4 +1,3 @@
-
 import React, {
   useEffect,
   useRef,
@@ -39,12 +38,29 @@ export default function VoiceInput({
   multiline = true,
   rows = 4,
   autoFocus = false,
+  id,
+  maxLength,
+  required = false,
+  minLength,
 }) {
   const { language, t } =
     useLanguage();
 
   const recognitionRef =
     useRef(null);
+
+  /*
+   * Keep latest value/onChange in refs. The recognition handlers are
+   * created once per language, so reading props directly inside them
+   * would use a stale (usually empty) value and overwrite typed text.
+   */
+  const valueRef = useRef(value);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    valueRef.current = value;
+    onChangeRef.current = onChange;
+  });
 
   const [
     isListening,
@@ -141,16 +157,18 @@ export default function VoiceInput({
           finalText.trim()
         ) {
           const existingText =
-            value?.trim() || "";
+            valueRef.current?.trim() || "";
 
           const separator =
             existingText
               ? " "
               : "";
 
-          onChange?.(
-            `${existingText}${separator}${finalText.trim()}`
-          );
+          const nextValue =
+            `${existingText}${separator}${finalText.trim()}`;
+
+          valueRef.current = nextValue;
+          onChangeRef.current?.(nextValue);
         }
       };
 
@@ -211,19 +229,19 @@ export default function VoiceInput({
 
           case "audio-capture":
             setError(
-              "Microphone could not be accessed."
+              t("voice.micUnavailable")
             );
             break;
 
           case "network":
             setError(
-              "Network error. Please check your internet connection."
+              t("voice.networkError")
             );
             break;
 
           default:
             setError(
-              "Voice input could not be started."
+              t("voice.startFailed")
             );
         }
       };
@@ -298,7 +316,7 @@ export default function VoiceInput({
           "InvalidStateError"
         ) {
           setError(
-            "Unable to start voice input."
+            t("voice.unableToStart")
           );
         }
       }
@@ -378,9 +396,11 @@ export default function VoiceInput({
                 handleTextChange
               }
               rows={rows}
-              placeholder={
-                placeholder
-              }
+              placeholder={placeholder}
+            id={id}
+            maxLength={maxLength}
+            required={required}
+            minLength={minLength}
               autoFocus={
                 autoFocus
               }
@@ -396,9 +416,11 @@ export default function VoiceInput({
               onChange={
                 handleTextChange
               }
-              placeholder={
-                placeholder
-              }
+              placeholder={placeholder}
+            id={id}
+            maxLength={maxLength}
+            required={required}
+            minLength={minLength}
               autoFocus={
                 autoFocus
               }
@@ -437,9 +459,11 @@ export default function VoiceInput({
               handleTextChange
             }
             rows={rows}
-            placeholder={
-              placeholder
-            }
+            placeholder={placeholder}
+            id={id}
+            maxLength={maxLength}
+            required={required}
+            minLength={minLength}
             autoFocus={
               autoFocus
             }
@@ -455,9 +479,11 @@ export default function VoiceInput({
             onChange={
               handleTextChange
             }
-            placeholder={
-              placeholder
-            }
+            placeholder={placeholder}
+            id={id}
+            maxLength={maxLength}
+            required={required}
+            minLength={minLength}
             autoFocus={
               autoFocus
             }
@@ -561,8 +587,8 @@ export default function VoiceInput({
       {/* Language hint */}
       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
         {language === "hi"
-          ? "हिंदी में बोलने के लिए 🎤 बटन दबाएँ।"
-          : "Press 🎤 and speak in Hindi or English."}
+          ? t("voice.micHintHi")
+          : t("voice.micHintEn")}
       </p>
     </div>
   );

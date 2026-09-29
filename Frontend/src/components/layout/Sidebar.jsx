@@ -1,36 +1,40 @@
 import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useLanguage } from "../../context/LanguageContext";
 
 const adminLinks = [
-  { to: "/admin/dashboard", icon: "📊", label: "Dashboard" },
-  { to: "/admin/users", icon: "👥", label: "Users" },
-  { to: "/admin/complaints", icon: "📋", label: "Complaints" },
-  { to: "/admin/certificates", icon: "📜", label: "Certificates" },
-  { to: "/admin/businesses", icon: "🏪", label: "Businesses" },
-  { to: "/admin/events", icon: "📅", label: "Events" },
-  { to: "/admin/jobs", icon: "💼", label: "Jobs" },
-  { to: "/admin/notices", icon: "📢", label: "Notices" },
-  { to: "/admin/services", icon: "🔧", label: "Services" },
-  { to: "/admin/emergency", icon: "🚨", label: "Emergency" },
-  { to: "/admin/government-contacts", icon: "🏛️", label: "Government Contacts" },
-  { to: "/admin/community", icon: "💬", label: "Community" },
-  { to: "/admin/reports", icon: "📈", label: "Reports" },
-  { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings" },
-  { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory" },
+  { to: "/admin/dashboard", icon: "📊", label: "Dashboard", key: "sidebar.dashboard" },
+  { to: "/admin/users", icon: "👥", label: "Users", key: "sidebar.users" },
+  { to: "/admin/complaints", icon: "📋", label: "Complaints", key: "sidebar.complaints" },
+  { to: "/admin/certificates", icon: "📜", label: "Certificates", key: "sidebar.certificates" },
+  { to: "/admin/businesses", icon: "🏪", label: "Businesses", key: "sidebar.businesses" },
+  { to: "/admin/events", icon: "📅", label: "Events", key: "sidebar.events" },
+  { to: "/admin/jobs", icon: "💼", label: "Jobs", key: "sidebar.jobs" },
+  { to: "/admin/notices", icon: "📢", label: "Notices", key: "sidebar.notices" },
+  { to: "/admin/services", icon: "🔧", label: "Services", key: "sidebar.services" },
+  { to: "/admin/emergency", icon: "🚨", label: "Emergency", key: "sidebar.emergency" },
+  { to: "/admin/village-features", icon: "🌾", label: "Village Features", key: "sidebar.villageFeatures" },
+  { to: "/admin/government-contacts", icon: "🏛️", label: "Government Contacts", key: "sidebar.governmentContacts" },
+  { to: "/admin/community", icon: "💬", label: "Community", key: "sidebar.community" },
+  { to: "/admin/reports", icon: "📈", label: "Reports", key: "sidebar.reports" },
+  { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings", key: "sidebar.villageSettings" },
+  { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory", key: "sidebar.villageDirectory" },
 ];
 
 const citizenLinks = [
-  { to: "/citizen/dashboard", icon: "📊", label: "Dashboard" },
-  { to: "/citizen/complaints", icon: "📋", label: "My Complaints" },
-  { to: "/citizen/complaints/create", icon: "➕", label: "File Complaint" },
-  { to: "/citizen/certificates", icon: "📜", label: "My Certificates" },
-  { to: "/citizen/certificates/request", icon: "➕", label: "Request Certificate" },
-  { to: "/citizen/posts", icon: "💬", label: "My Posts" },
-  { to: "/business-owner/my-business", icon: "🏪", label: "My Business" },
-  { to: "/business-owner/add-business", icon: "➕", label: "Add Business" },
-  { to: "/business-owner/my-jobs", icon: "💼", label: "My Jobs" },
-  { to: "/citizen/notifications", icon: "🔔", label: "Notifications" },
-  { to: "/citizen/profile", icon: "👤", label: "Profile" },
+  { to: "/citizen/dashboard", icon: "📊", label: "Dashboard", key: "sidebar.dashboard" },
+  { to: "/citizen/complaints", icon: "📋", label: "My Complaints", key: "sidebar.myComplaints" },
+  { to: "/citizen/complaints/create", icon: "➕", label: "File Complaint", key: "sidebar.fileComplaint" },
+  { to: "/citizen/certificates", icon: "📜", label: "My Certificates", key: "sidebar.myCertificates" },
+  { to: "/citizen/certificates/request", icon: "➕", label: "Request Certificate", key: "sidebar.requestCertificate" },
+  { to: "/citizen/sos", icon: "🆘", label: "Emergency SOS", key: "sidebar.emergencySos" },
+  { to: "/citizen/village-services", icon: "🌾", label: "Village Services", key: "sidebar.villageServices" },
+  { to: "/citizen/posts", icon: "💬", label: "My Posts", key: "sidebar.myPosts" },
+  { to: "/business-owner/my-business", icon: "🏪", label: "My Business", key: "sidebar.myBusiness" },
+  { to: "/business-owner/add-business", icon: "➕", label: "Add Business", key: "sidebar.addBusiness" },
+  { to: "/business-owner/my-jobs", icon: "💼", label: "My Jobs", key: "sidebar.myJobs" },
+  { to: "/citizen/notifications", icon: "🔔", label: "Notifications", key: "sidebar.notifications" },
+  { to: "/citizen/profile", icon: "👤", label: "Profile", key: "sidebar.profile" },
 ];
 
 function getLinks(role) {
@@ -40,13 +44,14 @@ function getLinks(role) {
 
 export default function Sidebar({ onClose }) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const links = getLinks(user?.role);
 
   return (
     <aside className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-64">
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
-        <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ Kakarcholi</span>
+        <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ {t("layout.brand")}</span>
         {onClose && (
           <button onClick={onClose} className="lg:hidden p-1 text-gray-400 hover:text-gray-600">✕</button>
         )}
@@ -60,7 +65,7 @@ export default function Sidebar({ onClose }) {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user?.name}</p>
-            <p className="text-xs text-gray-500 capitalize">{user?.role?.replace("_", " ")}</p>
+            <p className="text-xs text-gray-500 capitalize">{t(`roles.${user?.role}`, user?.role?.replace("_", " "))}</p>
           </div>
         </div>
       </div>
@@ -81,7 +86,7 @@ export default function Sidebar({ onClose }) {
             }
           >
             <span className="text-base">{link.icon}</span>
-            <span>{link.label}</span>
+            <span>{t(link.key, link.label)}</span>
           </NavLink>
         ))}
       </nav>
@@ -92,7 +97,7 @@ export default function Sidebar({ onClose }) {
           href="/"
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400"
         >
-          ← Back to Site
+          {t("layout.backToSite")}
         </a>
       </div>
     </aside>

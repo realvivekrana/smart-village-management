@@ -1,31 +1,33 @@
 import { Link } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 const quickLinks = [
-  { to: "/", label: "Home", icon: "🏠" },
-  { to: "/about", label: "About Kakarcholi", icon: "🏘️" },
-  { to: "/notices", label: "Notices", icon: "📢" },
-  { to: "/events", label: "Events", icon: "📅" },
-  { to: "/gallery", label: "Village Gallery", icon: "🖼️" },
+  { to: "/", label: "Home", key: "nav.home", icon: "🏠" },
+  { to: "/about", label: "About Kakarcholi", key: "footer.aboutKakarcholi", icon: "🏘️" },
+  { to: "/notices", label: "Notices", key: "nav.notices", icon: "📢" },
+  { to: "/events", label: "Events", key: "nav.events", icon: "📅" },
+  { to: "/gallery", label: "Village Gallery", key: "footer.villageGallery", icon: "🖼️" },
 ];
 
 const services = [
-  { to: "/businesses", label: "Local Businesses", icon: "🏪" },
-  { to: "/jobs", label: "Jobs & Opportunities", icon: "💼" },
-  { to: "/services", label: "Government Services", icon: "🏛️" },
-  { to: "/emergency", label: "Emergency Contacts", icon: "🚨" },
-  { to: "/government-contacts", label: "Government Contacts", icon: "📇" },
+  { to: "/businesses", label: "Local Businesses", key: "footer.localBusinesses", icon: "🏪" },
+  { to: "/jobs", label: "Jobs & Opportunities", key: "footer.jobsOpportunities", icon: "💼" },
+  { to: "/services", label: "Government Services", key: "footer.governmentServices", icon: "🏛️" },
+  { to: "/emergency", label: "Emergency Contacts", key: "footer.emergencyContacts", icon: "🚨" },
+  { to: "/government-contacts", label: "Government Contacts", key: "footer.governmentContacts", icon: "📇" },
 ];
 
 const communityLinks = [
-  { to: "/register", label: "Join the Community", icon: "👥" },
-  { to: "/login", label: "Citizen Login", icon: "🔐" },
-  { to: "/citizen/complaints/create", label: "File a Complaint", icon: "📝" },
-  { to: "/village-places", label: "Explore Village", icon: "📍" },
-  { to: "/contact", label: "Contact Us", icon: "✉️" },
+  { to: "/register", label: "Join the Community", key: "footer.joinCommunity", icon: "👥" },
+  { to: "/login", label: "Citizen Login", key: "footer.citizenLogin", icon: "🔐" },
+  { to: "/citizen/complaints/create", label: "File a Complaint", key: "footer.fileComplaint", icon: "📝" },
+  { to: "/village-places", label: "Explore Village", key: "footer.exploreVillage", icon: "📍" },
+  { to: "/contact", label: "Contact Us", key: "footer.contactUs", icon: "✉️" },
 ];
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { t } = useLanguage();
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-slate-950 text-gray-300">
@@ -116,7 +118,7 @@ export default function Footer() {
                     tracking-tight
                     text-white
                   ">
-                    Kakarcholi
+                    {t("layout.brand")}
                   </h3>
 
                   <p className="
@@ -126,7 +128,7 @@ export default function Footer() {
                     tracking-[0.18em]
                     text-primary-400
                   ">
-                    Village Connect
+                    {t("footer.villageConnect")}
                   </p>
                 </div>
               </Link>
@@ -138,9 +140,7 @@ export default function Footer() {
                 leading-7
                 text-gray-400
               ">
-                A digital platform connecting the people of Kakarcholi
-                with village information, local services, community
-                updates, businesses, jobs and important public resources.
+                {t("footer.tagline")}
               </p>
 
               {/* Location */}
@@ -171,11 +171,11 @@ export default function Footer() {
 
                 <div>
                   <p className="text-sm font-semibold text-white">
-                    Kakarcholi
+                    {t("layout.brand")}
                   </p>
 
                   <p className="mt-1 text-xs leading-5 text-gray-500">
-                    A connected village community
+                    {t("footer.connectedVillage")}
                   </p>
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default function Footer() {
 
                   <div>
                     <p className="text-xs text-gray-500">
-                      Emergency Helpline
+                      {t("footer.emergencyHelpline")}
                     </p>
 
                     <p className="
@@ -243,19 +243,19 @@ export default function Footer() {
 
             {/* Quick Links */}
             <FooterColumn
-              title="Explore"
+              title={t("footer.explore")}
               links={quickLinks}
             />
 
             {/* Services */}
             <FooterColumn
-              title="Services"
+              title={t("nav.services")}
               links={services}
             />
 
             {/* Community */}
             <FooterColumn
-              title="Community"
+              title={t("sidebar.community")}
               links={communityLinks}
             />
           </div>
@@ -284,9 +284,9 @@ export default function Footer() {
               ">
                 © {year}{" "}
                 <span className="font-semibold text-gray-400">
-                  Kakarcholi Village Connect
+                  {t("layout.brand")} {t("footer.villageConnect")}
                 </span>
-                . All rights reserved.
+                . {t("footer.rights")}
               </p>
 
               <p className="
@@ -294,7 +294,7 @@ export default function Footer() {
                 text-xs
                 text-gray-600
               ">
-                Built to connect, inform and empower the village community.
+                {t("footer.builtFor")}
               </p>
             </div>
 
@@ -315,7 +315,7 @@ export default function Footer() {
                   transition-colors
                 "
               >
-                Home
+                {t("nav.home")}
               </Link>
 
               <Link
@@ -326,7 +326,7 @@ export default function Footer() {
                   transition-colors
                 "
               >
-                About
+                {t("footer.about")}
               </Link>
 
               <Link
@@ -337,7 +337,7 @@ export default function Footer() {
                   transition-colors
                 "
               >
-                Notices
+                {t("nav.notices")}
               </Link>
 
               <Link
@@ -348,7 +348,7 @@ export default function Footer() {
                   transition-colors
                 "
               >
-                Emergency
+                {t("nav.emergency")}
               </Link>
             </div>
           </div>
@@ -361,6 +361,7 @@ export default function Footer() {
 
 /* Reusable footer column */
 function FooterColumn({ title, links }) {
+  const { t } = useLanguage();
   return (
     <div className="lg:col-span-2">
 
@@ -402,7 +403,7 @@ function FooterColumn({ title, links }) {
               </span>
 
               <span>
-                {link.label}
+                {t(link.key, link.label)}
               </span>
             </Link>
           </li>

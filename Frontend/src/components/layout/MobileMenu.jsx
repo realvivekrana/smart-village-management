@@ -1,22 +1,25 @@
 import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useLanguage } from "../../context/LanguageContext";
+import LanguageSwitcher from "../common/LanguageSwitcher";
 
 const links = [
-  { to: "/", label: "Home", end: true },
-  { to: "/notices", label: "Notices" },
-  { to: "/events", label: "Events" },
-  { to: "/jobs", label: "Jobs" },
-  { to: "/businesses", label: "Businesses" },
-  { to: "/services", label: "Services" },
-  { to: "/emergency", label: "Emergency" },
-  { to: "/government-contacts", label: "Govt. Contacts" },
-  { to: "/gallery", label: "Gallery" },
-  { to: "/about", label: "About Village" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", label: "Home", key: "nav.home", end: true },
+  { to: "/notices", label: "Notices", key: "nav.notices" },
+  { to: "/events", label: "Events", key: "nav.events" },
+  { to: "/jobs", label: "Jobs", key: "nav.jobs" },
+  { to: "/businesses", label: "Businesses", key: "nav.businesses" },
+  { to: "/services", label: "Services", key: "nav.services" },
+  { to: "/emergency", label: "Emergency", key: "nav.emergency" },
+  { to: "/government-contacts", label: "Govt. Contacts", key: "nav.govtContacts" },
+  { to: "/gallery", label: "Gallery", key: "nav.gallery" },
+  { to: "/about", label: "About Village", key: "nav.about" },
+  { to: "/contact", label: "Contact", key: "nav.contact" },
 ];
 
 export default function MobileMenu({ isOpen, onClose }) {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   if (!isOpen) return null;
 
@@ -25,8 +28,12 @@ export default function MobileMenu({ isOpen, onClose }) {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <nav className="absolute top-0 left-0 bottom-0 w-72 bg-white dark:bg-gray-900 shadow-xl overflow-y-auto">
         <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
-          <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ Kakarcholi</span>
+          <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ {t("layout.brand")}</span>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 text-xl">✕</button>
+        </div>
+
+        <div className="px-4 pt-3">
+          <LanguageSwitcher className="w-full justify-center" />
         </div>
 
         <div className="py-3 px-2">
@@ -44,7 +51,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                 }`
               }
             >
-              {link.label}
+              {t(link.key, link.label)}
             </NavLink>
           ))}
         </div>
@@ -57,20 +64,20 @@ export default function MobileMenu({ isOpen, onClose }) {
               </div>
               <div>
                 <p className="font-semibold text-sm text-gray-900 dark:text-white">{user.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{user.role?.replace("_", " ")}</p>
+                <p className="text-xs text-gray-500 capitalize">{t(`roles.${user.role}`, user.role?.replace("_", " "))}</p>
               </div>
             </div>
             <button
               onClick={() => { logout(); onClose(); }}
               className="w-full btn-danger text-sm"
             >
-              Logout
+              {t("layout.logout")}
             </button>
           </div>
         ) : (
           <div className="border-t border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-2">
-            <NavLink to="/login" onClick={onClose} className="btn-secondary text-sm text-center">Login</NavLink>
-            <NavLink to="/register" onClick={onClose} className="btn-primary text-sm text-center">Register</NavLink>
+            <NavLink to="/login" onClick={onClose} className="btn-secondary text-sm text-center">{t("layout.login")}</NavLink>
+            <NavLink to="/register" onClick={onClose} className="btn-primary text-sm text-center">{t("layout.register")}</NavLink>
           </div>
         )}
       </nav>

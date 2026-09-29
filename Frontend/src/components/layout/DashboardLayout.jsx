@@ -8,17 +8,20 @@ import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useLanguage } from "../../context/LanguageContext";
+import { LanguageToggle } from "../common/LanguageSwitcher";
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { unreadCount } = useContext(NotificationContext);
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
-    toast.success("Logged out");
+    toast.success(t("layout.loggedOut"));
     navigate("/login");
   };
 
@@ -50,8 +53,10 @@ export default function DashboardLayout() {
             ☰
           </button>
           <div className="flex items-center gap-2 ml-auto">
+            <LanguageToggle />
             <button
               onClick={toggleTheme}
+              aria-label={t("layout.toggleTheme")}
               className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               {theme === "dark" ? "☀️" : "🌙"}
@@ -71,7 +76,7 @@ export default function DashboardLayout() {
               onClick={handleLogout}
               className="text-sm text-gray-500 hover:text-red-500 px-2 py-1"
             >
-              Logout
+              {t("layout.logout")}
             </button>
           </div>
         </header>

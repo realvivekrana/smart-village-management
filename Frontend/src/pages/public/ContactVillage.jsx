@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import VoiceInput from "../../components/common/VoiceInput";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
@@ -423,15 +424,15 @@ const ContactVillage = () => {
                   Message <span className="text-red-500">*</span>
                 </label>
 
-                <textarea
-                  name="message"
+                <VoiceInput
                   value={form.message}
-                  onChange={handleChange}
+                  onChange={(text) =>
+                    setForm((previous) => ({ ...previous, message: text }))
+                  }
                   rows={7}
                   required
                   minLength={5}
                   placeholder="Write your message, suggestion, or concern..."
-                  className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
                 />
 
                 <div className="mt-2 flex justify-end text-xs text-slate-400">

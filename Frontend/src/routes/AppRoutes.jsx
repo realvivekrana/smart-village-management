@@ -140,6 +140,18 @@ const MyCertificates = lazy(
   () => import("../pages/citizen/MyCertificates")
 );
 
+const EmergencySOS = lazy(
+  () => import("../pages/public/EmergencySOS")
+);
+
+const VillageServices = lazy(
+  () => import("../pages/citizen/VillageServices")
+);
+
+const AdminVillageFeatures = lazy(
+  () => import("../pages/admin/VillageFeatures")
+);
+
 const MyPosts = lazy(
   () => import("../pages/citizen/MyPosts")
 );
@@ -440,6 +452,18 @@ export default function AppRoutes() {
             element={<RequestCertificate />}
           />
 
+          {/* Emergency SOS */}
+          <Route
+            path="/citizen/sos"
+            element={<EmergencySOS />}
+          />
+
+          {/* Village Services (schemes, farmer, health, etc.) */}
+          <Route
+            path="/citizen/village-services"
+            element={<VillageServices />}
+          />
+
           {/* My Posts */}
           <Route
             path="/citizen/posts"
@@ -560,6 +584,12 @@ export default function AppRoutes() {
           <Route
             path="/admin/services"
             element={<AdminServices />}
+          />
+
+          {/* Village Features */}
+          <Route
+            path="/admin/village-features"
+            element={<AdminVillageFeatures />}
           />
 
           {/* Emergency Contacts */}

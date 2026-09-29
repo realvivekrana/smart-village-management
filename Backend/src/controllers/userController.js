@@ -317,6 +317,13 @@ const toggleUserActive = async (
   next
 ) => {
   try {
+    if (req.params.id === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot change your own status or role",
+      });
+    }
+
     const user =
       await User.findById(
         req.params.id
@@ -361,6 +368,13 @@ const updateUserRole = async (
   next
 ) => {
   try {
+    if (req.params.id === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot change your own status or role",
+      });
+    }
+
     const { role } = req.body;
 
     const validRoles = [

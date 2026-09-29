@@ -5,30 +5,33 @@ import { NotificationContext } from "../../context/NotificationContext";
 import useAuth from "../../hooks/useAuth";
 import { getDashboardPath } from "../../utils/permissions";
 import toast from "react-hot-toast";
+import { useLanguage } from "../../context/LanguageContext";
+import { LanguageToggle } from "../common/LanguageSwitcher";
 
 const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/notices", label: "Notices" },
-  { to: "/events", label: "Events" },
-  { to: "/jobs", label: "Jobs" },
-  { to: "/businesses", label: "Businesses" },
-  { to: "/services", label: "Services" },
-  { to: "/emergency", label: "Emergency" },
-  { to: "/government-contacts", label: "Govt. Contacts" },
-  { to: "/gallery", label: "Gallery" },
-  { to: "/about", label: "About Village" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", label: "Home", key: "nav.home" },
+  { to: "/notices", label: "Notices", key: "nav.notices" },
+  { to: "/events", label: "Events", key: "nav.events" },
+  { to: "/jobs", label: "Jobs", key: "nav.jobs" },
+  { to: "/businesses", label: "Businesses", key: "nav.businesses" },
+  { to: "/services", label: "Services", key: "nav.services" },
+  { to: "/emergency", label: "Emergency", key: "nav.emergency" },
+  { to: "/government-contacts", label: "Govt. Contacts", key: "nav.govtContacts" },
+  { to: "/gallery", label: "Gallery", key: "nav.gallery" },
+  { to: "/about", label: "About Village", key: "nav.about" },
+  { to: "/contact", label: "Contact", key: "nav.contact" },
 ];
 export default function Navbar({ onMenuOpen }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { unreadCount } = useContext(NotificationContext);
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
-    toast.success("Logged out successfully");
+    toast.success(t("layout.loggedOut"));
     navigate("/login");
   };
 
@@ -38,7 +41,7 @@ export default function Navbar({ onMenuOpen }) {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-primary-700 dark:text-primary-400 text-lg">
-            🏘️ <span className="hidden sm:block">Kakarcholi</span>
+            🏘️ <span className="hidden sm:block">{t("layout.brand")}</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -56,18 +59,21 @@ export default function Navbar({ onMenuOpen }) {
                   }`
                 }
               >
-                {link.label}
+                {t(link.key, link.label)}
               </NavLink>
             ))}
           </nav>
 
           {/* Right side */}
           <div className="flex items-center gap-2">
+            {/* Language Toggle */}
+            <LanguageToggle />
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
-              aria-label="Toggle theme"
+              aria-label={t("layout.toggleTheme")}
             >
               {theme === "dark" ? "☀️" : "🌙"}
             </button>
@@ -105,27 +111,27 @@ export default function Navbar({ onMenuOpen }) {
                     <div className="absolute right-0 mt-2 w-52 card shadow-lg z-50 py-1">
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{user.role.replace("_", " ")}</p>
+                        <p className="text-xs text-gray-500 capitalize">{t(`roles.${user.role}`, user.role.replace("_", " "))}</p>
                       </div>
                       <Link
                         to={getDashboardPath(user)}
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                         onClick={() => setProfileOpen(false)}
                       >
-                        Dashboard
+                        {t("layout.dashboard")}
                       </Link>
                       <Link
                         to="/citizen/profile"
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                         onClick={() => setProfileOpen(false)}
                       >
-                        Profile
+                        {t("layout.profile")}
                       </Link>
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
-                        Logout
+                        {t("layout.logout")}
                       </button>
                     </div>
                   )}
@@ -133,8 +139,8 @@ export default function Navbar({ onMenuOpen }) {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/login" className="btn-secondary text-sm px-3 py-1.5">Login</Link>
-                <Link to="/register" className="btn-primary text-sm px-3 py-1.5">Register</Link>
+                <Link to="/login" className="btn-secondary text-sm px-3 py-1.5">{t("layout.login")}</Link>
+                <Link to="/register" className="btn-primary text-sm px-3 py-1.5">{t("layout.register")}</Link>
               </div>
             )}
 
@@ -142,7 +148,7 @@ export default function Navbar({ onMenuOpen }) {
             <button
               onClick={onMenuOpen}
               className="lg:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
-              aria-label="Open menu"
+              aria-label={t("layout.openMenu")}
             >
               ☰
             </button>

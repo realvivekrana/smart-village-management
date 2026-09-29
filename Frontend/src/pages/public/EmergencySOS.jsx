@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   AlertTriangle,
@@ -17,6 +16,8 @@ import {
 import {
   createSOSAlert,
 } from "../../services/sosService";
+import VoiceInput from "../../components/common/VoiceInput";
+import { useLanguage } from "../../context/LanguageContext";
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,7 @@ const EMERGENCY_NUMBERS = {
 */
 
 export default function EmergencySOS() {
+  const { t } = useLanguage();
   const [location, setLocation] =
     useState(null);
 
@@ -205,7 +207,7 @@ export default function EmergencySOS() {
       const payload = {
         message:
           message.trim() ||
-          "Emergency SOS alert from village citizen.",
+          t("sos.defaultMessage"),
 
         latitude:
           currentLocation?.latitude ||
@@ -653,18 +655,14 @@ export default function EmergencySOS() {
               </span>
             </label>
 
-            <textarea
+            <VoiceInput
               id="sos-message"
               value={message}
-              onChange={(event) =>
-                setMessage(
-                  event.target.value
-                )
-              }
+              onChange={setMessage}
               maxLength={500}
               rows={4}
-              placeholder="Emergency ke baare mein short information likhein..."
-              className="mt-2 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
+              placeholder={t("sos.messagePlaceholder")}
+              className="mt-2"
             />
 
             <div className="mt-1 text-right text-xs text-gray-400">

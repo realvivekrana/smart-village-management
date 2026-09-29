@@ -1,4 +1,5 @@
 import { useState } from "react";
+import VoiceInput from "../../components/common/VoiceInput";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { createCertificate } from "../../services/certificateService";
@@ -65,7 +66,7 @@ export default function RequestCertificate() {
         </div>
         <div>
           <label className="label">Purpose (kis kaam ke liye chahiye)</label>
-          <textarea name="purpose" value={form.purpose} onChange={onChange} className="input" rows={3} required minLength={10} maxLength={500} />
+          <VoiceInput value={form.purpose} onChange={(text) => setForm((f) => ({ ...f, purpose: text }))} rows={3} required minLength={10} maxLength={500} />
         </div>
         <div>
           <label className="label">Supporting documents (max 3 images, optional)</label>

@@ -1,4 +1,3 @@
-
 /*
 |--------------------------------------------------------------------------
 | Village Feature Service
@@ -8,75 +7,7 @@
 |--------------------------------------------------------------------------
 */
 
-import axios from "axios";
-
-/*
-|--------------------------------------------------------------------------
-| API Base URL
-|--------------------------------------------------------------------------
-|
-| Existing project mein agar axios instance already bana hua hai,
-| to usko use karna better hoga.
-|
-| VITE_API_URL example:
-|
-| VITE_API_URL=http://localhost:5000/api/v1
-|
-|--------------------------------------------------------------------------
-*/
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api/v1";
-
-/*
-|--------------------------------------------------------------------------
-| Axios Client
-|--------------------------------------------------------------------------
-*/
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type":
-      "application/json",
-  },
-  timeout: 15000,
-});
-
-/*
-|--------------------------------------------------------------------------
-| Add Authentication Token
-|--------------------------------------------------------------------------
-|
-| Existing localStorage keys ko support karne ke liye
-| multiple common keys check kiye gaye hain.
-|--------------------------------------------------------------------------
-*/
-
-api.interceptors.request.use(
-  (config) => {
-    const token =
-      localStorage.getItem(
-        "token"
-      ) ||
-      localStorage.getItem(
-        "accessToken"
-      ) ||
-      localStorage.getItem(
-        "authToken"
-      );
-
-    if (token) {
-      config.headers.Authorization =
-        `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) =>
-    Promise.reject(error)
-);
+import api from "./api";
 
 /*
 |--------------------------------------------------------------------------
@@ -180,6 +111,18 @@ async function put(
 | Generic DELETE
 |--------------------------------------------------------------------------
 */
+
+async function patch(
+  endpoint,
+  data = {}
+) {
+  try {
+    const response = await api.patch(endpoint, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+}
 
 async function remove(
   endpoint
@@ -644,11 +587,8 @@ export async function applyForFeature(
   }
 
   return post(
-    "/feature-applications",
-    {
-      featureId,
-      ...applicationData,
-    }
+    `/village-features/${featureId}/apply`,
+    applicationData
   );
 }
 
@@ -662,7 +602,7 @@ export async function getMyFeatureApplications(
   params = {}
 ) {
   return get(
-    "/feature-applications/my",
+    "/village-features/applications/mine",
     params
   );
 }
@@ -683,7 +623,7 @@ export async function getFeatureApplicationById(
   }
 
   return get(
-    `/feature-applications/${id}`
+    `/village-features/applications/track/${id}`
   );
 }
 
@@ -702,8 +642,9 @@ export async function cancelFeatureApplication(
     );
   }
 
-  return put(
-    `/feature-applications/${id}/cancel`
+  // Backend has no citizen-side cancel endpoint; only admins can delete.
+  throw new Error(
+    "Cancelling an application is not supported. Please contact the Gram Panchayat."
   );
 }
 
@@ -717,7 +658,7 @@ export async function getAllFeatureApplications(
   params = {}
 ) {
   return get(
-    "/feature-applications",
+    "/village-features/admin/applications",
     params
   );
 }
@@ -732,8 +673,8 @@ export async function updateFeatureApplicationStatus(
     );
   }
 
-  return put(
-    `/feature-applications/${id}/status`,
+  return patch(
+    `/village-features/admin/applications/${id}`,
     statusData
   );
 }

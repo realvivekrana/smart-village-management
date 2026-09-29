@@ -3,9 +3,12 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { getDashboardPath } from "../../utils/permissions";
 import toast from "react-hot-toast";
+import { useLanguage } from "../../context/LanguageContext";
+import { LanguageToggle } from "../../components/common/LanguageSwitcher";
 
 export default function Login() {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || null;
@@ -21,10 +24,10 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(form.email, form.password);
-      toast.success(`Welcome back, ${user.name}!`);
+      toast.success(t("auth.welcomeBack", "", { name: user.name }));
       navigate(from || getDashboardPath(user), { replace: true });
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || t("auth.loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -32,17 +35,20 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="absolute right-4 top-4">
+        <LanguageToggle />
+      </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="text-4xl">🏘️</Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">Kakarcholi</h1>
-          <p className="text-gray-500 text-sm mt-1">Sign in to your account</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{t("layout.brand")}</h1>
+          <p className="text-gray-500 text-sm mt-1">{t("auth.signInSubtitle")}</p>
         </div>
 
         <div className="card p-8 shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-group">
-              <label className="label">Email Address</label>
+              <label className="label">{t("auth.emailAddress")}</label>
               <input
                 type="email"
                 className="input"
@@ -55,7 +61,7 @@ export default function Login() {
             </div>
 
             <div className="form-group">
-              <label className="label">Password</label>
+              <label className="label">{t("auth.password")}</label>
               <div className="relative">
                 <input
                   type={showPwd ? "text" : "password"}
@@ -70,14 +76,14 @@ export default function Login() {
                   onClick={() => setShowPwd((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm"
                 >
-                  {showPwd ? "Hide" : "Show"}
+                  {showPwd ? t("auth.hide") : t("auth.show")}
                 </button>
               </div>
             </div>
 
             <div className="flex justify-end">
               <Link to="/forgot-password" className="text-sm text-primary-600 hover:underline">
-                Forgot password?
+                {t("auth.forgotPassword")}
               </Link>
             </div>
 
@@ -86,14 +92,14 @@ export default function Login() {
               disabled={loading}
               className="btn-primary w-full py-2.5 text-base"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? t("auth.signingIn") : t("auth.signIn")}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-6">
-            Don&apos;t have an account?{" "}
+            {t("auth.noAccount")}{" "}
             <Link to="/register" className="text-primary-600 font-medium hover:underline">
-              Register here
+              {t("auth.registerHere")}
             </Link>
           </p>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Button from "../common/Button";
+import VoiceInput from "../common/VoiceInput";
 import { COMMUNITY_CATEGORIES } from "../../utils/constants";
 
 export default function PostForm({ onSubmit, loading, onCancel, initial }) {
@@ -24,11 +25,11 @@ export default function PostForm({ onSubmit, loading, onCancel, initial }) {
 
   return (
     <form onSubmit={handleSubmit} className="card p-5 space-y-3">
-      <textarea
-        className="input min-h-[100px] resize-none"
-        placeholder="Share something with your community..."
+      <VoiceInput
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={setContent}
+        placeholder="Share something with your community..."
+        rows={4}
         required
         minLength={5}
         maxLength={2000}
