@@ -39,8 +39,8 @@ const QUICK_ITEMS = [
   { to: "/citizen/village-services?category=health-camp", icon: "🩺", key: "quick.health", fb: "Health Camp & Teeka" },
   { to: "/citizen/village-services?category=bill-tax", icon: "🧾", key: "quick.bills", fb: "Kar aur Bill" },
   { to: "/citizen/village-services?category=transport", icon: "🚌", key: "quick.transport", fb: "Bus / Gaadi Time" },
-  { to: "/notices", icon: "📢", key: "quick.notices", fb: "Suchnayein" },
-  { to: "/events", icon: "📅", key: "quick.events", fb: "Karyakram" },
+  { to: "/citizen/notices", icon: "📢", key: "quick.notices", fb: "Suchnayein" },
+  { to: "/citizen/events", icon: "📅", key: "quick.events", fb: "Karyakram" },
   { to: "/jobs", icon: "💼", key: "quick.jobs", fb: "Rozgar" },
   { to: "/businesses", icon: "🏪", key: "quick.businesses", fb: "Gaon ki Dukaanein" },
   { to: "/government-contacts", icon: "📞", key: "quick.govtContacts", fb: "Sarkari Sampark" },
@@ -179,7 +179,7 @@ export const NoticesWidget = ({ notices = [] }) => {
   return (
     <SectionCard
       title={`📢 ${t("citizenDash.noticesTitle", "Taaza Suchnayein")}`}
-      action={<ViewAll to="/notices" label={t("citizenDash.viewAll", "Sab dekhein")} />}
+      action={<ViewAll to="/citizen/notices" label={t("citizenDash.viewAll", "Sab dekhein")} />}
     >
       {notices.length === 0 ? (
         <Empty text={t("citizenDash.noNotices", "Koi nayi suchna nahi hai.")} />
@@ -187,7 +187,7 @@ export const NoticesWidget = ({ notices = [] }) => {
         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
           {notices.map((n) => (
             <li key={n._id}>
-              <Link to={`/notices/${n._id}`} className="flex items-start justify-between gap-3 py-2.5 hover:opacity-80">
+              <Link to={`/citizen/notices/${n._id}`} className="flex items-start justify-between gap-3 py-2.5 hover:opacity-80">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{n.title}</p>
                   <p className="text-xs text-gray-500">{formatDate(n.publishedAt)}</p>
@@ -213,7 +213,7 @@ export const EventsWidget = ({ events = [] }) => {
   return (
     <SectionCard
       title={`📅 ${t("citizenDash.eventsTitle", "Aane wale Karyakram")}`}
-      action={<ViewAll to="/events" label={t("citizenDash.viewAll", "Sab dekhein")} />}
+      action={<ViewAll to="/citizen/events" label={t("citizenDash.viewAll", "Sab dekhein")} />}
     >
       {events.length === 0 ? (
         <Empty text={t("citizenDash.noEvents", "Abhi koi karyakram tay nahi hai.")} />
@@ -221,7 +221,7 @@ export const EventsWidget = ({ events = [] }) => {
         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
           {events.map((e) => (
             <li key={e._id}>
-              <Link to={`/events/${e._id}`} className="block py-2.5 hover:opacity-80">
+              <Link to={`/citizen/events/${e._id}`} className="block py-2.5 hover:opacity-80">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{e.title}</p>
                 <p className="text-xs text-gray-500">
                   {formatDate(e.startDate)}

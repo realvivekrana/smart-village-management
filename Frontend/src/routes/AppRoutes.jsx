@@ -483,6 +483,28 @@ export default function AppRoutes() {
             element={<MyComplaints />}
           />
 
+          {/* Notices */}
+          <Route
+            path="/citizen/notices"
+            element={<Notices />}
+          />
+
+          <Route
+            path="/citizen/notices/:id"
+            element={<NoticeDetails />}
+          />
+
+          {/* Events */}
+          <Route
+            path="/citizen/events"
+            element={<Events />}
+          />
+
+          <Route
+            path="/citizen/events/:id"
+            element={<EventDetails />}
+          />
+
           {/* Emergency SOS */}
           <Route
             path="/citizen/sos"

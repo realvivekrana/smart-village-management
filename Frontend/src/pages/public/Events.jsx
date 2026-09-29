@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getEvents } from "../../services/eventService";
 import { formatDateRange } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
@@ -44,6 +44,7 @@ const categoryConfig = {
 };
 
 export default function Events() {
+  const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
   const { villageName } = useVillage();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -376,7 +377,7 @@ export default function Events() {
               return (
                 <Link
                   key={event._id}
-                  to={`/events/${event._id}`}
+                  to={`${base}/events/${event._id}`}
                   className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-900/5 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-purple-800"
                 >
                   {/* Image */}

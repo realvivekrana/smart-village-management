@@ -26,6 +26,8 @@ const citizenLinks = [
   { to: "/citizen/dashboard", icon: "📊", label: "Dashboard", key: "sidebar.dashboard" },
   { to: "/citizen/complaints", icon: "📋", label: "My Complaints", key: "sidebar.myComplaints" },
   { to: "/citizen/complaints/create", icon: "➕", label: "File Complaint", key: "sidebar.fileComplaint" },
+  { to: "/citizen/notices", icon: "📢", label: "Notices", key: "sidebar.notices" },
+  { to: "/citizen/events", icon: "📅", label: "Events", key: "sidebar.events" },
   { to: "/citizen/sos", icon: "🆘", label: "Emergency SOS", key: "sidebar.emergencySos" },
   { to: "/citizen/village-services", icon: "🌾", label: "Village Services", key: "sidebar.villageServices" },
   { to: "/citizen/applications", icon: "📝", label: "My Yojana Applications", key: "sidebar.myApplications" },

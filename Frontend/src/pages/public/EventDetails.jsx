@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   getEventById,
@@ -12,6 +12,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import { useVillage } from "../../context/VillageContext";
 
 export default function EventDetails() {
+  const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
   const { villageName } = useVillage();
   const { id } = useParams();
 
@@ -86,7 +87,7 @@ export default function EventDetails() {
 
             <div className="text-center mt-6">
               <Link
-                to="/events"
+                to={`${base}/events`}
                 className="
                   inline-flex items-center gap-2
                   rounded-xl
@@ -125,7 +126,7 @@ export default function EventDetails() {
           </p>
 
           <Link
-            to="/events"
+            to={`${base}/events`}
             className="
               inline-flex items-center gap-2
               mt-6
@@ -174,7 +175,7 @@ export default function EventDetails() {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 pt-6 mb-6 text-sm">
             <Link
-              to="/"
+              to={base ? "/citizen/dashboard" : "/"}
               className="text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
             >
               Home
@@ -183,7 +184,7 @@ export default function EventDetails() {
             <span className="text-gray-400">/</span>
 
             <Link
-              to="/events"
+              to={`${base}/events`}
               className="text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
             >
               Events
@@ -239,7 +240,7 @@ export default function EventDetails() {
           ">
 
             <Link
-              to="/events"
+              to={`${base}/events`}
               className="
                 inline-flex
                 items-center

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getNotices } from "../../services/noticeService";
 import { formatRelative } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
@@ -32,6 +32,7 @@ const priorityConfig = {
 };
 
 export default function Notices() {
+  const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
   const { villageName } = useVillage();
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -313,7 +314,7 @@ export default function Notices() {
               return (
                 <Link
                   key={notice._id}
-                  to={`/notices/${notice._id}`}
+                  to={`${base}/notices/${notice._id}`}
                   className="group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-blue-800"
                 >
                   {/* Top accent */}
