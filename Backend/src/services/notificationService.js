@@ -77,24 +77,6 @@ const notifyComplaintUpdate = async (userId, complaint) => {
 
 /*
 |--------------------------------------------------------------------------
-| Notify: Certificate Request Status Changed
-|--------------------------------------------------------------------------
-*/
-
-const notifyCertificateUpdate = async (userId, certificate) => {
-  return createNotification({
-    recipient: userId,
-    title: "Certificate Request Updated",
-    message: `Your certificate request ${certificate.requestNumber} is now: ${certificate.status.replace("_", " ").toUpperCase()}`,
-    type: "certificate_update",
-    link: `/citizen/certificates`,
-    refModel: "CertificateRequest",
-    refId: certificate._id,
-  });
-};
-
-/*
-|--------------------------------------------------------------------------
 | Notify: Job Application Status Changed
 |--------------------------------------------------------------------------
 */
@@ -212,7 +194,6 @@ module.exports = {
   createNotification,
   broadcastNotification,
   notifyComplaintUpdate,
-  notifyCertificateUpdate,
   notifyJobApplicationUpdate,
   notifyNewNotice,
   notifyNewEvent,

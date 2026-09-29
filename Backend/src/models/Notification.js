@@ -27,7 +27,6 @@ const notificationSchema = new mongoose.Schema(
       enum: {
         values: [
           "complaint_update",
-          "certificate_update",
           "job_application",
           "new_notice",
           "new_event",
@@ -56,7 +55,6 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       enum: [
         "Complaint",
-        "CertificateRequest",
         "Job",
         "JobApplication",
         "Notice",

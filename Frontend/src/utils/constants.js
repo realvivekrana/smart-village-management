@@ -150,16 +150,3 @@ export const COMMUNITY_CATEGORIES = [
   { value: "event", label: "Event" },
   { value: "other", label: "Other" },
 ];
-export const CERTIFICATE_TYPES = [
-  { value: "residence", label: "Residence Certificate (निवास प्रमाण पत्र)" },
-  { value: "income", label: "Income Certificate (आय प्रमाण पत्र)" },
-  { value: "caste", label: "Caste Certificate (जाति प्रमाण पत्र)" },
-  { value: "birth", label: "Birth Certificate (जन्म प्रमाण पत्र)" },
-  { value: "death", label: "Death Certificate (मृत्यु प्रमाण पत्र)" },
-  { value: "character", label: "Character Certificate (चरित्र प्रमाण पत्र)" },
-  { value: "domicile", label: "Domicile Certificate (मूल निवास प्रमाण पत्र)" },
-  { value: "no_dues", label: "No Dues Certificate (अदेय प्रमाण पत्र)" },
-  { value: "other", label: "Other" },
-];
-
-export const CERTIFICATE_STATUSES = ["pending", "in_progress", "approved", "rejected", "cancelled"];

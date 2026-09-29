@@ -6,7 +6,6 @@ const Job = require("../models/Job");
 const Business = require("../models/Business");
 const CommunityPost = require("../models/CommunityPost");
 const JobApplication = require("../models/JobApplication");
-const CertificateRequest = require("../models/CertificateRequest");
 const FeatureApplication = require("../models/FeatureApplication");
 const VillageFeature = require("../models/VillageFeature");
 const Household = require("../models/Household");
@@ -228,9 +227,6 @@ const getCitizenStats = async (userId) => {
     pendingApplications,
     shortlistedApplications,
     totalPosts,
-    totalCertificates,
-    pendingCertificates,
-    approvedCertificates,
     totalFeatureApps,
     pendingFeatureApps,
     approvedFeatureApps,
@@ -273,10 +269,6 @@ const getCitizenStats = async (userId) => {
       createdBy: userId,
       isActive: true,
     }),
-
-    CertificateRequest.countDocuments({ submittedBy: userId }),
-    CertificateRequest.countDocuments({ submittedBy: userId, status: { $in: ["pending", "in_progress"] } }),
-    CertificateRequest.countDocuments({ submittedBy: userId, status: "approved" }),
 
     // Scheme / village-service applications
     FeatureApplication.countDocuments({ applicant: userId }),
@@ -357,12 +349,6 @@ const getCitizenStats = async (userId) => {
       .lean();
 
   return {
-    certificates: {
-      total: totalCertificates,
-      pending: pendingCertificates,
-      approved: approvedCertificates,
-    },
-
     featureApplications: {
       total: totalFeatureApps,
       pending: pendingFeatureApps,
