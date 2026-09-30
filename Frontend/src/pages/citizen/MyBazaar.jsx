@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useHighlight from "../../hooks/useHighlight";
 import toast from "react-hot-toast";
 import {
   getMyListings,
@@ -215,6 +216,7 @@ export default function MyBazaar() {
 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const { hlClass } = useHighlight(!loading && !error);
 
   const load = () => {
     setLoading(true);
@@ -316,7 +318,8 @@ export default function MyBazaar() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {listings.map((l) => (
-            <ListingCard key={l._id} listing={l} showStatus>
+            <div key={l._id} data-highlight-id={l._id} className={hlClass(l._id)}>
+            <ListingCard listing={l} showStatus>
               <button className="btn-secondary" onClick={() => openEdit(l)}>
                 ✏️ Badlein
               </button>
@@ -329,6 +332,7 @@ export default function MyBazaar() {
                 🗑️
               </button>
             </ListingCard>
+            </div>
           ))}
         </div>
       )}

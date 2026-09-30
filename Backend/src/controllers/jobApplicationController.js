@@ -158,7 +158,7 @@ const updateApplicationStatus = async (req, res, next) => {
     // Notify applicant (non-blocking)
     const applicant = await User.findById(application.applicant).select("name email");
     if (applicant) {
-      notificationService.notifyJobApplicationUpdate(applicant._id, application.job, status).catch(() => {});
+      notificationService.notifyJobApplicationUpdate(applicant._id, application.job, status, application).catch(() => {});
       emailService.sendJobApplicationStatusEmail(applicant, application.job, application).catch(() => {});
     }
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useHighlight from "../../hooks/useHighlight";
 import toast from "react-hot-toast";
 import { getMyPhotos, uploadPhotos, deletePhoto } from "../../services/galleryService";
 import { GALLERY_CATEGORIES, REVIEW_STATUS } from "../../utils/bazaar";
@@ -27,6 +28,7 @@ export default function MyPhotos() {
 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const { hlClass } = useHighlight(!loading && !error);
 
   const load = () => {
     setLoading(true);
@@ -158,7 +160,7 @@ export default function MyPhotos() {
           {photos.map((p) => {
             const review = REVIEW_STATUS[p.status];
             return (
-              <div key={p._id} className="card overflow-hidden">
+              <div key={p._id} data-highlight-id={p._id} className={`card overflow-hidden ${hlClass(p._id)}`}>
                 <img src={p.image?.url} alt={p.caption || "Gaon ki photo"} className="h-40 w-full object-cover" loading="lazy" />
                 <div className="p-3 space-y-2">
                   {review && <span className={review.badge}>{review.label}</span>}

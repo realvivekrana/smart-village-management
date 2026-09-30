@@ -12,6 +12,7 @@ import Pagination from "../../components/common/Pagination";
 import { STATUS_BADGE, prettyCategory } from "../../utils/submissionOptions";
 import { formatDate } from "../../utils/formatDate";
 import { useLanguage } from "../../context/LanguageContext";
+import useHighlight from "../../hooks/useHighlight";
 
 const TABS = {
   notices: { fetch: getMyNotices, remove: deleteNotice, listKey: "notices", addTo: "/citizen/notices/new", detail: "/citizen/notices" },
@@ -34,6 +35,7 @@ export default function MySubmissions() {
   const [error, setError] = useState("");
   const [target, setTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const { hlClass } = useHighlight(!loading && !error);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -111,7 +113,7 @@ export default function MySubmissions() {
           {items.map((item) => {
             const status = statusOf(item);
             return (
-              <li key={item._id} className="card space-y-2 p-4">
+              <li key={item._id} data-highlight-id={item._id} className={`card space-y-2 p-4 ${hlClass(item._id)}`}>
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <h2 className="min-w-0 flex-1 font-semibold text-gray-900 dark:text-white">{item.title}</h2>
                   <span className={`badge ${STATUS_BADGE[status]}`}>

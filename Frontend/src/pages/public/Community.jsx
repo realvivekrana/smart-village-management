@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { getPosts, createPost } from "../../services/communityService";
+import { getPosts, getPostById, createPost } from "../../services/communityService";
 import { COMMUNITY_CATEGORIES } from "../../utils/constants";
 import useAuth from "../../hooks/useAuth";
 import useDebounce from "../../hooks/useDebounce";
@@ -32,6 +32,44 @@ export default function Community() {
   const [error, setError] = useState(null);
   const [posting, setPosting] = useState(false);
   const [viewPost, setViewPost] = useState(null);
+
+  // Notification se aaya `?post=<id>`: seedha wahi post (comments ke saath) khol do
+  const [searchParams, setSearchParams] = useSearchParams();
+  const postParam = searchParams.get("post");
+
+  useEffect(() => {
+    if (!postParam) return undefined;
+    let active = true;
+    getPostById(postParam)
+      .then((res) => {
+        if (active) setViewPost(res.data?.data?.post || null);
+      })
+      .catch((err) => {
+        if (!active) return;
+        toast.error(
+          err.response?.status === 404
+            ? "Ye post ab available nahi hai"
+            : "Post khul nahi payi"
+        );
+      });
+    return () => {
+      active = false;
+    };
+  }, [postParam]);
+
+  const closePost = () => {
+    setViewPost(null);
+    if (postParam) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete("post");
+          return next;
+        },
+        { replace: true }
+      );
+    }
+  };
 
   const load = useCallback(() => {
     setLoading(true);
@@ -147,7 +185,7 @@ export default function Community() {
 
       <Pagination pagination={pagination} onPageChange={setPage} />
 
-      <Modal isOpen={!!viewPost} onClose={() => setViewPost(null)} title="Post" size="lg">
+      <Modal isOpen={!!viewPost} onClose={closePost} title="Post" size="lg">
         <PostDetails post={viewPost} />
       </Modal>
     </div>

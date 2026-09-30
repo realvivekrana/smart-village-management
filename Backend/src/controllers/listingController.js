@@ -325,7 +325,9 @@ const reviewListing = async (req, res, next) => {
           ? `Aapki ${TYPE_LABEL[listing.type]} post "${listing.title}" ab sabko dikh rahi hai.`
           : `Aapki ${TYPE_LABEL[listing.type]} post "${listing.title}" reject hui. Karan: ${listing.rejectionReason}`.slice(0, 500),
       type: "general",
-      link: "/citizen/bazaar",
+      link: `/citizen/bazaar?highlight=${listing._id}`,
+      refModel: "Listing",
+      refId: listing._id,
     });
 
     return res.status(200).json({

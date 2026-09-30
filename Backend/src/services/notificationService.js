@@ -69,7 +69,7 @@ const notifyComplaintUpdate = async (userId, complaint) => {
     title: "Complaint Status Updated",
     message: `Your complaint "${complaint.title}" status changed to: ${complaint.status.replace("_", " ").toUpperCase()}`,
     type: "complaint_update",
-    link: `/citizen/complaints`,
+    link: `/citizen/complaints?highlight=${complaint._id}`,
     refModel: "Complaint",
     refId: complaint._id,
   });
@@ -81,7 +81,7 @@ const notifyComplaintUpdate = async (userId, complaint) => {
 |--------------------------------------------------------------------------
 */
 
-const notifyJobApplicationUpdate = async (userId, job, status) => {
+const notifyJobApplicationUpdate = async (userId, job, status, application = null) => {
   const messages = {
     reviewed: `Your application for "${job.title}" at ${job.company} has been reviewed.`,
     shortlisted: `Great news! You've been shortlisted for "${job.title}" at ${job.company}.`,
@@ -94,9 +94,12 @@ const notifyJobApplicationUpdate = async (userId, job, status) => {
     title: "Job Application Update",
     message: messages[status] || `Your job application status has been updated.`,
     type: "job_application",
-    link: `/citizen/dashboard`,
-    refModel: "Job",
-    refId: job._id,
+    // Applicant ko seedha uski application par le jao (na ki dashboard par)
+    link: application
+      ? `/citizen/job-applications?highlight=${application._id}`
+      : `/citizen/job-applications`,
+    refModel: application ? "JobApplication" : "Job",
+    refId: application ? application._id : job._id,
   });
 };
 
@@ -167,7 +170,7 @@ const notifyNewComment = async (postAuthorId, commenter, post) => {
     title: "New Comment on Your Post",
     message: `${commenter.name} commented on your community post.`,
     type: "community_comment",
-    link: `/community`,
+    link: `/community?post=${post._id}`,
     refModel: "CommunityPost",
     refId: post._id,
   });

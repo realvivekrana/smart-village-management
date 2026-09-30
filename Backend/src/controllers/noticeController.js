@@ -257,7 +257,10 @@ const reviewNotice = async (req, res, next) => {
               ? `"${notice.title}" is now visible to everyone.`
               : `"${notice.title}" was not approved. Reason: ${notice.rejectionReason}`,
           type: "system",
-          link: "/citizen/my-submissions",
+          link:
+            status === "approved"
+              ? `/citizen/notices/${notice._id}`
+              : `/citizen/my-submissions?highlight=${notice._id}`,
           refModel: "Notice",
           refId: notice._id,
         })

@@ -249,7 +249,10 @@ const reviewEvent = async (req, res, next) => {
               ? `"${event.title}" is now visible to everyone.`
               : `"${event.title}" was not approved. Reason: ${event.rejectionReason}`,
           type: "system",
-          link: "/citizen/my-submissions",
+          link:
+            status === "approved"
+              ? `/citizen/events/${event._id}`
+              : `/citizen/my-submissions?tab=events&highlight=${event._id}`,
           refModel: "Event",
           refId: event._id,
         })

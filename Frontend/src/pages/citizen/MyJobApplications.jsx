@@ -9,6 +9,7 @@ import ConfirmDialog from "../../components/common/ConfirmDialog";
 import BackButton from "../../components/common/BackButton";
 import { formatDate } from "../../utils/formatDate";
 import { useLanguage } from "../../context/LanguageContext";
+import useHighlight from "../../hooks/useHighlight";
 
 const STATUS_BADGE = {
   pending: "badge-yellow",
@@ -33,6 +34,7 @@ export default function MyJobApplications() {
   const [error, setError] = useState(null);
   const [target, setTarget] = useState(null);
   const [withdrawing, setWithdrawing] = useState(false);
+  const { hlClass } = useHighlight(!loading && !error);
 
   const load = () => {
     setLoading(true);
@@ -89,7 +91,7 @@ export default function MyJobApplications() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {applications.map((a) => (
-            <div key={a._id} className="card p-5 space-y-3">
+            <div key={a._id} data-highlight-id={a._id} className={`card p-5 space-y-3 ${hlClass(a._id)}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-white">

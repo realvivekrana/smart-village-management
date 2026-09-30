@@ -196,7 +196,9 @@ const reviewPhoto = async (req, res, next) => {
           ? "Aapki photo ab gaon ki Gallery me sabko dikh rahi hai."
           : `Aapki photo reject hui. Karan: ${photo.rejectionReason}`.slice(0, 500),
       type: "general",
-      link: "/citizen/photos",
+      link: `/citizen/photos?highlight=${photo._id}`,
+      refModel: "GalleryPhoto",
+      refId: photo._id,
     });
 
     return res.status(200).json({ success: true, message: `Photo ${status}`, data: { photo } });

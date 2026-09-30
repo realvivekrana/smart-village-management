@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { getComplaints, deleteComplaint } from "../../services/complaintService";
+import { getComplaints, getComplaintById, deleteComplaint } from "../../services/complaintService";
+import useHighlight from "../../hooks/useHighlight";
 import ComplaintCard from "../../components/complaints/ComplaintCard";
 import ComplaintTimeline from "../../components/complaints/ComplaintTimeline";
 import Pagination from "../../components/common/Pagination";
@@ -23,6 +24,13 @@ export default function MyComplaints() {
   const [confirmTarget, setConfirmTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Notification se aaya `?highlight=<complaintId>`
+  const [pinned, setPinned] = useState(null); // complaint jo current page par nahi hai
+  const [resolved, setResolved] = useState(false);
+  const handledRef = useRef(null);
+  const wantedId = useSearchParams()[0].get("highlight");
+  const { hlClass } = useHighlight(!loading && !error && (!wantedId || resolved));
+
   useEffect(() => { setPage(1); }, [status]);
 
   useEffect(() => {
@@ -40,6 +48,36 @@ export default function MyComplaints() {
     return () => { active = false; };
   }, [page, status]);
 
+  useEffect(() => {
+    if (loading || error || !wantedId || handledRef.current === wantedId) return undefined;
+    handledRef.current = wantedId;
+
+    // Complaint isi page par hai -> sirf timeline khol do
+    if (complaints.some((c) => c._id === wantedId)) {
+      setExpandedId(wantedId);
+      setResolved(true);
+      return undefined;
+    }
+
+    // Warna (doosre page/filter me) seedha fetch karke upar pin kar do
+    let active = true;
+    getComplaintById(wantedId)
+      .then((res) => {
+        if (!active) return;
+        const found = res.data?.data?.complaint;
+        if (found) {
+          setPinned(found);
+          setExpandedId(found._id);
+        }
+      })
+      .catch(() => {})
+      .finally(() => active && setResolved(true));
+    return () => { active = false; };
+  }, [loading, error, wantedId, complaints]);
+
+  const visibleComplaints =
+    pinned && !complaints.some((c) => c._id === pinned._id) ? [pinned, ...complaints] : complaints;
+
   const handleDelete = async () => {
     if (!confirmTarget) return;
     setDeleting(true);
@@ -48,6 +86,7 @@ export default function MyComplaints() {
       toast.success("Complaint deleted");
       setConfirmTarget(null);
       setComplaints((prev) => prev.filter((c) => c._id !== confirmTarget._id));
+      setPinned((prev) => (prev && prev._id === confirmTarget._id ? null : prev));
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not delete complaint");
     } finally {
@@ -76,13 +115,13 @@ export default function MyComplaints() {
         <Loader />
       ) : error ? (
         <ErrorMessage message={error} onRetry={() => setPage((p) => p)} />
-      ) : complaints.length === 0 ? (
+      ) : visibleComplaints.length === 0 ? (
         <EmptyState icon="📋" title="No complaints found" description="You haven't filed any complaints yet." />
       ) : (
         <>
           <div className="space-y-4">
-            {complaints.map((c) => (
-              <div key={c._id}>
+            {visibleComplaints.map((c) => (
+              <div key={c._id} data-highlight-id={c._id} className={hlClass(c._id)}>
                 <button
                   onClick={() => setExpandedId(expandedId === c._id ? null : c._id)}
                   className="w-full text-left"

@@ -62,6 +62,8 @@ const notificationSchema = new mongoose.Schema(
         "Business",
         "CommunityPost",
         "Review",
+        "Listing",
+        "GalleryPhoto",
         null,
       ],
       default: null,
