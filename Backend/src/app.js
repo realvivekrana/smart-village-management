@@ -98,8 +98,14 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
+// Extra origins (comma separated) env se: CORS_ORIGINS=https://a.com,https://b.com
+const extraOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((o) => o.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL && process.env.FRONTEND_URL.replace(/\/$/, ""),
 
   // Local development
   "http://localhost:5173",
@@ -107,135 +113,39 @@ const allowedOrigins = [
 
   // Production Vercel
   "https://smart-village-management.vercel.app",
+
+  ...extraOrigins,
 ].filter(Boolean);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      /*
-      |--------------------------------------------------------------------------
-      | Requests without Origin
-      |--------------------------------------------------------------------------
-      |
-      | Examples:
-      | - Postman
-      | - Server-to-server requests
-      | - Some backend tools
-      |
-      |--------------------------------------------------------------------------
-      */
+// Vercel deployment / preview URLs, e.g.
+// https://smart-village-management-8hizmiin6-vivek-kumar-rana-s-projects.vercel.app
+const vercelPreviewRegex =
+  /^https:\/\/smart-village-management[a-z0-9-]*\.vercel\.app$/i;
 
-      if (!origin) {
-        return callback(null, true);
-      }
+const isOriginAllowed = (origin) =>
+  allowedOrigins.includes(origin) || vercelPreviewRegex.test(origin);
 
-      /*
-      |--------------------------------------------------------------------------
-      | Exact allowed origins
-      |--------------------------------------------------------------------------
-      */
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Postman / server-to-server (no Origin header)
+    if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+    if (isOriginAllowed(origin)) return callback(null, true);
 
-      /*
-      |--------------------------------------------------------------------------
-      | Allow Vercel Preview Deployments
-      |--------------------------------------------------------------------------
-      |
-      | Example:
-      |
-      | https://smart-village-management-8hizmiin6-vivek-kumar-rana-s-projects.vercel.app
-      |
-      |--------------------------------------------------------------------------
-      */
+    // Error throw nahi karte: warna 403 bina CORS headers ke jata hai
+    // aur browser me confusing "CORS blocked" error dikhta hai.
+    console.warn(`CORS blocked origin: ${origin}`);
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  optionsSuccessStatus: 204,
+};
 
-      if (
-        origin.endsWith(".vercel.app") &&
-        origin.includes("smart-village-management")
-      ) {
-        return callback(null, true);
-      }
-
-      /*
-      |--------------------------------------------------------------------------
-      | Block unknown origins
-      |--------------------------------------------------------------------------
-      */
-
-      return callback(
-        new Error("Not allowed by CORS")
-      );
-    },
-
-    credentials: true,
-
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "PATCH",
-      "DELETE",
-      "OPTIONS",
-    ],
-
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-    ],
-  })
-);
-
-/*
-|--------------------------------------------------------------------------
-| Explicit OPTIONS / Preflight
-|--------------------------------------------------------------------------
-*/
-
-app.options(
-  "*",
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      if (
-        origin.endsWith(".vercel.app") &&
-        origin.includes("smart-village-management")
-      ) {
-        return callback(null, true);
-      }
-
-      return callback(
-        new Error("Not allowed by CORS")
-      );
-    },
-
-    credentials: true,
-
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "PATCH",
-      "DELETE",
-      "OPTIONS",
-    ],
-
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-    ],
-  })
-);
+// cors middleware preflight (OPTIONS) khud handle kar leta hai.
+// NOTE: Express 5 me app.options("*", ...) crash karta hai, isliye hata diya.
+app.use(cors(corsOptions));
 
 /*
 |--------------------------------------------------------------------------
