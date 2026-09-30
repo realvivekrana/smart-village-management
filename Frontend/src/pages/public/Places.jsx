@@ -152,7 +152,7 @@ const Places = () => {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-dvh bg-gray-50">
       {/* Header */}
       <section className="bg-gradient-to-r from-blue-700 to-cyan-600">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">

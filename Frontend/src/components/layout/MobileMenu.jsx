@@ -1,4 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { getDashboardPath } from "../../utils/permissions";
 import useAuth from "../../hooks/useAuth";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
@@ -8,16 +10,24 @@ import { allNavLinks } from "../../utils/navLinks";
 export default function MobileMenu({ isOpen, onClose }) {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
+
+  const handleLogout = async () => {
+    onClose();
+    await logout();
+    toast.success(t("layout.loggedOut"));
+    navigate("/login");
+  };
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <nav className="absolute top-0 left-0 bottom-0 w-72 bg-white dark:bg-gray-900 shadow-xl overflow-y-auto">
+      <nav className="absolute top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-white dark:bg-gray-900 shadow-xl overflow-y-auto">
         <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
           <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ {t("layout.brand")}</span>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 text-xl">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close menu" className="flex h-11 w-11 items-center justify-center text-gray-400 hover:text-gray-600 text-xl">✕</button>
         </div>
 
         <div className="px-4 pt-3">
@@ -32,7 +42,7 @@ export default function MobileMenu({ isOpen, onClose }) {
               end={link.end}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors mb-0.5 ${
+                `flex items-center min-h-[44px] px-4 py-3 rounded-lg text-sm font-medium transition-colors mb-0.5 ${
                   isActive
                     ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
                     : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
@@ -55,8 +65,16 @@ export default function MobileMenu({ isOpen, onClose }) {
                 <p className="text-xs text-gray-500 capitalize">{t(`roles.${user.role}`, user.role?.replace("_", " "))}</p>
               </div>
             </div>
+            <Link
+              to={getDashboardPath(user)}
+              onClick={onClose}
+              className="w-full btn-primary text-sm mb-2"
+            >
+              {t("layout.dashboard")}
+            </Link>
             <button
-              onClick={() => { logout(); onClose(); }}
+              type="button"
+              onClick={handleLogout}
               className="w-full btn-danger text-sm"
             >
               {t("layout.logout")}

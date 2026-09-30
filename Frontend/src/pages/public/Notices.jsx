@@ -4,6 +4,7 @@ import { getNotices } from "../../services/noticeService";
 import { formatRelative } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
+import useAuth from "../../hooks/useAuth";
 
 const priorityConfig = {
   urgent: {
@@ -35,6 +36,7 @@ const priorityConfig = {
 export default function Notices() {
   const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
   const { villageName } = useVillage();
+  const { user } = useAuth();
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -76,9 +78,9 @@ export default function Notices() {
         setNotices(Array.isArray(data?.notices) ? data.notices : []);
 
         setPagination({
-          total: data?.pagination?.total || 0,
-          pages: data?.pagination?.pages || 1,
-          currentPage: data?.pagination?.page || page,
+          total: response?.data?.pagination?.total || 0,
+          pages: response?.data?.pagination?.totalPages || 1,
+          currentPage: response?.data?.pagination?.page || page,
         });
       } catch (err) {
         if (!mounted) return;
@@ -126,14 +128,14 @@ export default function Notices() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-gray-950">
+    <main className="min-h-dvh bg-slate-50 dark:bg-gray-950">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-blue-100 bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-800 text-white dark:border-gray-800">
         {/* Decorative shapes */}
         <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-purple-400/20 blur-3xl" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           {base && (
             <div className="mb-6">
               <BackButton to="/citizen/dashboard" label="Back to Dashboard" variant="onDark" />
@@ -145,7 +147,7 @@ export default function Notices() {
               {villageName} Community Updates
             </div>
 
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-3xl font-extrabold tracking-tight min-[400px]:text-4xl sm:text-5xl lg:text-6xl">
               Village Notices
             </h1>
 
@@ -153,6 +155,14 @@ export default function Notices() {
               Stay informed about official announcements, important updates,
               community information and notices from {villageName}.
             </p>
+            {user && (
+              <Link
+                to="/citizen/notices/new"
+                className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-lg transition hover:bg-gray-100"
+              >
+                ➕ Add Notice
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -173,7 +183,7 @@ export default function Notices() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search notices..."
-                className="h-12 w-full rounded-2xl border border-gray-200 bg-gray-50 pl-11 pr-10 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:bg-gray-800"
+                className="h-12 w-full rounded-2xl border border-gray-200 bg-gray-50 pl-11 pr-10 text-base sm:text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:bg-gray-800"
               />
 
               {search && (

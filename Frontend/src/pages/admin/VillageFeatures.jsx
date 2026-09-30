@@ -682,7 +682,7 @@ export default function VillageFeatures() {
    */
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40">
+    <div className="min-h-dvh bg-gray-50 dark:bg-gray-700/40">
       {/* ================================================================ */}
       {/* HEADER */}
       {/* ================================================================ */}
@@ -1410,7 +1410,7 @@ function FeatureFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
-      <div className="flex max-h-[95vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white dark:bg-gray-800 shadow-2xl sm:max-w-3xl sm:rounded-2xl">
+      <div className="flex max-h-[95dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-white dark:bg-gray-800 shadow-2xl sm:max-w-3xl sm:rounded-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-5 py-4">
           <div>
@@ -2034,7 +2034,7 @@ function FeatureViewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl">
+      <div className="max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl">
         <div className="sticky top-0 flex items-start justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
           <div className="flex items-start gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">

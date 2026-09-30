@@ -94,7 +94,7 @@ export default function Jobs() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <main className="min-h-dvh bg-gradient-to-b from-slate-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-gray-200/70 bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-800 dark:border-gray-800">
         {/* Decorative elements */}

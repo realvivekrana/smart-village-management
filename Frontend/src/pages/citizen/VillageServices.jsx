@@ -449,7 +449,7 @@ export default function VillageServices() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40">
+    <div className="min-h-dvh bg-gray-50 dark:bg-gray-700/40">
       {/* HEADER */}
       <section className="bg-gradient-to-br from-green-700 via-emerald-700 to-teal-700 text-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -882,7 +882,7 @@ function FeatureModal({ feature, onClose }) {
       aria-modal="true"
       aria-label={feature?.title}
     >
-      <div className="max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white dark:bg-gray-800 shadow-2xl sm:max-w-2xl sm:rounded-2xl">
+      <div className="max-h-[92dvh] w-full overflow-y-auto rounded-t-2xl bg-white dark:bg-gray-800 shadow-2xl sm:max-w-2xl sm:rounded-2xl">
         {/* Header */}
         <div
           className={`sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-gray-200 dark:border-gray-700 p-5 ${

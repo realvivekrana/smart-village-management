@@ -2,22 +2,27 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getNotices,
-  getNoticeById,
-  createNotice,
-  updateNotice,
-  deleteNotice,
+  getNotices, getManageNotices, getMyNotices, getNoticeById,
+  createNotice, updateNotice, reviewNotice, deleteNotice,
 } = require("../controllers/noticeController");
 
-const { protect } = require("../middleware/authMiddleware");
+const { protect, optionalAuth } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
 const validate = require("../middleware/validationMiddleware");
-const { createNoticeValidator, updateNoticeValidator } = require("../validators/noticeValidator");
+const {
+  createNoticeValidator, updateNoticeValidator, reviewValidator,
+} = require("../validators/noticeValidator");
 
 router.get("/", getNotices);
-router.get("/:id", getNoticeById);
-router.post("/", protect, authorize("admin"), createNoticeValidator, validate, createNotice);
+// fixed paths must stay above "/:id"
+router.get("/manage", protect, authorize("admin"), getManageNotices);
+router.get("/mine", protect, getMyNotices);
+router.get("/:id", optionalAuth, getNoticeById);
+
+// any logged-in user can submit; citizens' notices wait for admin approval
+router.post("/", protect, createNoticeValidator, validate, createNotice);
 router.put("/:id", protect, authorize("admin"), updateNoticeValidator, validate, updateNotice);
-router.delete("/:id", protect, authorize("admin"), deleteNotice);
+router.patch("/:id/review", protect, authorize("admin"), reviewValidator, validate, reviewNotice);
+router.delete("/:id", protect, deleteNotice);
 
 module.exports = router;

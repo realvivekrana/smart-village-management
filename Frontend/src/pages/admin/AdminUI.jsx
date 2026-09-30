@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "../../components/common/Pagination";
 import BackButton from "../../components/common/BackButton";
 
@@ -14,7 +14,8 @@ export function Page({
   return (
     <div className="page-container space-y-6">
       {showBack ? (
-        <div>
+        // On phones the top bar already has a back arrow, so this one is desktop-only.
+        <div className="hidden lg:block">
           <BackButton to={backTo} label={backLabel} />
         </div>
       ) : null}
@@ -130,12 +131,24 @@ export function AdminPagination({ pagination, onPageChange }) {
 }
 
 export function Modal({ title, onClose, children, wide = false }) {
+  // lock page scroll behind the dialog and let Esc close it
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && onClose?.();
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className={`max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl dark:bg-gray-900 ${wide ? "max-w-4xl" : "max-w-xl"}`}>
-        <div className="mb-5 flex items-center justify-between gap-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:p-4" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className={`max-h-[92dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-4 shadow-2xl dark:bg-gray-900 sm:rounded-2xl sm:p-5 ${wide ? "sm:max-w-4xl" : "sm:max-w-xl"}`}>
+        <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">{title}</h2>
-          <button onClick={onClose} className="text-xl text-gray-400 hover:text-gray-700 dark:hover:text-white" type="button" aria-label="Close">✕</button>
+          <button onClick={onClose} className="flex h-11 w-11 items-center justify-center text-xl text-gray-400 hover:text-gray-700 dark:hover:text-white" type="button" aria-label="Close">✕</button>
         </div>
         {children}
       </div>
@@ -192,7 +205,7 @@ export function Form({ fields = [], initial = {}, onSubmit, submitLabel = "Save"
           </div>
         ))}
       </div>
-      <div className="flex justify-end gap-2 pt-2">
+      <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
         {onCancel ? <button type="button" className="btn-secondary" onClick={onCancel}>Cancel</button> : null}
         <button className="btn-primary" type="submit">{submitLabel}</button>
       </div>

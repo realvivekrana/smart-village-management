@@ -15,7 +15,7 @@ const noticeSchema = new mongoose.Schema(
       required: [true, "Notice content is required"],
       trim: true,
       minlength: [10, "Content must be at least 10 characters"],
-      maxlength: [10000, "Content cannot exceed 10000 characters"],
+      maxlength: [5000, "Content cannot exceed 5000 characters"],
     },
 
     category: {
@@ -30,6 +30,12 @@ const noticeSchema = new mongoose.Schema(
           "social",
           "emergency",
           "general",
+          "infrastructure",
+          "water",
+          "electricity",
+          "sanitation",
+          "disaster",
+          "government_scheme",
           "other",
         ],
         message: "Invalid notice category",
@@ -88,6 +94,35 @@ const noticeSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
+
+    // Citizen submissions start as "pending" and need admin approval.
+    // Old documents without this field are treated as approved.
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "approved",
+    },
+
+    rejectionReason: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Reason cannot exceed 500 characters"],
+      default: "",
+    },
+
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    reviewedAt: {
+      type: Date,
     },
 
     createdBy: {
@@ -201,6 +236,9 @@ noticeSchema.index({
 | Text Search
 |--------------------------------------------------------------------------
 */
+
+noticeSchema.index({ createdBy: 1, createdAt: -1 });
+noticeSchema.index({ status: 1, createdAt: -1 });
 
 noticeSchema.index({
   title: "text",

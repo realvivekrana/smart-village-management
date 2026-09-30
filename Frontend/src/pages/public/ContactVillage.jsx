@@ -160,7 +160,7 @@ const ContactVillage = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-50 px-4 py-16 dark:bg-slate-950">
+      <main className="min-h-dvh bg-slate-50 px-4 py-16 dark:bg-slate-950">
         <div className="mx-auto max-w-7xl">
           <div className="h-72 animate-pulse rounded-[2rem] bg-slate-200 dark:bg-slate-800" />
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -173,7 +173,7 @@ const ContactVillage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
+    <main className="min-h-dvh bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
       {/* Hero */}
       <section className="relative isolate overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-emerald-800 to-cyan-800" />

@@ -86,7 +86,7 @@ export default function Businesses() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50/50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <main className="min-h-dvh bg-gradient-to-b from-orange-50/50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* =========================================================
           HERO
       ========================================================== */}

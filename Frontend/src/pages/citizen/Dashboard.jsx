@@ -71,42 +71,42 @@ export default function Dashboard() {
   if (!stats) return null;
 
   return (
-    <div className="page-container space-y-8">
+    <div className="page-container space-y-6 sm:space-y-8">
       <div>
-        <h1 className="section-title">👋 Welcome, {user?.name}</h1>
+        <h1 className="section-title break-words">👋 Welcome, {user?.name}</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your account.</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="card p-4 sm:p-5">
           <p className="text-xs text-gray-500 mb-1">Total Complaints</p>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.complaints.total}</p>
         </div>
-        <div className="card p-5">
+        <div className="card p-4 sm:p-5">
           <p className="text-xs text-gray-500 mb-1">Pending Complaints</p>
           <p className="text-2xl font-bold text-yellow-600">{stats.complaints.pending}</p>
         </div>
-        <div className="card p-5">
+        <div className="card p-4 sm:p-5">
           <p className="text-xs text-gray-500 mb-1">Resolved Complaints</p>
           <p className="text-2xl font-bold text-green-600">{stats.complaints.resolved}</p>
         </div>
-        <div className="card p-5">
+        <div className="card p-4 sm:p-5">
           <p className="text-xs text-gray-500 mb-1">Job Applications</p>
           <p className="text-2xl font-bold text-primary-600">{stats.applications.total}</p>
         </div>
-        <Link to="/citizen/applications" className="card p-5 hover:shadow-md transition-shadow">
+        <Link to="/citizen/applications" className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
           <p className="text-xs text-gray-500 mb-1">Yojana / Seva Applications</p>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.featureApplications?.total ?? 0}</p>
         </Link>
-        <Link to="/citizen/applications" className="card p-5 hover:shadow-md transition-shadow">
+        <Link to="/citizen/applications" className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
           <p className="text-xs text-gray-500 mb-1">Applications In Process</p>
           <p className="text-2xl font-bold text-yellow-600">{stats.featureApplications?.pending ?? 0}</p>
         </Link>
-        <Link to="/citizen/applications" className="card p-5 hover:shadow-md transition-shadow">
+        <Link to="/citizen/applications" className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
           <p className="text-xs text-gray-500 mb-1">Applications Approved</p>
           <p className="text-2xl font-bold text-green-600">{stats.featureApplications?.approved ?? 0}</p>
         </Link>
-        <div className="card p-5">
+        <div className="card p-4 sm:p-5">
           <p className="text-xs text-gray-500 mb-1">Family Members</p>
           <p className="text-2xl font-bold text-primary-600">{stats.household?.memberCount ?? 0}</p>
         </div>
@@ -125,6 +125,9 @@ export default function Dashboard() {
 
       <div className="flex flex-wrap gap-3">
         <Link to="/citizen/complaints/create" className="btn-primary">📋 File a Complaint</Link>
+        <Link to="/citizen/notices/new" className="btn-primary">📝 Add Notice</Link>
+        <Link to="/citizen/events/new" className="btn-primary">🎉 Add Event</Link>
+        <Link to="/citizen/my-submissions" className="btn-secondary">🗒️ My Notices &amp; Events</Link>
         <Link to="/citizen/posts" className="btn-secondary">💬 Community Posts</Link>
         <Link to="/citizen/applications" className="btn-secondary">🌾 My Yojana Applications</Link>
         <Link to="/citizen/job-applications" className="btn-secondary">💼 My Job Applications</Link>

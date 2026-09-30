@@ -93,6 +93,7 @@ const getHomeData = async (req, res, next) => {
 
       Event.find({
         isActive: true,
+        status: { $nin: ["pending", "rejected"] },
         endDate: {
           $gte: currentDate,
         },
@@ -114,6 +115,7 @@ const getHomeData = async (req, res, next) => {
 
       Notice.find({
         isActive: true,
+        status: { $nin: ["pending", "rejected"] },
         $or: [
           {
             expiresAt: null,

@@ -320,7 +320,7 @@ export default function EmergencySOS() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40 px-4 py-8 sm:py-12">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-700/40 px-4 py-8 sm:py-12">
         <div className="mx-auto max-w-2xl">
           <div className="rounded-3xl border border-green-200 dark:border-green-800 bg-white dark:bg-gray-800 p-6 text-center shadow-lg sm:p-10">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
@@ -458,7 +458,7 @@ export default function EmergencySOS() {
    */
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-700/40">
+    <div className="min-h-dvh bg-gray-50 dark:bg-gray-700/40">
       {/* ================================================================ */}
       {/* HEADER */}
       {/* ================================================================ */}

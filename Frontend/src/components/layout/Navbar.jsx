@@ -48,7 +48,7 @@ export default function Navbar({ onMenuOpen }) {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-primary-700 dark:text-primary-400 text-lg">
@@ -102,14 +102,16 @@ export default function Navbar({ onMenuOpen }) {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-2">
-            {/* Language Toggle */}
-            <LanguageToggle />
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Language Toggle (phones use the one inside the menu) */}
+            <div className="hidden sm:block">
+              <LanguageToggle />
+            </div>
 
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
               aria-label={t("layout.toggleTheme")}
             >
               {theme === "dark" ? "☀️" : "🌙"}
@@ -120,7 +122,7 @@ export default function Navbar({ onMenuOpen }) {
                 {/* Notifications */}
                 <Link
                   to="/citizen/notifications"
-                  className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="relative flex h-11 w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   🔔
                   {unreadCount > 0 && (
@@ -175,7 +177,7 @@ export default function Navbar({ onMenuOpen }) {
                 </div>
               </>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Link to="/login" className="btn-secondary text-sm px-3 py-1.5">{t("layout.login")}</Link>
                 <Link to="/register" className="btn-primary text-sm px-3 py-1.5">{t("layout.register")}</Link>
               </div>
@@ -184,7 +186,7 @@ export default function Navbar({ onMenuOpen }) {
             {/* Mobile menu button */}
             <button
               onClick={onMenuOpen}
-              className="lg:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="lg:hidden flex h-11 w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
               aria-label={t("layout.openMenu")}
             >
               ☰

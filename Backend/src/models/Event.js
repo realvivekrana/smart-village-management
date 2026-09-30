@@ -102,6 +102,30 @@ const eventSchema = new mongoose.Schema(
       default: false,
     },
 
+    // Citizen submissions start as "pending" and need admin approval.
+    // Old documents without this field are treated as approved.
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "approved",
+    },
+
+    rejectionReason: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Reason cannot exceed 500 characters"],
+      default: "",
+    },
+
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    reviewedAt: {
+      type: Date,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

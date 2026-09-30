@@ -98,7 +98,7 @@ export default function BusinessDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-950">
         <Loader fullScreen />
       </div>
     );
@@ -110,7 +110,7 @@ export default function BusinessDetails() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 px-4 py-12">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-950 px-4 py-12">
         <div className="mx-auto max-w-4xl">
           <ErrorMessage message={error} onRetry={load} />
         </div>
@@ -120,7 +120,7 @@ export default function BusinessDetails() {
 
   if (!business) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 px-4 py-20">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-950 px-4 py-20">
         <div className="mx-auto max-w-xl text-center">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 text-4xl dark:bg-gray-800">
             🏪
@@ -175,7 +175,7 @@ export default function BusinessDetails() {
   ------------------------------------------------- */
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <main className="min-h-dvh bg-gray-50 dark:bg-gray-950">
 
       {/* =================================================
           TOP HEADER / BREADCRUMB

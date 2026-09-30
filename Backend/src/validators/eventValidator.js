@@ -1,5 +1,10 @@
 const { body } = require("express-validator");
 
+const CATEGORIES = [
+  "cultural", "religious", "sports", "health", "education",
+  "agriculture", "government", "environment", "social", "other",
+];
+
 const createEventValidator = [
   body("title")
     .trim()
@@ -13,10 +18,7 @@ const createEventValidator = [
 
   body("category")
     .optional()
-    .isIn([
-      "cultural", "religious", "sports", "health", "education",
-      "agriculture", "government", "environment", "social", "other",
-    ]).withMessage("Invalid event category"),
+    .isIn(CATEGORIES).withMessage("Invalid event category"),
 
   body("startDate")
     .notEmpty().withMessage("Start date is required")
@@ -62,10 +64,23 @@ const updateEventValidator = [
     .optional()
     .isISO8601().withMessage("End date must be a valid date"),
 
+  body("category")
+    .optional()
+    .isIn(CATEGORIES).withMessage("Invalid event category"),
+
   body("location")
     .optional()
     .trim()
     .isLength({ max: 300 }).withMessage("Location cannot exceed 300 characters"),
 ];
 
-module.exports = { createEventValidator, updateEventValidator };
+const reviewEventValidator = [
+  body("status").isIn(["approved", "rejected"]).withMessage("Status must be approved or rejected"),
+  body("rejectionReason")
+    .if(body("status").equals("rejected"))
+    .trim()
+    .notEmpty().withMessage("Please give a reason for rejecting")
+    .isLength({ max: 500 }).withMessage("Reason cannot exceed 500 characters"),
+];
+
+module.exports = { createEventValidator, updateEventValidator, reviewEventValidator };

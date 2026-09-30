@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useLanguage } from "../../context/LanguageContext";
 
@@ -28,6 +28,9 @@ const citizenLinks = [
   { to: "/citizen/complaints/create", icon: "➕", label: "File Complaint", key: "sidebar.fileComplaint" },
   { to: "/citizen/notices", icon: "📢", label: "Notices", key: "sidebar.notices" },
   { to: "/citizen/events", icon: "📅", label: "Events", key: "sidebar.events" },
+  { to: "/citizen/notices/new", icon: "📝", label: "Add Notice", key: "submit.addNotice" },
+  { to: "/citizen/events/new", icon: "🎉", label: "Add Event", key: "submit.addEvent" },
+  { to: "/citizen/my-submissions", icon: "🗒️", label: "My Notices & Events", key: "submit.mySubmissions" },
   { to: "/citizen/sos", icon: "🆘", label: "Emergency SOS", key: "sidebar.emergencySos" },
   { to: "/citizen/village-services", icon: "🌾", label: "Village Services", key: "sidebar.villageServices" },
   { to: "/citizen/applications", icon: "📝", label: "My Yojana Applications", key: "sidebar.myApplications" },
@@ -48,18 +51,18 @@ function getLinks(role) {
   return citizenLinks;
 }
 
-export default function Sidebar({ onClose }) {
+export default function Sidebar({ onClose, onLogout }) {
   const { user } = useAuth();
   const { t } = useLanguage();
   const links = getLinks(user?.role);
 
   return (
-    <aside className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-64">
+    <aside className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-64 max-w-[85vw]">
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
         <span className="font-bold text-primary-700 dark:text-primary-400 text-lg">🏘️ {t("layout.brand")}</span>
         {onClose && (
-          <button onClick={onClose} className="lg:hidden p-1 text-gray-400 hover:text-gray-600">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close menu" className="lg:hidden flex h-11 w-11 items-center justify-center text-gray-400 hover:text-gray-600">✕</button>
         )}
       </div>
 
@@ -83,8 +86,9 @@ export default function Sidebar({ onClose }) {
             key={link.to}
             to={link.to}
             onClick={onClose}
+            end={links.some((other) => other.to.startsWith(`${link.to}/`))}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              `flex items-center gap-3 px-3 py-3 lg:py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -97,14 +101,24 @@ export default function Sidebar({ onClose }) {
         ))}
       </nav>
 
-      {/* Back to site */}
-      <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700">
-        <a
-          href="/"
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400"
+      {/* Back to site / logout */}
+      <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 space-y-1">
+        <Link
+          to="/"
+          onClick={onClose}
+          className="flex items-center gap-2 min-h-[44px] text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400"
         >
           {t("layout.backToSite")}
-        </a>
+        </Link>
+        {onLogout && (
+          <button
+            type="button"
+            onClick={onLogout}
+            className="flex w-full items-center gap-2 min-h-[44px] text-sm font-medium text-red-600 hover:text-red-700"
+          >
+            🚪 {t("layout.logout")}
+          </button>
+        )}
       </div>
     </aside>
   );

@@ -107,7 +107,7 @@ export default function Emergency() {
     contacts.length > 0 ? contacts : fallbackContacts;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-dvh bg-gradient-to-b from-red-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 
       {/* Hero */}
       <section className="relative overflow-hidden">

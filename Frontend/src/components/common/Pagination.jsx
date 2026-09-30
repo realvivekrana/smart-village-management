@@ -17,17 +17,17 @@ export default function Pagination({ pagination, onPageChange }) {
         Showing <span className="font-medium">{from}</span>–<span className="font-medium">{to}</span> of{" "}
         <span className="font-medium">{total}</span> results
       </p>
-      <nav className="flex items-center gap-1">
+      <nav className="flex flex-wrap items-center justify-center gap-1">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className="px-3 py-1 rounded-lg text-sm border border-gray-200 dark:border-gray-600 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="px-3 py-2 min-w-[40px] rounded-lg text-sm border border-gray-200 dark:border-gray-600 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
         >
           ‹
         </button>
         {pages[0] > 1 && (
           <>
-            <button onClick={() => onPageChange(1)} className="px-3 py-1 rounded-lg text-sm border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">1</button>
+            <button onClick={() => onPageChange(1)} className="px-3 py-2 min-w-[40px] rounded-lg text-sm border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">1</button>
             {pages[0] > 2 && <span className="px-2 text-gray-400">…</span>}
           </>
         )}
@@ -35,7 +35,7 @@ export default function Pagination({ pagination, onPageChange }) {
           <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`px-3 py-1 rounded-lg text-sm border ${
+            className={`px-3 py-2 min-w-[40px] rounded-lg text-sm border ${
               p === page
                 ? "bg-primary-600 text-white border-primary-600"
                 : "border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -47,13 +47,13 @@ export default function Pagination({ pagination, onPageChange }) {
         {pages[pages.length - 1] < totalPages && (
           <>
             {pages[pages.length - 1] < totalPages - 1 && <span className="px-2 text-gray-400">…</span>}
-            <button onClick={() => onPageChange(totalPages)} className="px-3 py-1 rounded-lg text-sm border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">{totalPages}</button>
+            <button onClick={() => onPageChange(totalPages)} className="px-3 py-2 min-w-[40px] rounded-lg text-sm border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">{totalPages}</button>
           </>
         )}
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className="px-3 py-1 rounded-lg text-sm border border-gray-200 dark:border-gray-600 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="px-3 py-2 min-w-[40px] rounded-lg text-sm border border-gray-200 dark:border-gray-600 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700"
         >
           ›
         </button>

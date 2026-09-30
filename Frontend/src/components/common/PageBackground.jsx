@@ -118,7 +118,7 @@ export default function PageBackground({
 
   return (
     <div
-      className={`relative min-h-screen overflow-hidden bg-slate-950 ${className}`}
+      className={`relative min-h-dvh overflow-hidden bg-slate-950 ${className}`}
     >
 
       {/* ================================================================ */}
@@ -171,7 +171,7 @@ export default function PageBackground({
       {/* CONTENT                                                           */}
       {/* ================================================================ */}
 
-      <div className="relative z-10 min-h-screen">
+      <div className="relative z-10 min-h-dvh">
         {children}
       </div>
 

@@ -81,7 +81,7 @@ export default function GovernmentContacts() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-dvh bg-gray-50 dark:bg-gray-950">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-green-700 via-green-600 to-emerald-600 text-white">
         <div className="max-w-7xl mx-auto px-4 py-14 sm:px-6 lg:px-8">

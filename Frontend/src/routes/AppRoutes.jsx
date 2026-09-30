@@ -168,6 +168,18 @@ const MyJobApplications = lazy(
   () => import("../pages/citizen/MyJobApplications")
 );
 
+const AddNotice = lazy(
+  () => import("../pages/citizen/AddNotice")
+);
+
+const AddEvent = lazy(
+  () => import("../pages/citizen/AddEvent")
+);
+
+const MySubmissions = lazy(
+  () => import("../pages/citizen/MySubmissions")
+);
+
 const MyBazaar = lazy(
   () => import("../pages/citizen/MyBazaar")
 );
@@ -494,6 +506,22 @@ export default function AppRoutes() {
             element={<NoticeDetails />}
           />
 
+          {/* Citizens can send a notice / event; admin approves it */}
+          <Route
+            path="/citizen/notices/new"
+            element={<AddNotice />}
+          />
+
+          <Route
+            path="/citizen/events/new"
+            element={<AddEvent />}
+          />
+
+          <Route
+            path="/citizen/my-submissions"
+            element={<MySubmissions />}
+          />
+
           {/* Events */}
           <Route
             path="/citizen/events"
@@ -726,7 +754,7 @@ export default function AppRoutes() {
         <Route
           path="*"
           element={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+            <div className="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
               <div className="text-center">
 
                 <h1 className="text-6xl font-bold text-primary-600">

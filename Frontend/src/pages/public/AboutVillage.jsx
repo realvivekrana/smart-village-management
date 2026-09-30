@@ -199,7 +199,7 @@ export default function AboutVillage() {
     village.location?.lng !== undefined;
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
+    <main className="min-h-dvh bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
 
       {/* =========================================================
           HERO
@@ -757,7 +757,7 @@ export default function AboutVillage() {
           onClick={() => setActiveImage(null)}
         >
           <div
-            className="relative max-h-[90vh] max-w-5xl overflow-hidden rounded-3xl bg-black shadow-2xl"
+            className="relative max-h-[90dvh] max-w-5xl overflow-hidden rounded-3xl bg-black shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -771,7 +771,7 @@ export default function AboutVillage() {
             <img
               src={activeImage.url}
               alt={activeImage.caption || village.name}
-              className="max-h-[82vh] w-auto max-w-full object-contain"
+              className="max-h-[82dvh] w-auto max-w-full object-contain"
             />
 
             {activeImage.caption && (
@@ -1007,7 +1007,7 @@ function PlaceCard({ place }) {
 
 function AboutSkeleton() {
   return (
-    <main className="min-h-screen animate-pulse bg-slate-50 dark:bg-slate-950">
+    <main className="min-h-dvh animate-pulse bg-slate-50 dark:bg-slate-950">
       <div className="h-[520px] bg-slate-800" />
 
       <div className="mx-auto -mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">

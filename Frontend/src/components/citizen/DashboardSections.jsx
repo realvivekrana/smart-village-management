@@ -9,7 +9,7 @@ import { formatCurrency } from "../../utils/formatCurrency";
  */
 
 const SectionCard = ({ title, action, children }) => (
-  <div className="card p-5">
+  <div className="card p-4 sm:p-5 min-w-0">
     <div className="flex items-center justify-between mb-4 gap-2">
       <h2 className="text-base font-semibold text-gray-900 dark:text-white">{title}</h2>
       {action}
@@ -41,6 +41,8 @@ const QUICK_ITEMS = [
   { to: "/citizen/village-services?category=transport", icon: "🚌", key: "quick.transport", fb: "Bus / Gaadi Time" },
   { to: "/citizen/notices", icon: "📢", key: "quick.notices", fb: "Suchnayein" },
   { to: "/citizen/events", icon: "📅", key: "quick.events", fb: "Karyakram" },
+  { to: "/citizen/notices/new", icon: "📝", key: "quick.addNotice", fb: "Suchna Jodein" },
+  { to: "/citizen/events/new", icon: "🎉", key: "quick.addEvent", fb: "Karyakram Jodein" },
   { to: "/jobs", icon: "💼", key: "quick.jobs", fb: "Rozgar" },
   { to: "/businesses", icon: "🏪", key: "quick.businesses", fb: "Gaon ki Dukaanein" },
   { to: "/government-contacts", icon: "📞", key: "quick.govtContacts", fb: "Sarkari Sampark" },
@@ -51,12 +53,12 @@ export const QuickAccessGrid = () => {
   const { t } = useLanguage();
   return (
     <SectionCard title={t("citizenDash.quickAccess", "Gaon ki Sevayein")}>
-      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 min-[420px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
         {QUICK_ITEMS.map((item) => (
           <Link
             key={item.key}
             to={item.to}
-            className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center transition-all hover:-translate-y-0.5 hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 min-h-[84px] text-center transition-all hover:-translate-y-0.5 hover:shadow-md ${
               item.danger
                 ? "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
                 : "border-gray-100 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"

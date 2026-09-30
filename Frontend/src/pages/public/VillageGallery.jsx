@@ -244,7 +244,7 @@ const VillageGallery = () => {
 
   return (
     <>
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-dvh bg-gray-50">
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-600">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -349,7 +349,7 @@ const VillageGallery = () => {
           </button>
 
           <div
-            className="relative flex max-h-[90vh] max-w-6xl flex-col items-center"
+            className="relative flex max-h-[90dvh] max-w-6xl flex-col items-center"
             onClick={(event) =>
               event.stopPropagation()
             }
@@ -357,7 +357,7 @@ const VillageGallery = () => {
             <img
               src={selectedImage.url}
               alt={selectedImage.title}
-              className="max-h-[75vh] max-w-full rounded-xl object-contain shadow-2xl"
+              className="max-h-[75dvh] max-w-full rounded-xl object-contain shadow-2xl"
             />
 
             <div className="mt-4 max-w-2xl text-center">

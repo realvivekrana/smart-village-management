@@ -91,6 +91,8 @@ const en = {
       transport: "Bus / Vehicle Timings",
       notices: "Notices",
       events: "Events",
+      addNotice: "Add Notice",
+      addEvent: "Add Event",
       jobs: "Jobs",
       businesses: "Village Shops",
       govtContacts: "Govt. Contacts",
@@ -263,6 +265,22 @@ const en = {
     startFailed: "Voice input could not be started.",
     unableToStart: "Unable to start voice input.",
   },
+
+  submit: {
+    addNotice: "Add Notice",
+    addEvent: "Add Event",
+    mySubmissions: "My Notices & Events",
+    back: "Back",
+    approvalInfo: "Your submission will be checked by the village admin. It becomes visible to everyone only after approval.",
+    submitNotice: "Submit Notice",
+    submitEvent: "Submit Event",
+    submitting: "Submitting...",
+    pending: "Waiting for approval",
+    approved: "Approved",
+    rejected: "Rejected",
+    reason: "Reason",
+    nothingYet: "You have not submitted anything yet.",
+  },
 };
 
 const hi = {
@@ -352,6 +370,8 @@ const hi = {
       transport: "बस / गाड़ी का समय",
       notices: "सूचनाएँ",
       events: "कार्यक्रम",
+      addNotice: "सूचना जोड़ें",
+      addEvent: "कार्यक्रम जोड़ें",
       jobs: "रोज़गार",
       businesses: "गाँव की दुकानें",
       govtContacts: "सरकारी संपर्क",
@@ -523,6 +543,22 @@ const hi = {
     networkError: "नेटवर्क में समस्या है। कृपया इंटरनेट कनेक्शन जाँचें।",
     startFailed: "वॉइस इनपुट शुरू नहीं हो सका।",
     unableToStart: "वॉइस इनपुट शुरू करने में असमर्थ।",
+  },
+
+  submit: {
+    addNotice: "सूचना जोड़ें",
+    addEvent: "कार्यक्रम जोड़ें",
+    mySubmissions: "मेरी सूचनाएँ और कार्यक्रम",
+    back: "वापस",
+    approvalInfo: "आपकी सबमिशन की जाँच ग्राम प्रशासक करेंगे। मंज़ूरी के बाद ही यह सबको दिखेगी।",
+    submitNotice: "सूचना भेजें",
+    submitEvent: "कार्यक्रम भेजें",
+    submitting: "भेजा जा रहा है...",
+    pending: "मंज़ूरी का इंतज़ार",
+    approved: "मंज़ूर",
+    rejected: "अस्वीकृत",
+    reason: "कारण",
+    nothingYet: "आपने अभी तक कुछ नहीं भेजा है।",
   },
 };
 

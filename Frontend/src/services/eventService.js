@@ -7,3 +7,7 @@ export const createEvent = (data) =>
 export const updateEvent = (id, data) => api.put(`/events/${id}`, data);
 export const deleteEvent = (id) => api.delete(`/events/${id}`);
 export const toggleInterested = (id) => api.post(`/events/${id}/interested`);
+
+export const getManageEvents = (params) => api.get("/events/manage", { params });
+export const getMyEvents = (params) => api.get("/events/mine", { params });
+export const reviewEvent = (id, data) => api.patch(`/events/${id}/review`, data);

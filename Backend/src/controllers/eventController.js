@@ -1,461 +1,311 @@
 const Event = require("../models/Event");
 const User = require("../models/User");
-const {
-  getPagination,
-  getPaginationMeta,
-} = require("../utils/pagination");
+const { getPagination, getPaginationMeta } = require("../utils/pagination");
 const cloudinaryService = require("../services/cloudinaryService");
 const notificationService = require("../services/notificationService");
 const env = require("../config/env");
+const { APPROVED_ONLY, pick } = require("../utils/publicVisibility");
 
-/*
-|--------------------------------------------------------------------------
-| GET /api/v1/events  (public)
-|--------------------------------------------------------------------------
-|
-| Optimized event listing.
-|
-| Important:
-| - Pagination preserved
-| - Search preserved
-| - Category filter preserved
-| - Upcoming filter preserved
-| - createdBy populate preserved
-| - Only required list fields selected
-|--------------------------------------------------------------------------
-*/
+const CITIZEN_FIELDS = [
+  "title", "description", "category", "startDate", "endDate",
+  "location", "organizer", "maxAttendees",
+];
+const ADMIN_FIELDS = [...CITIZEN_FIELDS, "isFeatured", "isActive"];
 
+const isAdmin = (user) => user?.role === "admin";
+
+// multipart/form-data sends everything as strings, JSON sends real types.
+const cleanBody = (body, allowed) => {
+  const data = pick(body, allowed);
+  if ("maxAttendees" in data) {
+    data.maxAttendees =
+      data.maxAttendees === "" || data.maxAttendees === null ? null : Number(data.maxAttendees);
+  }
+  if ("isFeatured" in data) data.isFeatured = data.isFeatured === true || data.isFeatured === "true";
+  if ("isActive" in data) data.isActive = data.isActive === true || data.isActive === "true";
+  return data;
+};
+
+const buildFilter = (query, base) => {
+  const filter = { ...base };
+  if (query.category) filter.category = query.category;
+  if (query.upcoming === "true") filter.endDate = { $gte: new Date() };
+  if (query.search) filter.$text = { $search: String(query.search) };
+  return filter;
+};
+
+const LIST_FIELDS =
+  "_id title description category startDate endDate location organizer images attendeeCount maxAttendees isActive isFeatured createdBy createdAt";
+
+/* GET /events  (public: approved + active only) */
 const getEvents = async (req, res, next) => {
   try {
-    const {
-      page,
-      limit,
-      skip,
-    } = getPagination(req.query);
-
-    const {
-      category,
-      upcoming,
-      search,
-    } = req.query;
-
-    const filter = {
-      isActive: true,
-    };
-
-    /*
-    |--------------------------------------------------------------------------
-    | Category Filter
-    |--------------------------------------------------------------------------
-    */
-
-    if (category) {
-      filter.category = category;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Upcoming Filter
-    |--------------------------------------------------------------------------
-    */
-
-    if (upcoming === "true") {
-      filter.endDate = {
-        $gte: new Date(),
-      };
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Text Search
-    |--------------------------------------------------------------------------
-    */
-
-    if (search) {
-      filter.$text = {
-        $search: search,
-      };
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Events + Count in Parallel
-    |--------------------------------------------------------------------------
-    */
+    const { page, limit, skip } = getPagination(req.query);
+    const filter = buildFilter(req.query, { isActive: true, ...APPROVED_ONLY });
 
     const [events, total] = await Promise.all([
       Event.find(filter)
-        /*
-        |--------------------------------------------------------------------------
-        | Only fields required by event listing
-        |--------------------------------------------------------------------------
-        */
-
-        .select(
-          "_id title description category startDate endDate location organizer images attendeeCount maxAttendees isActive isFeatured createdBy createdAt"
-        )
-
-        /*
-        |--------------------------------------------------------------------------
-        | Lightweight creator information
-        |--------------------------------------------------------------------------
-        */
-
-        .populate(
-          "createdBy",
-          "name"
-        )
-
-        /*
-        |--------------------------------------------------------------------------
-        | Upcoming events first
-        |--------------------------------------------------------------------------
-        */
-
-        .sort({
-          startDate: 1,
-        })
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pagination
-        |--------------------------------------------------------------------------
-        */
-
+        .select(LIST_FIELDS)
+        .populate("createdBy", "name")
+        .sort({ startDate: 1 })
         .skip(skip)
         .limit(limit)
-
-        /*
-        |--------------------------------------------------------------------------
-        | Faster plain JavaScript objects
-        |--------------------------------------------------------------------------
-        */
-
         .lean(),
-
-      /*
-      |--------------------------------------------------------------------------
-      | Pagination count
-      |--------------------------------------------------------------------------
-      */
-
       Event.countDocuments(filter),
     ]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Response
-    |--------------------------------------------------------------------------
-    */
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-
-      data: {
-        events,
-      },
-
-      pagination: getPaginationMeta(
-        total,
-        page,
-        limit
-      ),
+      data: { events },
+      pagination: getPaginationMeta(total, page, limit),
     });
   } catch (error) {
     next(error);
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| GET /api/v1/events/:id  (public)
-|--------------------------------------------------------------------------
-*/
-
-const getEventById = async (
-  req,
-  res,
-  next
-) => {
+/* GET /events/manage  (admin: every status, optional ?status=pending) */
+const getManageEvents = async (req, res, next) => {
   try {
-    const event =
-      await Event.findById(
-        req.params.id
-      )
-        .populate(
-          "createdBy",
-          "name"
-        )
-        .lean();
+    const { page, limit, skip } = getPagination(req.query);
+    const base = { isActive: true };
+    if (["pending", "approved", "rejected"].includes(req.query.status)) {
+      base.status = req.query.status === "approved" ? APPROVED_ONLY.status : req.query.status;
+    }
+    const filter = buildFilter(req.query, base);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Event not found
-    |--------------------------------------------------------------------------
-    */
+    const [events, total, pendingCount] = await Promise.all([
+      Event.find(filter)
+        .populate("createdBy", "name email role")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Event.countDocuments(filter),
+      Event.countDocuments({ isActive: true, status: "pending" }),
+    ]);
 
-    if (
-      !event ||
-      !event.isActive
-    ) {
-      return res.status(404).json({
-        success: false,
-        message: "Event not found",
-      });
+    res.status(200).json({
+      success: true,
+      data: { events, pendingCount },
+      pagination: getPaginationMeta(total, page, limit),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* GET /events/mine */
+const getMyEvents = async (req, res, next) => {
+  try {
+    const { page, limit, skip } = getPagination(req.query);
+    const filter = { createdBy: req.user._id, isActive: true };
+    const [events, total] = await Promise.all([
+      Event.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Event.countDocuments(filter),
+    ]);
+    res.status(200).json({
+      success: true,
+      data: { events },
+      pagination: getPaginationMeta(total, page, limit),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* GET /events/:id */
+const getEventById = async (req, res, next) => {
+  try {
+    const event = await Event.findById(req.params.id).populate("createdBy", "name").lean();
+
+    const isOwner = event && req.user && String(event.createdBy?._id) === String(req.user._id);
+    const approved = event && !["pending", "rejected"].includes(event.status);
+
+    if (!event || !event.isActive || (!approved && !isOwner && !isAdmin(req.user))) {
+      return res.status(404).json({ success: false, message: "Event not found" });
     }
 
-    return res.status(200).json({
-      success: true,
-
-      data: {
-        event,
-      },
-    });
+    res.status(200).json({ success: true, data: { event } });
   } catch (error) {
     next(error);
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| POST /api/v1/events  (admin)
-|--------------------------------------------------------------------------
-*/
+const broadcastPublished = (event) =>
+  User.find({ isActive: true })
+    .select("_id")
+    .lean()
+    .then((users) => notificationService.notifyNewEvent(users.map((u) => u._id), event))
+    .catch(() => {});
 
-const createEvent = async (
-  req,
-  res,
-  next
-) => {
+/* POST /events  (admin publishes immediately, citizen submits for approval) */
+const createEvent = async (req, res, next) => {
   try {
+    const admin = isAdmin(req.user);
+    const data = cleanBody(req.body, admin ? ADMIN_FIELDS : CITIZEN_FIELDS);
+
     let images = [];
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cloudinary Upload
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      req.files &&
-      req.files.length > 0 &&
-      env.cloudinary.enabled
-    ) {
-      images =
-        await cloudinaryService.uploadMultipleImages(
-          req.files,
-          "smart-village/events"
-        );
+    if (req.files && req.files.length > 0 && env.cloudinary.enabled) {
+      images = await cloudinaryService.uploadMultipleImages(req.files, "smart-village/events");
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Create Event
-    |--------------------------------------------------------------------------
-    */
-
-    const event =
-      await Event.create({
-        ...req.body,
-        images,
-        createdBy:
-          req.user._id,
-      });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Notifications
-    |--------------------------------------------------------------------------
-    |
-    | Background / non-blocking.
-    |
-    | API response user ko notification process ka wait nahi karayega.
-    |--------------------------------------------------------------------------
-    */
-
-    User.find({
-      isActive: true,
-    })
-      .select("_id")
-      .lean()
-      .then(async (users) => {
-        const ids = users.map(
-          (user) => user._id
-        );
-
-        await notificationService.notifyNewEvent(
-          ids,
-          event
-        );
-      })
-      .catch(() => {});
-
-    return res.status(201).json({
-      success: true,
-      message: "Event created",
-      data: {
-        event,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/*
-|--------------------------------------------------------------------------
-| PUT /api/v1/events/:id  (admin)
-|--------------------------------------------------------------------------
-*/
-
-const updateEvent = async (
-  req,
-  res,
-  next
-) => {
-  try {
-    const event =
-      await Event.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
-
-    if (!event) {
-      return res.status(404).json({
-        success: false,
-        message: "Event not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Event updated",
-
-      data: {
-        event,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/*
-|--------------------------------------------------------------------------
-| DELETE /api/v1/events/:id  (admin)
-|--------------------------------------------------------------------------
-*/
-
-const deleteEvent = async (
-  req,
-  res,
-  next
-) => {
-  try {
-    const event =
-      await Event.findByIdAndUpdate(
-        req.params.id,
-        {
-          isActive: false,
-        },
-        {
-          new: true,
-        }
-      );
-
-    if (!event) {
-      return res.status(404).json({
-        success: false,
-        message: "Event not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Event deleted",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-/*
-|--------------------------------------------------------------------------
-| POST /api/v1/events/:id/interested  (protected)
-|--------------------------------------------------------------------------
-*/
-
-const toggleInterested = async (
-  req,
-  res,
-  next
-) => {
-  try {
-    const event =
-      await Event.findById(
-        req.params.id
-      );
-
-    if (
-      !event ||
-      !event.isActive
-    ) {
-      return res.status(404).json({
-        success: false,
-        message: "Event not found",
-      });
-    }
-
-    const userId =
-      req.user._id;
-
-    const isInterested =
-      event.interestedUsers.some(
-        (id) =>
-          String(id) ===
-          String(userId)
-      );
-
-    if (isInterested) {
-      event.interestedUsers.pull(
-        userId
-      );
-
-      event.attendeeCount =
-        Math.max(
-          0,
-          event.attendeeCount - 1
-        );
+    if (admin) {
+      data.status = "approved";
+      data.reviewedBy = req.user._id;
+      data.reviewedAt = new Date();
     } else {
-      event.interestedUsers.push(
-        userId
-      );
-
-      event.attendeeCount += 1;
+      data.status = "pending";
     }
 
+    const event = await Event.create({ ...data, images, createdBy: req.user._id });
+
+    if (admin) {
+      broadcastPublished(event);
+    } else {
+      User.find({ role: "admin", isActive: true })
+        .select("_id")
+        .lean()
+        .then((admins) =>
+          notificationService.broadcastNotification(
+            admins.map((a) => a._id),
+            {
+              title: "New event awaiting approval",
+              message: `${req.user.name} submitted an event: "${event.title}"`,
+              type: "system",
+              link: "/admin/events?status=pending",
+              refModel: "Event",
+              refId: event._id,
+            }
+          )
+        )
+        .catch(() => {});
+    }
+
+    res.status(201).json({
+      success: true,
+      message: admin
+        ? "Event created"
+        : "Event submitted. It will be visible to everyone after admin approval.",
+      data: { event },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* PUT /events/:id  (admin) */
+const updateEvent = async (req, res, next) => {
+  try {
+    const data = cleanBody(req.body, ADMIN_FIELDS);
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ success: false, message: "Event not found" });
+
+    event.set(data);
+    await event.save(); // schema hook checks end date is after start date
+
+    res.status(200).json({ success: true, message: "Event updated", data: { event } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* PATCH /events/:id/review  (admin) */
+const reviewEvent = async (req, res, next) => {
+  try {
+    const { status, rejectionReason } = req.body;
+    const event = await Event.findById(req.params.id);
+    if (!event || !event.isActive) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    // already approved: do nothing (avoids re-sending notifications to the whole village)
+    if (status === "approved" && event.status === "approved") {
+      return res.status(200).json({ success: true, message: "Event is already approved", data: { event } });
+    }
+
+    event.status = status;
+    event.rejectionReason = status === "rejected" ? String(rejectionReason || "").trim() : "";
+    event.reviewedBy = req.user._id;
+    event.reviewedAt = new Date();
     await event.save();
 
-    return res.status(200).json({
+    if (String(event.createdBy) !== String(req.user._id)) {
+      notificationService
+        .createNotification({
+          recipient: event.createdBy,
+          title: status === "approved" ? "Your event was approved" : "Your event was rejected",
+          message:
+            status === "approved"
+              ? `"${event.title}" is now visible to everyone.`
+              : `"${event.title}" was not approved. Reason: ${event.rejectionReason}`,
+          type: "system",
+          link: "/citizen/my-submissions",
+          refModel: "Event",
+          refId: event._id,
+        })
+        .catch(() => {});
+    }
+    if (status === "approved") broadcastPublished(event);
+
+    res.status(200).json({
       success: true,
+      message: status === "approved" ? "Event approved" : "Event rejected",
+      data: { event },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-      message: isInterested
-        ? "Removed from interested"
-        : "Marked as interested",
+/* DELETE /events/:id  (admin: any; citizen: own pending/rejected only) */
+const deleteEvent = async (req, res, next) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ success: false, message: "Event not found" });
 
-      data: {
-        interested:
-          !isInterested,
+    if (!isAdmin(req.user)) {
+      const own = String(event.createdBy) === String(req.user._id);
+      if (!own || event.status === "approved") {
+        return res.status(403).json({
+          success: false,
+          message: "You can only remove your own events that are not yet published",
+        });
+      }
+    }
 
-        attendeeCount:
-          event.attendeeCount,
-      },
+    event.isActive = false;
+    await event.save();
+    res.status(200).json({ success: true, message: "Event deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* POST /events/:id/interested */
+const toggleInterested = async (req, res, next) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event || !event.isActive || ["pending", "rejected"].includes(event.status)) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+
+    const userId = req.user._id;
+    const isInterested = event.interestedUsers.some((id) => String(id) === String(userId));
+
+    if (isInterested) {
+      event.interestedUsers.pull(userId);
+      event.attendeeCount = Math.max(0, event.attendeeCount - 1);
+    } else {
+      event.interestedUsers.push(userId);
+      event.attendeeCount += 1;
+    }
+    await event.save();
+
+    res.status(200).json({
+      success: true,
+      message: isInterested ? "Removed from interested" : "Marked as interested",
+      data: { interested: !isInterested, attendeeCount: event.attendeeCount },
     });
   } catch (error) {
     next(error);
@@ -463,10 +313,6 @@ const toggleInterested = async (
 };
 
 module.exports = {
-  getEvents,
-  getEventById,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-  toggleInterested,
+  getEvents, getManageEvents, getMyEvents, getEventById,
+  createEvent, updateEvent, reviewEvent, deleteEvent, toggleInterested,
 };

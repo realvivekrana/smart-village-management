@@ -92,6 +92,7 @@ const getAdminStats = async () => {
 
     Notice.countDocuments({
       isActive: true,
+      status: { $nin: ["pending", "rejected"] },
     }),
 
     // Events
@@ -99,6 +100,7 @@ const getAdminStats = async () => {
 
     Event.countDocuments({
       isActive: true,
+      status: { $nin: ["pending", "rejected"] },
       endDate: {
         $gte: now,
       },
@@ -289,6 +291,7 @@ const getCitizenStats = async (userId) => {
     // Latest active notices (expired ones hidden)
     Notice.find({
       isActive: true,
+      status: { $nin: ["pending", "rejected"] },
       $or: [{ expiresAt: null }, { expiresAt: { $gte: new Date() } }],
     })
       .sort({ publishedAt: -1 })
@@ -297,7 +300,7 @@ const getCitizenStats = async (userId) => {
       .lean(),
 
     // Upcoming events
-    Event.find({ isActive: true, endDate: { $gte: new Date() } })
+    Event.find({ isActive: true, status: { $nin: ["pending", "rejected"] }, endDate: { $gte: new Date() } })
       .sort({ startDate: 1 })
       .limit(3)
       .select("title startDate endDate location category")

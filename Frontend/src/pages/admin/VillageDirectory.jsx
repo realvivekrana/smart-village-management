@@ -1246,7 +1246,7 @@ const Modal = ({
 }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl">
+      <div className="max-h-[90dvh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl">
         <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             {title}

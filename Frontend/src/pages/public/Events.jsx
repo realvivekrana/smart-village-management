@@ -4,6 +4,7 @@ import { getEvents } from "../../services/eventService";
 import { formatDateRange } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
+import useAuth from "../../hooks/useAuth";
 
 const categoryConfig = {
   cultural: {
@@ -47,6 +48,7 @@ const categoryConfig = {
 export default function Events() {
   const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
   const { villageName } = useVillage();
+  const { user } = useAuth();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -93,9 +95,9 @@ export default function Events() {
         setEvents(Array.isArray(data?.events) ? data.events : []);
 
         setPagination({
-          total: data?.pagination?.total || 0,
-          pages: data?.pagination?.pages || 1,
-          currentPage: data?.pagination?.page || page,
+          total: response?.data?.pagination?.total || 0,
+          pages: response?.data?.pagination?.totalPages || 1,
+          currentPage: response?.data?.pagination?.page || page,
         });
       } catch (err) {
         if (!mounted) return;
@@ -149,14 +151,14 @@ export default function Events() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-gray-950">
+    <main className="min-h-dvh bg-slate-50 dark:bg-gray-950">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-purple-100 bg-gradient-to-br from-indigo-700 via-purple-700 to-fuchsia-700 text-white dark:border-gray-800">
         <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-fuchsia-400/20 blur-3xl" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           {base && (
             <div className="mb-6">
               <BackButton to="/citizen/dashboard" label="Back to Dashboard" variant="onDark" />
@@ -168,7 +170,7 @@ export default function Events() {
               {villageName} Community
             </div>
 
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-3xl font-extrabold tracking-tight min-[400px]:text-4xl sm:text-5xl lg:text-6xl">
               Village Events
             </h1>
 
@@ -176,6 +178,14 @@ export default function Events() {
               Discover upcoming cultural, religious, educational, sports and
               community events happening in {villageName}.
             </p>
+            {user && (
+              <Link
+                to="/citizen/events/new"
+                className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-purple-700 shadow-lg transition hover:bg-gray-100"
+              >
+                ➕ Add Event
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -196,7 +206,7 @@ export default function Events() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search events, places or activities..."
-                className="h-12 w-full rounded-2xl border border-gray-200 bg-gray-50 pl-11 pr-10 text-sm text-gray-900 outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:bg-gray-800"
+                className="h-12 w-full rounded-2xl border border-gray-200 bg-gray-50 pl-11 pr-10 text-base sm:text-sm text-gray-900 outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:bg-gray-800"
               />
 
               {search && (
