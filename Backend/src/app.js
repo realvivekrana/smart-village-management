@@ -60,6 +60,7 @@ const app = express();
 |
 | Required when deployed behind Render / Railway / Nginx.
 | This allows Express to correctly identify the client IP.
+|
 |--------------------------------------------------------------------------
 */
 
@@ -86,12 +87,26 @@ app.use(
 |--------------------------------------------------------------------------
 | CORS
 |--------------------------------------------------------------------------
+|
+| Supports:
+|
+| 1. Local development
+| 2. Production Vercel
+| 3. Vercel preview deployments
+| 4. Postman / server-to-server requests
+|
+|--------------------------------------------------------------------------
 */
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+
+  // Local development
   "http://localhost:5173",
   "http://localhost:3000",
+
+  // Production Vercel
+  "https://smart-village-management.vercel.app",
 ].filter(Boolean);
 
 app.use(
@@ -99,12 +114,14 @@ app.use(
     origin: (origin, callback) => {
       /*
       |--------------------------------------------------------------------------
-      | Allow requests without an origin
+      | Requests without Origin
       |--------------------------------------------------------------------------
       |
       | Examples:
-      | Postman
-      | Server-to-server requests
+      | - Postman
+      | - Server-to-server requests
+      | - Some backend tools
+      |
       |--------------------------------------------------------------------------
       */
 
@@ -112,7 +129,87 @@ app.use(
         return callback(null, true);
       }
 
+      /*
+      |--------------------------------------------------------------------------
+      | Exact allowed origins
+      |--------------------------------------------------------------------------
+      */
+
       if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      /*
+      |--------------------------------------------------------------------------
+      | Allow Vercel Preview Deployments
+      |--------------------------------------------------------------------------
+      |
+      | Example:
+      |
+      | https://smart-village-management-8hizmiin6-vivek-kumar-rana-s-projects.vercel.app
+      |
+      |--------------------------------------------------------------------------
+      */
+
+      if (
+        origin.endsWith(".vercel.app") &&
+        origin.includes("smart-village-management")
+      ) {
+        return callback(null, true);
+      }
+
+      /*
+      |--------------------------------------------------------------------------
+      | Block unknown origins
+      |--------------------------------------------------------------------------
+      */
+
+      return callback(
+        new Error("Not allowed by CORS")
+      );
+    },
+
+    credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+    ],
+  })
+);
+
+/*
+|--------------------------------------------------------------------------
+| Explicit OPTIONS / Preflight
+|--------------------------------------------------------------------------
+*/
+
+app.options(
+  "*",
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      if (
+        origin.endsWith(".vercel.app") &&
+        origin.includes("smart-village-management")
+      ) {
         return callback(null, true);
       }
 
@@ -122,6 +219,21 @@ app.use(
     },
 
     credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+    ],
   })
 );
 
@@ -142,9 +254,9 @@ app.use(
 |--------------------------------------------------------------------------
 |
 | Reduced from 10MB to 2MB.
+| File/image uploads using multipart/form-data
+| are handled separately by upload middleware.
 |
-| File/image uploads using multipart/form-data are handled separately
-| by upload middleware, so this does not affect those uploads.
 |--------------------------------------------------------------------------
 */
 
@@ -172,10 +284,6 @@ app.use(cookieParser());
 /*
 |--------------------------------------------------------------------------
 | Logging
-|--------------------------------------------------------------------------
-|
-| Morgan is useful during development but unnecessary for every request
-| in production. Reducing production logging lowers console overhead.
 |--------------------------------------------------------------------------
 */
 
@@ -237,12 +345,8 @@ app.use(
 | Home
 |--------------------------------------------------------------------------
 |
-| Combined homepage API:
-|
 | GET /api/v1/home
 |
-| Events + Notices are fetched together instead of making separate
-| homepage requests.
 |--------------------------------------------------------------------------
 */
 
@@ -478,6 +582,7 @@ app.use(
 | Lost & Found
 | Buy / Sell
 | etc.
+|
 |--------------------------------------------------------------------------
 */
 
