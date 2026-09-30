@@ -143,7 +143,7 @@ export default function MyPhotos() {
         </div>
 
         <button type="submit" className="btn-primary" disabled={uploading}>
-          {uploading ? "Bhej rahe hain..." : "📤 Approval ke liye bhejein"}
+          {uploading ? "Bhej rahe hain..." : "📤 Photo daalein"}
         </button>
       </form>
 

@@ -167,7 +167,7 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
         </div>
       </div>
       <p className="text-xs text-gray-500 -mt-2">
-        Ye phone number approve hone ke baad sabko dikhega.
+        Ye phone number sabko dikhega.
       </p>
 
       {!editing && (
@@ -196,7 +196,7 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
           Radd karein
         </button>
         <button type="submit" className="btn-primary" disabled={submitting}>
-          {submitting ? "Bhej rahe hain..." : editing ? "Save karein" : "Approval ke liye bhejein"}
+          {submitting ? "Bhej rahe hain..." : editing ? "Save karein" : "Post karein"}
         </button>
       </div>
     </form>

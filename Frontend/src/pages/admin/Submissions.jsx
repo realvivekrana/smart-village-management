@@ -24,15 +24,15 @@ import BackButton from "../../components/common/BackButton";
  */
 
 const STATUS_FILTERS = [
-  { value: "pending", label: "Approval baaki" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
-  { value: "", label: "Sabhi" },
+  { value: "", label: "Sabhi (nayi posts)" },
+  { value: "approved", label: "Live" },
+  { value: "rejected", label: "Hataai gayi" },
+  { value: "pending", label: "Review baaki" },
 ];
 
 export default function Submissions() {
   const [tab, setTab] = useState("bazaar");
-  const [status, setStatus] = useState("pending");
+  const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
   const [items, setItems] = useState([]);

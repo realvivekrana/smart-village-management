@@ -13,11 +13,12 @@ const {
 
 const { protect } = require("../middleware/authMiddleware");
 const { uploadMultipleImages } = require("../middleware/uploadMiddleware");
+const { submissionLimiter } = require("../middleware/rateLimitMiddleware");
 
 router.get("/", getPosts);
 router.get("/my", protect, getMyPosts);
 router.get("/:id", getPostById);
-router.post("/", protect, uploadMultipleImages("images", 3), createPost);
+router.post("/", protect, submissionLimiter, uploadMultipleImages("images", 3), createPost);
 router.put("/:id", protect, updatePost);
 router.delete("/:id", protect, deletePost);
 router.post("/:id/like", protect, toggleLike);

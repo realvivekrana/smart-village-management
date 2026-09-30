@@ -13,7 +13,7 @@ export default function AddBusiness() {
     setLoading(true);
     try {
       await createBusiness(formData);
-      toast.success("Business registered! It will appear once approved by an admin.");
+      toast.success("Business registered! It is now visible to everyone.");
       navigate("/business-owner/my-business");
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not register business");
@@ -28,7 +28,7 @@ export default function AddBusiness() {
         <BackButton to="/business-owner/my-business" label="Back to My Businesses" />
         <h1 className="section-title mt-2">➕ Register a Business</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Tell villagers about your business. Your listing goes live once an admin approves it.
+          Tell villagers about your business. Your listing goes live right away.
         </p>
       </div>
       <div className="card p-6">

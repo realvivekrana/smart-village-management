@@ -75,7 +75,7 @@ const en = {
     myJobApplications: "My Job Applications",
     myBazaar: "My Bazaar Posts",
     myPhotos: "My Photos",
-    submissions: "Citizen Approvals",
+    submissions: "Citizen Posts",
   },
 
   citizenDash: {
@@ -143,12 +143,12 @@ const en = {
 
   myBazaar: {
     title: "My Bazaar Posts",
-    subtitle: "Sell items, report lost & found, or rent out farm equipment. Everyone sees it after admin approval.",
+    subtitle: "Sell items, report lost & found, or rent out farm equipment. Everyone sees it right away.",
   },
 
   myPhotos: {
     title: "My Gallery Photos",
-    subtitle: "Upload photos of the village. They appear in the Gallery after admin approval.",
+    subtitle: "Upload photos of the village. They appear in the Gallery right away.",
   },
 
   citizenJobApps: {
@@ -271,7 +271,7 @@ const en = {
     addEvent: "Add Event",
     mySubmissions: "My Notices & Events",
     back: "Back",
-    approvalInfo: "Your submission will be checked by the village admin. It becomes visible to everyone only after approval.",
+    approvalInfo: "Your post goes live for everyone right away. The village admin can remove anything that breaks the rules.",
     submitNotice: "Submit Notice",
     submitEvent: "Submit Event",
     submitting: "Submitting...",
@@ -422,12 +422,12 @@ const hi = {
 
   myBazaar: {
     title: "मेरे बाज़ार विज्ञापन",
-    subtitle: "सामान बेचें, खोया-पाया बताएँ या खेती का सामान किराये पर दें। एडमिन की मंज़ूरी के बाद सबको दिखेगा।",
+    subtitle: "सामान बेचें, खोया-पाया बताएँ या खेती का सामान किराये पर दें। पोस्ट करते ही सबको दिखेगा।",
   },
 
   myPhotos: {
     title: "मेरी गैलरी फ़ोटो",
-    subtitle: "गाँव की फ़ोटो डालें। एडमिन की मंज़ूरी के बाद ये गैलरी में दिखेंगी।",
+    subtitle: "गाँव की फ़ोटो डालें। डालते ही ये गैलरी में दिखेंगी।",
   },
 
   citizenJobApps: {
@@ -550,7 +550,7 @@ const hi = {
     addEvent: "कार्यक्रम जोड़ें",
     mySubmissions: "मेरी सूचनाएँ और कार्यक्रम",
     back: "वापस",
-    approvalInfo: "आपकी सबमिशन की जाँच ग्राम प्रशासक करेंगे। मंज़ूरी के बाद ही यह सबको दिखेगी।",
+    approvalInfo: "आपकी पोस्ट तुरंत सबको दिखेगी। नियम तोड़ने वाली पोस्ट ग्राम प्रशासक हटा सकते हैं।",
     submitNotice: "सूचना भेजें",
     submitEvent: "कार्यक्रम भेजें",
     submitting: "भेजा जा रहा है...",

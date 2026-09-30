@@ -15,6 +15,7 @@ const {
 const { protect, optionalAuth } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
 const { uploadMultipleImages } = require("../middleware/uploadMiddleware");
+const { submissionLimiter } = require("../middleware/rateLimitMiddleware");
 const validate = require("../middleware/validationMiddleware");
 const {
   createBusinessValidator,
@@ -26,7 +27,7 @@ router.get("/", getBusinesses);
 router.get("/my", protect, authorize("citizen", "admin"), getMyBusiness);
 router.get("/admin/all", protect, authorize("admin"), getAllBusinessesAdmin);
 router.get("/:id", optionalAuth, getBusinessById);
-router.post("/", protect, authorize("citizen", "admin"), uploadMultipleImages("images", 5), createBusinessValidator, validate, createBusiness);
+router.post("/", protect, authorize("citizen", "admin"), submissionLimiter, uploadMultipleImages("images", 5), createBusinessValidator, validate, createBusiness);
 router.put("/:id", protect, uploadMultipleImages("images", 5), updateBusinessValidator, validate, updateBusiness);
 router.patch("/:id/review", protect, authorize("admin"), reviewBusinessValidator, validate, reviewBusiness);
 router.delete("/:id", protect, deleteBusiness);

@@ -4,6 +4,19 @@ const cloudinaryService = require("../services/cloudinaryService");
 const notificationService = require("../services/notificationService");
 const emailService = require("../services/emailService");
 const env = require("../config/env");
+const { REQUIRE_APPROVAL, submissionStatus } = require("../utils/publicVisibility");
+
+// Owner sirf ye fields badal sakta hai (status / owner / rating jaise fields nahi)
+const OWNER_FIELDS = [
+  "name", "description", "category", "phone", "alternatePhone",
+  "email", "website", "address", "openingHours", "tags",
+];
+const ADMIN_FIELDS = [...OWNER_FIELDS, "isFeatured", "isActive"];
+const pickFields = (body, allowed) =>
+  allowed.reduce((out, key) => {
+    if (body[key] !== undefined) out[key] = body[key];
+    return out;
+  }, {});
 
 /*
 |--------------------------------------------------------------------------
@@ -131,16 +144,22 @@ const createBusiness = async (req, res, next) => {
       images[0].isMain = true;
     }
 
+    const status = submissionStatus(req.user);
+    const published = status === "approved";
+
     const business = await Business.create({
-      ...req.body,
+      ...pickFields(req.body, OWNER_FIELDS),
       images,
       owner: req.user._id,
-      status: "pending",
+      status,
+      approvedBy: published ? req.user._id : undefined,
     });
 
     return res.status(201).json({
       success: true,
-      message: "Business registered. Pending admin approval.",
+      message: published
+        ? "Business registered. It is now visible to everyone."
+        : "Business registered. Pending admin approval.",
       data: { business },
     });
   } catch (error) {
@@ -163,11 +182,10 @@ const updateBusiness = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    // If owner updates, reset to pending
-    const updates = { ...req.body };
-    if (!isAdmin) updates.status = "pending";
-
-    Object.assign(business, updates);
+    // Owner ke edit turant live. Admin ne reject / suspend kiya ho to wo status nahi badalta.
+    // "Approval required" mode me edit ke baad dobara pending.
+    Object.assign(business, pickFields(req.body, isAdmin ? ADMIN_FIELDS : OWNER_FIELDS));
+    if (!isAdmin && REQUIRE_APPROVAL) business.status = "pending";
 
     // Newly uploaded photos (if any) are appended to the existing gallery
     if (req.files && req.files.length > 0 && env.cloudinary.enabled) {

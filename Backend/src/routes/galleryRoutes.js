@@ -14,13 +14,14 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
 const { uploadMultipleImages } = require("../middleware/uploadMiddleware");
+const { submissionLimiter } = require("../middleware/rateLimitMiddleware");
 
 // Public: sirf approved photos
 router.get("/", getPhotos);
 
 // Logged-in
 router.get("/my", protect, getMyPhotos);
-router.post("/", protect, uploadMultipleImages("images", 5), uploadPhotos);
+router.post("/", protect, submissionLimiter, uploadMultipleImages("images", 5), uploadPhotos);
 
 // Admin
 router.get("/admin/all", protect, authorize("admin"), getAllPhotosAdmin);

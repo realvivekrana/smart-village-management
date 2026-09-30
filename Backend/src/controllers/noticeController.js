@@ -3,7 +3,7 @@ const User = require("../models/User");
 const { getPagination, getPaginationMeta } = require("../utils/pagination");
 const notificationService = require("../services/notificationService");
 const emailService = require("../services/emailService");
-const { APPROVED_ONLY, notExpired, pick } = require("../utils/publicVisibility");
+const { APPROVED_ONLY, REQUIRE_APPROVAL, submissionStatus, notExpired, pick } = require("../utils/publicVisibility");
 
 const CITIZEN_FIELDS = ["title", "content", "category", "expiresAt"];
 const ADMIN_FIELDS = [...CITIZEN_FIELDS, "priority", "publishedAt", "isActive"];
@@ -44,10 +44,10 @@ const notifyAdminsOfSubmission = (notice, user) =>
       notificationService.broadcastNotification(
         admins.map((a) => a._id),
         {
-          title: "New notice awaiting approval",
-          message: `${user.name} submitted a notice: "${notice.title}"`,
+          title: notice.status === "approved" ? "New notice posted by a citizen" : "New notice awaiting approval",
+          message: `${user.name} ${notice.status === "approved" ? "posted" : "submitted"} a notice: "${notice.title}"`,
           type: "system",
-          link: "/admin/notices?status=pending",
+          link: notice.status === "approved" ? "/admin/notices" : "/admin/notices?status=pending",
           refModel: "Notice",
           refId: notice._id,
         }
@@ -167,31 +167,35 @@ const getNoticeById = async (req, res, next) => {
   }
 };
 
-/* POST /notices  (admin publishes immediately, citizen submits for approval) */
+/* POST /notices  (goes live immediately; admin can moderate afterwards) */
 const createNotice = async (req, res, next) => {
   try {
     const admin = isAdmin(req.user);
     const data = cleanBody(req.body, admin ? ADMIN_FIELDS : CITIZEN_FIELDS);
 
-    if (!admin) {
-      data.status = "pending";
-      data.priority = "normal";
-    } else {
-      data.status = "approved";
+    // citizens can never mark a notice urgent / high (it would alert the whole village)
+    if (!admin) data.priority = "normal";
+
+    data.status = submissionStatus(req.user);
+    if (data.status === "approved") {
       data.reviewedBy = req.user._id;
       data.reviewedAt = new Date();
     }
 
     const notice = await Notice.create({ ...data, createdBy: req.user._id });
 
-    if (admin) broadcastPublished(notice, req.body.sendEmail);
-    else notifyAdminsOfSubmission(notice, req.user);
+    if (notice.status === "approved") {
+      // e-mail blast only for admin notices, in-app notification for everyone
+      broadcastPublished(notice, admin && req.body.sendEmail);
+    }
+    if (!admin) notifyAdminsOfSubmission(notice, req.user);
 
     res.status(201).json({
       success: true,
-      message: admin
-        ? "Notice created"
-        : "Notice submitted. It will be visible to everyone after admin approval.",
+      message:
+        notice.status === "approved"
+          ? "Notice published. Everyone can see it now."
+          : "Notice submitted. It will be visible to everyone after admin approval.",
       data: { notice },
     });
   } catch (error) {
@@ -199,14 +203,21 @@ const createNotice = async (req, res, next) => {
   }
 };
 
-/* PUT /notices/:id  (admin) */
+/* PUT /notices/:id  (admin: any notice; citizen: own notice) */
 const updateNotice = async (req, res, next) => {
   try {
-    const data = cleanBody(req.body, ADMIN_FIELDS);
+    const admin = isAdmin(req.user);
     const notice = await Notice.findById(req.params.id);
-    if (!notice) return res.status(404).json({ success: false, message: "Notice not found" });
+    if (!notice || (!admin && !notice.isActive)) {
+      return res.status(404).json({ success: false, message: "Notice not found" });
+    }
+    if (!admin && String(notice.createdBy) !== String(req.user._id)) {
+      return res.status(403).json({ success: false, message: "You can only edit your own notices" });
+    }
 
-    notice.set(data);
+    notice.set(cleanBody(req.body, admin ? ADMIN_FIELDS : CITIZEN_FIELDS));
+    // only when the village runs in "approval required" mode
+    if (!admin && REQUIRE_APPROVAL) notice.status = "pending";
     await notice.save();
 
     res.status(200).json({ success: true, message: "Notice updated", data: { notice } });
@@ -264,18 +275,17 @@ const reviewNotice = async (req, res, next) => {
   }
 };
 
-/* DELETE /notices/:id  (admin: any; citizen: own pending/rejected only) */
+/* DELETE /notices/:id  (admin: any; citizen: own notice) */
 const deleteNotice = async (req, res, next) => {
   try {
     const notice = await Notice.findById(req.params.id);
     if (!notice) return res.status(404).json({ success: false, message: "Notice not found" });
 
     if (!isAdmin(req.user)) {
-      const own = String(notice.createdBy) === String(req.user._id);
-      if (!own || notice.status === "approved") {
+      if (String(notice.createdBy) !== String(req.user._id)) {
         return res.status(403).json({
           success: false,
-          message: "You can only remove your own notices that are not yet published",
+          message: "You can only remove your own notices",
         });
       }
     }

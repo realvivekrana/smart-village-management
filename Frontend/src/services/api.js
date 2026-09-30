@@ -31,7 +31,7 @@ const api = axios.create({
   |--------------------------------------------------------------------------
   */
 
-  timeout: 15000,
+  timeout: 60000, // Render free plan sone ke baad pehli request 30-60 sec le sakti hai
 });
 
 /*

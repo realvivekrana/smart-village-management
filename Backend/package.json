@@ -11,7 +11,8 @@
     "seed:village": "node src/seeds/villageSeed.js",
     "seed:kakarcholi": "node src/seeds/seedKakarcholi.js",
     "seed:features": "node src/seeds/villageFeaturesSeed.js",
-    "seed:emergency": "node src/seeds/emergencySeed.js"
+    "seed:emergency": "node src/seeds/emergencySeed.js",
+    "publish:pending": "node src/seeds/publishPending.js"
   },
   "keywords": [
     "smart-village",

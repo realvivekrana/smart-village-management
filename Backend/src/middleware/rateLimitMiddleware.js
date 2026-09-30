@@ -1,4 +1,5 @@
 const rateLimit = require("express-rate-limit");
+const { ipKeyGenerator } = rateLimit;
 
 const createLimiter = ({ windowMs, limit, message, ...options }) =>
   rateLimit({
@@ -46,8 +47,18 @@ const sosLimiter = createLimiter({
   message: "Too many SOS alerts sent. If this is a real emergency, call 112 directly.",
 });
 
+// Ab citizen posts bina admin approval ke live hoti hain, isliye spam rokne ke liye
+// har logged-in user ki naye post / event / notice / photo / business par limit.
+const submissionLimiter = createLimiter({
+  windowMs: 60 * 60 * 1000,
+  limit: 20,
+  keyGenerator: (req) => (req.user ? `user:${req.user._id}` : ipKeyGenerator(req.ip)),
+  message: "Aap bahut jaldi-jaldi post kar rahe hain. Thodi der baad dobara koshish karein.",
+});
+
 module.exports = {
   apiLimiter,
+  submissionLimiter,
   authLimiter,
   emailLimiter,
   contactLimiter,

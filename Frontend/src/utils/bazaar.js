@@ -27,9 +27,9 @@ export const GALLERY_CATEGORIES = [
 ];
 
 export const REVIEW_STATUS = {
-  pending: { label: "Approval ka intezaar", badge: "badge-yellow" },
-  approved: { label: "Approved — sabko dikh rahi hai", badge: "badge-green" },
-  rejected: { label: "Reject hui", badge: "badge-red" },
+  pending: { label: "Review ka intezaar", badge: "badge-yellow" },
+  approved: { label: "Live — sabko dikh rahi hai", badge: "badge-green" },
+  rejected: { label: "Admin ne hata di", badge: "badge-red" },
 };
 
 export const getTypeMeta = (value) =>

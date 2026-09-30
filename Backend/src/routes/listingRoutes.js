@@ -16,13 +16,14 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 const { authorize } = require("../middleware/roleMiddleware");
 const { uploadMultipleImages } = require("../middleware/uploadMiddleware");
+const { submissionLimiter } = require("../middleware/rateLimitMiddleware");
 
 // Public: sirf approved listings
 router.get("/", getListings);
 
 // Logged-in
 router.get("/my", protect, getMyListings);
-router.post("/", protect, uploadMultipleImages("images", 3), createListing);
+router.post("/", protect, submissionLimiter, uploadMultipleImages("images", 3), createListing);
 
 // Admin (/:id se pehle rakhna zaroori hai)
 router.get("/admin/all", protect, authorize("admin"), getAllListingsAdmin);

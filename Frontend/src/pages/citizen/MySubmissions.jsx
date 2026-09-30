@@ -18,7 +18,7 @@ const TABS = {
   events: { fetch: getMyEvents, remove: deleteEvent, listKey: "events", addTo: "/citizen/events/new", detail: "/citizen/events" },
 };
 
-// old records created before approval existed have no status: they are live
+// old records created before the status field existed have no status: they are live
 const statusOf = (item) => item.status || "approved";
 
 export default function MySubmissions() {
@@ -139,11 +139,10 @@ export default function MySubmissions() {
                   {status === "approved" && (
                     <Link to={`${cfg.detail}/${item._id}`} className="btn-secondary">View</Link>
                   )}
-                  {status !== "approved" && (
-                    <button type="button" className="btn-secondary" onClick={() => setTarget(item)}>
-                      Remove
-                    </button>
-                  )}
+                  <Link to={`${cfg.detail}/${item._id}/edit`} className="btn-secondary">Edit</Link>
+                  <button type="button" className="btn-secondary" onClick={() => setTarget(item)}>
+                    Remove
+                  </button>
                 </div>
               </li>
             );
@@ -158,7 +157,7 @@ export default function MySubmissions() {
         onClose={() => setTarget(null)}
         onConfirm={handleDelete}
         title="Remove submission"
-        message="This submission has not been published. Do you want to remove it?"
+        message="This will remove it for everyone. Do you want to continue?"
         confirmLabel="Remove"
         loading={deleting}
       />

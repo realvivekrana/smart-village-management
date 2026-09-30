@@ -3,6 +3,7 @@ const env = require("../config/env");
 const cloudinaryService = require("../services/cloudinaryService");
 const { createNotification } = require("../services/notificationService");
 const { getPagination, getPaginationMeta } = require("../utils/pagination");
+const { submissionStatus } = require("../utils/publicVisibility");
 
 const CATEGORIES = ["village", "festival", "farming", "event", "nature", "other"];
 
@@ -105,7 +106,8 @@ const uploadPhotos = async (req, res, next) => {
     }
 
     const uploaded = await cloudinaryService.uploadMultipleImages(req.files, "smart-village/gallery");
-    const isAdmin = req.user.role === "admin";
+    const status = submissionStatus(req.user);
+    const published = status === "approved";
     const category = CATEGORIES.includes(req.body.category) ? req.body.category : "village";
     const caption = (req.body.caption || "").trim().slice(0, 200);
 
@@ -115,16 +117,16 @@ const uploadPhotos = async (req, res, next) => {
         caption,
         category,
         createdBy: req.user._id,
-        status: isAdmin ? "approved" : "pending",
-        reviewedBy: isAdmin ? req.user._id : null,
-        reviewedAt: isAdmin ? new Date() : null,
+        status,
+        reviewedBy: published ? req.user._id : null,
+        reviewedAt: published ? new Date() : null,
       }))
     );
 
     return res.status(201).json({
       success: true,
-      message: isAdmin
-        ? "Photos published"
+      message: published
+        ? "Photos published. Ab gallery me sabko dikh rahi hain."
         : "Photos submitted. Admin approval ke baad gallery me dikhengi.",
       data: { photos },
     });

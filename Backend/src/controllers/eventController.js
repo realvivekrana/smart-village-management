@@ -4,7 +4,7 @@ const { getPagination, getPaginationMeta } = require("../utils/pagination");
 const cloudinaryService = require("../services/cloudinaryService");
 const notificationService = require("../services/notificationService");
 const env = require("../config/env");
-const { APPROVED_ONLY, pick } = require("../utils/publicVisibility");
+const { APPROVED_ONLY, REQUIRE_APPROVAL, submissionStatus, pick } = require("../utils/publicVisibility");
 
 const CITIZEN_FIELDS = [
   "title", "description", "category", "startDate", "endDate",
@@ -139,7 +139,7 @@ const broadcastPublished = (event) =>
     .then((users) => notificationService.notifyNewEvent(users.map((u) => u._id), event))
     .catch(() => {});
 
-/* POST /events  (admin publishes immediately, citizen submits for approval) */
+/* POST /events  (goes live immediately; admin can moderate afterwards) */
 const createEvent = async (req, res, next) => {
   try {
     const admin = isAdmin(req.user);
@@ -150,19 +150,20 @@ const createEvent = async (req, res, next) => {
       images = await cloudinaryService.uploadMultipleImages(req.files, "smart-village/events");
     }
 
-    if (admin) {
-      data.status = "approved";
+    data.status = submissionStatus(req.user);
+    if (data.status === "approved") {
       data.reviewedBy = req.user._id;
       data.reviewedAt = new Date();
-    } else {
-      data.status = "pending";
     }
 
     const event = await Event.create({ ...data, images, createdBy: req.user._id });
 
-    if (admin) {
+    if (event.status === "approved") {
       broadcastPublished(event);
-    } else {
+    }
+
+    if (!admin) {
+      const published = event.status === "approved";
       User.find({ role: "admin", isActive: true })
         .select("_id")
         .lean()
@@ -170,10 +171,10 @@ const createEvent = async (req, res, next) => {
           notificationService.broadcastNotification(
             admins.map((a) => a._id),
             {
-              title: "New event awaiting approval",
-              message: `${req.user.name} submitted an event: "${event.title}"`,
+              title: published ? "New event posted by a citizen" : "New event awaiting approval",
+              message: `${req.user.name} ${published ? "posted" : "submitted"} an event: "${event.title}"`,
               type: "system",
-              link: "/admin/events?status=pending",
+              link: published ? "/admin/events" : "/admin/events?status=pending",
               refModel: "Event",
               refId: event._id,
             }
@@ -184,9 +185,10 @@ const createEvent = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: admin
-        ? "Event created"
-        : "Event submitted. It will be visible to everyone after admin approval.",
+      message:
+        event.status === "approved"
+          ? "Event published. Everyone can see it now."
+          : "Event submitted. It will be visible to everyone after admin approval.",
       data: { event },
     });
   } catch (error) {
@@ -194,14 +196,21 @@ const createEvent = async (req, res, next) => {
   }
 };
 
-/* PUT /events/:id  (admin) */
+/* PUT /events/:id  (admin: any event; citizen: own event) */
 const updateEvent = async (req, res, next) => {
   try {
-    const data = cleanBody(req.body, ADMIN_FIELDS);
+    const admin = isAdmin(req.user);
     const event = await Event.findById(req.params.id);
-    if (!event) return res.status(404).json({ success: false, message: "Event not found" });
+    if (!event || (!admin && !event.isActive)) {
+      return res.status(404).json({ success: false, message: "Event not found" });
+    }
+    if (!admin && String(event.createdBy) !== String(req.user._id)) {
+      return res.status(403).json({ success: false, message: "You can only edit your own events" });
+    }
 
-    event.set(data);
+    event.set(cleanBody(req.body, admin ? ADMIN_FIELDS : CITIZEN_FIELDS));
+    // only when the village runs in "approval required" mode
+    if (!admin && REQUIRE_APPROVAL) event.status = "pending";
     await event.save(); // schema hook checks end date is after start date
 
     res.status(200).json({ success: true, message: "Event updated", data: { event } });
@@ -258,18 +267,17 @@ const reviewEvent = async (req, res, next) => {
   }
 };
 
-/* DELETE /events/:id  (admin: any; citizen: own pending/rejected only) */
+/* DELETE /events/:id  (admin: any; citizen: own event) */
 const deleteEvent = async (req, res, next) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ success: false, message: "Event not found" });
 
     if (!isAdmin(req.user)) {
-      const own = String(event.createdBy) === String(req.user._id);
-      if (!own || event.status === "approved") {
+      if (String(event.createdBy) !== String(req.user._id)) {
         return res.status(403).json({
           success: false,
-          message: "You can only remove your own events that are not yet published",
+          message: "You can only remove your own events",
         });
       }
     }

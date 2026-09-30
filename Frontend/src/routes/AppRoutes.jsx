@@ -506,14 +506,24 @@ export default function AppRoutes() {
             element={<NoticeDetails />}
           />
 
-          {/* Citizens can send a notice / event; admin approves it */}
+          {/* Citizens can post / edit their own notice or event (live immediately) */}
           <Route
             path="/citizen/notices/new"
             element={<AddNotice />}
           />
 
           <Route
+            path="/citizen/notices/:id/edit"
+            element={<AddNotice />}
+          />
+
+          <Route
             path="/citizen/events/new"
+            element={<AddEvent />}
+          />
+
+          <Route
+            path="/citizen/events/:id/edit"
             element={<AddEvent />}
           />
 

@@ -3,6 +3,7 @@ const env = require("../config/env");
 const cloudinaryService = require("../services/cloudinaryService");
 const { createNotification } = require("../services/notificationService");
 const { getPagination, getPaginationMeta } = require("../utils/pagination");
+const { REQUIRE_APPROVAL, submissionStatus } = require("../utils/publicVisibility");
 
 const TYPES = ["buy-sell", "lost-found", "equipment-rental"];
 const TYPE_LABEL = {
@@ -164,23 +165,24 @@ const createListing = async (req, res, next) => {
       images = images.map(({ url, publicId }) => ({ url, publicId }));
     }
 
-    const isAdmin = req.user.role === "admin";
+    // Ab post seedhe sabko dikhti hai (admin baad me hata sakta hai)
+    const status = submissionStatus(req.user);
+    const published = status === "approved";
 
     const listing = await Listing.create({
       ...data,
       contactName: data.contactName || req.user.name,
       images,
       createdBy: req.user._id,
-      // Admin ki apni post ko approval ki zaroorat nahi
-      status: isAdmin ? "approved" : "pending",
-      reviewedBy: isAdmin ? req.user._id : null,
-      reviewedAt: isAdmin ? new Date() : null,
+      status,
+      reviewedBy: published ? req.user._id : null,
+      reviewedAt: published ? new Date() : null,
     });
 
     return res.status(201).json({
       success: true,
-      message: isAdmin
-        ? "Listing published"
+      message: published
+        ? "Listing published. Ab sabko dikh rahi hai."
         : "Listing submitted. Admin approval ke baad sabko dikhegi.",
       data: { listing },
     });
@@ -191,7 +193,7 @@ const createListing = async (req, res, next) => {
 
 /*
 | PUT /api/v1/listings/:id   (owner / admin)
-| Owner ke edit ke baad dobara approval chahiye.
+| Edit turant live hota hai (REQUIRE_ADMIN_APPROVAL=true ho to dobara approval).
 */
 const updateListing = async (req, res, next) => {
   try {
@@ -215,7 +217,10 @@ const updateListing = async (req, res, next) => {
       }
     );
 
-    if (!isAdmin) {
+    // Sirf "approval required" mode me edit ke baad dobara approval chahiye.
+    // Warna edit turant live; admin ne jo reject kiya hai wo edit se wapas publish nahi hota.
+    const needsReview = !isAdmin && REQUIRE_APPROVAL;
+    if (needsReview) {
       listing.status = "pending";
       listing.rejectionReason = "";
     }
@@ -224,7 +229,7 @@ const updateListing = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message: isAdmin ? "Listing updated" : "Listing updated. Dobara admin approval ke baad dikhegi.",
+      message: needsReview ? "Listing updated. Dobara admin approval ke baad dikhegi." : "Listing updated",
       data: { listing },
     });
   } catch (error) {

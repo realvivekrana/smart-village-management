@@ -19,7 +19,7 @@ const adminLinks = [
   { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings", key: "sidebar.villageSettings" },
   { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory", key: "sidebar.villageDirectory" },
   { to: "/admin/households", icon: "🏠", label: "Households", key: "sidebar.households" },
-  { to: "/admin/submissions", icon: "✅", label: "Citizen Approvals", key: "sidebar.submissions" },
+  { to: "/admin/submissions", icon: "✅", label: "Citizen Posts", key: "sidebar.submissions" },
 ];
 
 const citizenLinks = [
