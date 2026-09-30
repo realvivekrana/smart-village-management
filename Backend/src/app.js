@@ -122,8 +122,14 @@ const allowedOrigins = [
 const vercelPreviewRegex =
   /^https:\/\/smart-village-management[a-z0-9-]*\.vercel\.app$/i;
 
+// Local development: localhost / 127.0.0.1 ka koi bhi port (5173, 5174, ...)
+// Sirf production ke bahar allow hota hai.
+const localhostRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
+
 const isOriginAllowed = (origin) =>
-  allowedOrigins.includes(origin) || vercelPreviewRegex.test(origin);
+  allowedOrigins.includes(origin) ||
+  vercelPreviewRegex.test(origin) ||
+  (process.env.NODE_ENV !== "production" && localhostRegex.test(origin));
 
 const corsOptions = {
   origin: (origin, callback) => {
