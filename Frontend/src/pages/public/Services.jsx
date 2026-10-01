@@ -7,6 +7,7 @@ import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import useDebounce from "../../hooks/useDebounce";
 import { useVillage } from "../../context/VillageContext";
+import SEO from "../../components/common/SEO";
 
 const serviceIcons = {
   certificate: "📜",
@@ -81,6 +82,11 @@ export default function Services() {
 
   return (
     <div className="min-h-dvh bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <SEO
+        title={`Government Services in ${villageName}`}
+        description={`Explore government and village services available for residents of ${villageName}, including certificates, licenses, education, health, agriculture and welfare services.`}
+        path="/services"
+      />
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-gray-200 dark:border-gray-800">

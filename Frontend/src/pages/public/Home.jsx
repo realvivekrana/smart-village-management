@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 import Hero from "../../components/home/Hero";
@@ -8,6 +9,9 @@ import LatestNotices from "../../components/home/LatestNotices";
 import EmergencySection from "../../components/home/EmergencySection";
 
 import { getHomeData } from "../../services/homeService";
+
+// SEO
+import SEO from "../../components/common/SEO";
 
 export default function Home() {
   const [homeData, setHomeData] = useState({
@@ -68,30 +72,48 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      {/* Critical first-screen content */}
-      <Hero />
+    <>
+      {/* =====================================================
+          SEO
+      ====================================================== */}
 
-      {/* Village Stats - Proper spacing below Hero */}
-      <div className="pt-12 sm:pt-14">
-        <VillageStats />
+      <SEO
+        title="Kakarcholi Village"
+        description="Official Smart Village Management portal for Kakarcholi village. Explore village information, government schemes, public services, notices, events, emergency contacts and important local resources."
+        path="/"
+      />
+
+      {/* =====================================================
+          HOMEPAGE
+      ====================================================== */}
+
+      <div>
+        {/* Critical first-screen content */}
+        <Hero />
+
+        {/* Village Stats - Proper spacing below Hero */}
+        <div className="pt-12 sm:pt-14">
+          <VillageStats />
+        </div>
+
+        {/* Quick Village Services */}
+        <QuickServices />
+
+        {/* Optimized Events Data */}
+        <UpcomingEvents
+          events={homeData.events}
+          loading={loading}
+        />
+
+        {/* Optimized Notices Data */}
+        <LatestNotices
+          notices={homeData.notices}
+          loading={loading}
+        />
+
+        {/* Emergency Information */}
+        <EmergencySection />
       </div>
-
-      <QuickServices />
-
-      {/* Optimized Events Data */}
-      <UpcomingEvents
-        events={homeData.events}
-        loading={loading}
-      />
-
-      {/* Optimized Notices Data */}
-      <LatestNotices
-        notices={homeData.notices}
-        loading={loading}
-      />
-
-      <EmergencySection />
-    </div>
+    </>
   );
 }

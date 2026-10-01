@@ -8,6 +8,7 @@ import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import useDebounce from "../../hooks/useDebounce";
 import { useVillage } from "../../context/VillageContext";
+import SEO from "../../components/common/SEO";
 
 export default function Jobs() {
   const { villageName } = useVillage();
@@ -95,6 +96,11 @@ export default function Jobs() {
 
   return (
     <main className="min-h-dvh bg-gradient-to-b from-slate-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <SEO
+        title={`Jobs & Career Opportunities in ${villageName}`}
+        description={`Find local jobs, employment opportunities and career openings available in and around ${villageName}. Search jobs by keyword, category and employment type.`}
+        path="/jobs"
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-gray-200/70 bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-800 dark:border-gray-800">
         {/* Decorative elements */}

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
+import SEO from "../../components/common/SEO";
 
 const PLACE_TYPE_ICONS = {
   temple: "🛕",
@@ -200,6 +201,20 @@ export default function AboutVillage() {
 
   return (
     <main className="min-h-dvh bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
+
+      <SEO
+        title={`About ${village.name} Village`}
+        description={
+          village.description
+            ? village.description.slice(0, 155)
+            : `Learn about ${village.name} village including its history, population, area, important places, connectivity, languages and local information.`
+        }
+        path="/about"
+        image={
+          data.images?.[0]?.url ||
+          "https://smart-village-management.vercel.app/village-hero-bg.webp"
+        }
+      />
 
       {/* =========================================================
           HERO

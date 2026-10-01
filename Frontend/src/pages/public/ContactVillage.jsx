@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import VoiceInput from "../../components/common/VoiceInput";
+import SEO from "../../components/common/SEO";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
@@ -174,6 +175,13 @@ const ContactVillage = () => {
 
   return (
     <main className="min-h-dvh bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
+      <SEO
+        title={`Contact ${villageName} Village`}
+        description={`Contact ${villageName} village through the official Smart Village Management portal. Find village contact details, representative information, location and send your questions, suggestions or concerns.`}
+        path="/contact"
+      />
+
+
       {/* Hero */}
       <section className="relative isolate overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-emerald-800 to-cyan-800" />

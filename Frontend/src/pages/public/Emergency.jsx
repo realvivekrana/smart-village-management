@@ -4,6 +4,7 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { useVillage } from "../../context/VillageContext";
+import SEO from "../../components/common/SEO";
 
 const fallbackContacts = [
   {
@@ -180,6 +181,12 @@ export default function Emergency() {
       </section>
 
       {/* Contacts */}
+        <SEO
+          title={`Emergency Contacts in ${villageName}`}
+          description={`Find important emergency contact numbers for ${villageName}, including police, fire, ambulance, medical services and other urgent assistance.`}
+          path="/emergency"
+        />
+
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
 
         <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

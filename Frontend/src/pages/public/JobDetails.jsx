@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -8,6 +9,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import Modal from "../../components/common/Modal";
 import Button from "../../components/common/Button";
 import BackButton from "../../components/common/BackButton";
+import SEO from "../../components/common/SEO";
 
 export default function JobDetails() {
   const { id } = useParams();
@@ -23,9 +25,14 @@ export default function JobDetails() {
   const load = () => {
     setLoading(true);
     setError(null);
+
     getJobById(id)
       .then((res) => setJob(res.data.data.job))
-      .catch((err) => setError(err.response?.data?.message || "Failed to load job"))
+      .catch((err) =>
+        setError(
+          err.response?.data?.message || "Failed to load job"
+        )
+      )
       .finally(() => setLoading(false));
   };
 
@@ -34,63 +41,119 @@ export default function JobDetails() {
   const handleApplySubmit = async (e) => {
     e.preventDefault();
     setApplying(true);
+
     try {
       const formData = new FormData();
       formData.append("coverLetter", coverLetter);
-      if (resume) formData.append("resume", resume);
+
+      if (resume) {
+        formData.append("resume", resume);
+      }
+
       await applyForJob(id, formData);
+
       toast.success("Application submitted!");
       setShowModal(false);
       setCoverLetter("");
       setResume(null);
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Could not submit application");
+      toast.error(
+        err.response?.data?.message ||
+          "Could not submit application"
+      );
     } finally {
       setApplying(false);
     }
   };
 
   if (loading) return <Loader fullScreen />;
-  if (error) return (
-    <div className="page-container">
-      <div className="mb-4"><BackButton to="/jobs" label="Back to Jobs" /></div>
-      <ErrorMessage message={error} onRetry={load} />
-    </div>
-  );
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <div className="mb-4">
+          <BackButton to="/jobs" label="Back to Jobs" />
+        </div>
+
+        <ErrorMessage message={error} onRetry={load} />
+      </div>
+    );
+  }
+
   if (!job) return null;
 
   return (
-    <div className="page-container max-w-3xl">
-      <div className="mb-4">
-        <BackButton to="/jobs" label="Back to Jobs" />
-      </div>
-      <JobDetailsView job={job} onApply={() => setShowModal(true)} applying={applying} />
+    <>
+      <SEO
+        title={`${job.title} | Jobs`}
+        description={
+          job.description
+            ? job.description.slice(0, 155)
+            : `View job details, requirements and application information for ${job.title}.`
+        }
+        path={`/jobs/${id}`}
+      />
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={`Apply for ${job.title}`}>
-        <form onSubmit={handleApplySubmit} className="space-y-4">
-          <div>
-            <label className="label">Cover Letter</label>
-            <textarea
-              className="input"
-              rows={4}
-              placeholder="Tell them why you're a good fit..."
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Resume (optional)</label>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={(e) => setResume(e.target.files[0])}
-              className="input"
-            />
-          </div>
-          <Button type="submit" loading={applying} className="w-full">Submit Application</Button>
-        </form>
-      </Modal>
-    </div>
+      <div className="page-container max-w-3xl">
+        <div className="mb-4">
+          <BackButton to="/jobs" label="Back to Jobs" />
+        </div>
+
+        <JobDetailsView
+          job={job}
+          onApply={() => setShowModal(true)}
+          applying={applying}
+        />
+
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          title={`Apply for ${job.title}`}
+        >
+          <form
+            onSubmit={handleApplySubmit}
+            className="space-y-4"
+          >
+            <div>
+              <label className="label">Cover Letter</label>
+
+              <textarea
+                className="input"
+                rows={4}
+                placeholder="Tell them why you're a good fit..."
+                value={coverLetter}
+                onChange={(e) =>
+                  setCoverLetter(e.target.value)
+                }
+              />
+            </div>
+
+            <div>
+              <label className="label">
+                Resume (optional)
+              </label>
+
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={(e) =>
+                  setResume(e.target.files[0])
+                }
+                className="input"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              loading={applying}
+              className="w-full"
+            >
+              Submit Application
+            </Button>
+          </form>
+        </Modal>
+      </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { useLanguage } from "../../context/LanguageContext";
+import SEO from "../../components/common/SEO";
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
 
@@ -246,6 +247,12 @@ const VillageGallery = () => {
 
   return (
     <>
+        <SEO
+          title={`${village?.name || "Kakarcholi"} Village Gallery`}
+          description={`Explore photos, memories and important moments from ${village?.name || "Kakarcholi"} village. View the village gallery, local places, events and community photos.`}
+          path="/gallery"
+        />
+
       <main className="min-h-dvh bg-gray-50">
         {/* Hero */}
         <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-600">

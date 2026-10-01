@@ -5,6 +5,7 @@ import { formatDateRange } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
 import useAuth from "../../hooks/useAuth";
+import SEO from "../../components/common/SEO";
 
 const categoryConfig = {
   cultural: {
@@ -152,6 +153,11 @@ export default function Events() {
 
   return (
     <main className="min-h-dvh bg-slate-50 dark:bg-gray-950">
+      <SEO
+        title={`Village Events in ${villageName}`}
+        description={`Discover upcoming cultural, religious, educational, sports and community events happening in ${villageName}. Explore local events, dates, locations and activities.`}
+        path="/events"
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-purple-100 bg-gradient-to-br from-indigo-700 via-purple-700 to-fuchsia-700 text-white dark:border-gray-800">
         <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />

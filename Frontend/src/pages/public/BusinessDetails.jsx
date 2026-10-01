@@ -12,6 +12,7 @@ import BusinessDetailsView from "../../components/business/BusinessDetails";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import Button from "../../components/common/Button";
+import SEO from "../../components/common/SEO";
 
 import useAuth from "../../hooks/useAuth";
 import { formatRelative } from "../../utils/formatDate";
@@ -174,8 +175,23 @@ export default function BusinessDetails() {
      Render
   ------------------------------------------------- */
 
+  const seoTitle = business.name
+    ? `${business.name} | Local Business`
+    : "Business Details";
+
+  const seoDescription =
+    business.description ||
+    `View details, contact information, reviews and other information about ${business.name || "this local business"}.`;
+
   return (
     <main className="min-h-dvh bg-gray-50 dark:bg-gray-950">
+
+      <SEO
+        title={seoTitle}
+        description={seoDescription.slice(0, 155)}
+        path={`/businesses/${id}`}
+      />
+
 
       {/* =================================================
           TOP HEADER / BREADCRUMB

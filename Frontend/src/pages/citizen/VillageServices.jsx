@@ -48,6 +48,7 @@ import { useVillage } from "../../context/VillageContext";
 import useAuth from "../../hooks/useAuth";
 import { formatDate } from "../../utils/formatDate";
 import BackButton from "../../components/common/BackButton";
+import SEO from "../../components/common/SEO";
 
 import { useLanguage } from "../../context/LanguageContext";
 /*
@@ -458,6 +459,12 @@ export default function VillageServices() {
 
   return (
     <div className="min-h-dvh bg-gray-50 dark:bg-gray-700/40">
+      <SEO
+        title={`${villageName} Village Services`}
+        description={`Explore government schemes, farmer services, health, education, Gram Sabha, bills, local services and community information available for ${villageName} village.`}
+        path="/village-services"
+      />
+
       {/* HEADER */}
       <section className="bg-gradient-to-br from-green-700 via-emerald-700 to-teal-700 text-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

@@ -4,6 +4,7 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import { useVillage } from "../../context/VillageContext";
+import SEO from "../../components/common/SEO";
 
 const categoryIcons = {
   Emergency: "🆘",
@@ -111,6 +112,12 @@ export default function GovernmentContacts() {
       </section>
 
       {/* Main Content */}
+      <SEO
+        title={`Government & Important Contacts in ${villageName}`}
+        description={`Find government officers, departments, emergency services and important public assistance contacts for ${villageName} village, including administration, police, health, education, agriculture, electricity and other services.`}
+        path="/government-contacts"
+      />
+
       <main className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
         {/* Search */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-5 mb-8">

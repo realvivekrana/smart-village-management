@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -9,6 +10,7 @@ import {
 import EventDetailsView from "../../components/events/EventDetails";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import SEO from "../../components/common/SEO";
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
 
@@ -150,6 +152,18 @@ export default function EventDetails() {
 
   return (
     <main className="min-h-dvh bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+
+      <SEO
+        title={`${event.title || event.name || "Event"} in ${villageName}`}
+        description={
+          event.description
+            ? event.description.slice(0, 155)
+            : `View details, date, time and information about ${
+                event.title || event.name || "this event"
+              } in ${villageName}.`
+        }
+        path={`/events/${id}`}
+      />
 
       {/* Top decorative background */}
       <div className="relative overflow-hidden">

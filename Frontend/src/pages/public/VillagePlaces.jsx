@@ -3,6 +3,7 @@ import api from "../../services/api";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
+import SEO from "../../components/common/SEO";
 
 const CATEGORIES = [
   { value: "all", label: "All Places", icon: "🗺️" },
@@ -108,6 +109,12 @@ export default function VillagePlaces() {
 
   return (
     <div className="page-container">
+      <SEO
+        title="Places of Interest in Kakarcholi"
+        description="Explore schools, colleges, hospitals, temples, mosques, railway stations, markets, government offices, tourist places and other important places in Kakarcholi village."
+        path="/places"
+      />
+
       <h1 className="section-title mb-2">🗺️ Places of Interest</h1>
       <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
         {filteredPlaces.length} place{filteredPlaces.length !== 1 ? "s" : ""}

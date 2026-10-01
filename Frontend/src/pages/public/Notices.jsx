@@ -5,6 +5,7 @@ import { formatRelative } from "../../utils/formatDate";
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
 import useAuth from "../../hooks/useAuth";
+import SEO from "../../components/common/SEO";
 
 const priorityConfig = {
   urgent: {
@@ -129,6 +130,11 @@ export default function Notices() {
 
   return (
     <main className="min-h-dvh bg-slate-50 dark:bg-gray-950">
+      <SEO
+        title={`Village Notices in ${villageName}`}
+        description={`Stay informed about official announcements, important updates, community information and notices from ${villageName}.`}
+        path="/notices"
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-blue-100 bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-800 text-white dark:border-gray-800">
         {/* Decorative shapes */}

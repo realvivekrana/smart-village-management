@@ -6,6 +6,7 @@ import Pagination from "../../components/common/Pagination";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import SEO from "../../components/common/SEO";
 import useDebounce from "../../hooks/useDebounce";
 import { useVillage } from "../../context/VillageContext";
 
@@ -87,6 +88,12 @@ export default function Businesses() {
 
   return (
     <main className="min-h-dvh bg-gradient-to-b from-orange-50/50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+
+      <SEO
+        title={`Local Businesses in ${villageName}`}
+        description={`Discover local shops, services, professionals and businesses in and around ${villageName}. Search and explore the local business directory on Smart Village Management.`}
+        path="/businesses"
+      />
       {/* =========================================================
           HERO
       ========================================================== */}
