@@ -163,7 +163,9 @@ const getMe = async (req, res, next) => {
     // req.user is already the full user document set by protect middleware
     return res.status(200).json({
       success: true,
-      data: { user: req.user },
+      data: {
+        user: req.user,
+      },
     });
   } catch (error) {
     next(error);
@@ -191,26 +193,144 @@ const logout = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| Reset Password (direct)
+| Send Forgot Password OTP
 |--------------------------------------------------------------------------
-| POST /api/v1/auth/reset-password
-| Body: { email, phone, password }
+| POST /api/v1/auth/forgot-password/send-otp
+|
+| Body:
+| {
+|   email,
+|   phone
+| }
+|
+| User ke registered mobile number par OTP bheja jayega.
 */
 
-const resetPassword = async (req, res, next) => {
+const sendResetOtp = async (req, res, next) => {
   try {
-    const { email, phone, password } = req.body;
-    const result = await authService.resetPasswordDirect({ email, phone, password });
+    const { email, phone } = req.body;
+
+    if (!email || !phone) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and phone number are required",
+      });
+    }
+
+    const result = await authService.sendResetOtp({
+      email,
+      phone,
+    });
+
     return res.status(200).json(result);
   } catch (error) {
     next(error);
   }
 };
 
+/*
+|--------------------------------------------------------------------------
+| Verify Forgot Password OTP
+|--------------------------------------------------------------------------
+| POST /api/v1/auth/forgot-password/verify-otp
+|
+| Body:
+| {
+|   email,
+|   phone,
+|   otp
+| }
+|
+| OTP verify hone ke baad reset token milega.
+| Isi reset token ke bina password change nahi hoga.
+*/
+
+const verifyResetOtp = async (req, res, next) => {
+  try {
+    const { email, phone, otp } = req.body;
+
+    if (!email || !phone || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, phone number and OTP are required",
+      });
+    }
+
+    const result = await authService.verifyResetOtp({
+      email,
+      phone,
+      otp,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/*
+|--------------------------------------------------------------------------
+| Reset Password After OTP Verification
+|--------------------------------------------------------------------------
+| POST /api/v1/auth/reset-password
+|
+| Body:
+| {
+|   email,
+|   phone,
+|   resetToken,
+|   password
+| }
+|
+| IMPORTANT:
+| OTP verify hone ke baad mila resetToken required hai.
+| Direct email + phone + password se password reset nahi hoga.
+*/
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const {
+      email,
+      phone,
+      resetToken,
+      password,
+    } = req.body;
+
+    if (!email || !phone || !resetToken || !password) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Email, phone number, reset token and new password are required",
+      });
+    }
+
+    const result = await authService.resetPassword({
+      email,
+      phone,
+      resetToken,
+      password,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/*
+|--------------------------------------------------------------------------
+| Export Controllers
+|--------------------------------------------------------------------------
+*/
+
 module.exports = {
   register,
   login,
   getMe,
   logout,
+
+  // Forgot Password OTP Flow
+  sendResetOtp,
+  verifyResetOtp,
   resetPassword,
 };

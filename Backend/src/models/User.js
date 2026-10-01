@@ -139,6 +139,13 @@ const userSchema = new mongoose.Schema(
     // Password Reset
     // --------------------------------------------------
 
+    /*
+    |--------------------------------------------------------------------------
+    | Password Reset Token
+    |--------------------------------------------------------------------------
+    | OTP verify hone ke baad temporary reset session ke liye.
+    */
+
     passwordResetToken: {
       type: String,
       select: false,
@@ -146,6 +153,37 @@ const userSchema = new mongoose.Schema(
 
     passwordResetExpires: {
       type: Date,
+      select: false,
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | Password Reset OTP
+    |--------------------------------------------------------------------------
+    | OTP ka plain text database me store nahi hoga.
+    | authService hashed OTP save karega.
+    */
+
+    passwordResetOtp: {
+      type: String,
+      select: false,
+    },
+
+    passwordResetOtpExpires: {
+      type: Date,
+      select: false,
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | OTP Attempts
+    |--------------------------------------------------------------------------
+    | Wrong OTP attempts ko limit karne ke liye.
+    */
+
+    passwordResetOtpAttempts: {
+      type: Number,
+      default: 0,
       select: false,
     },
   },
@@ -167,7 +205,10 @@ userSchema.pre("save", async function () {
 
   const salt = await bcrypt.genSalt(12);
 
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(
+    this.password,
+    salt
+  );
 });
 
 // ------------------------------------------------------
@@ -179,18 +220,29 @@ userSchema.pre("save", async function () {
 userSchema.methods.comparePassword = async function (
   candidatePassword
 ) {
-  return bcrypt.compare(candidatePassword, this.password);
+  return bcrypt.compare(
+    candidatePassword,
+    this.password
+  );
 };
 
 // ------------------------------------------------------
 // Remove Sensitive Data
 // ------------------------------------------------------
-// Response me password return nahi hoga.
+// Response me sensitive password-reset information
+// return nahi hogi.
 
 userSchema.methods.toJSON = function () {
   const user = this.toObject();
 
   delete user.password;
+
+  // Password reset security fields
+  delete user.passwordResetToken;
+  delete user.passwordResetExpires;
+  delete user.passwordResetOtp;
+  delete user.passwordResetOtpExpires;
+  delete user.passwordResetOtpAttempts;
 
   return user;
 };
@@ -199,6 +251,9 @@ userSchema.methods.toJSON = function () {
 // Create Model
 // ------------------------------------------------------
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model(
+  "User",
+  userSchema
+);
 
 module.exports = User;
