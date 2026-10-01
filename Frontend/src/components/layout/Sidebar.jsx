@@ -20,6 +20,8 @@ const adminLinks = [
   { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory", key: "sidebar.villageDirectory" },
   { to: "/admin/households", icon: "🏠", label: "Households", key: "sidebar.households" },
   { to: "/admin/submissions", icon: "✅", label: "Citizen Posts", key: "sidebar.submissions" },
+  { to: "/admin/applications", icon: "📑", label: "Yojana Applications", key: "sidebar.featureApplications" },
+  { to: "/admin/contact-messages", icon: "✉️", label: "Contact Messages", key: "sidebar.contactMessages" },
 ];
 
 const citizenLinks = [

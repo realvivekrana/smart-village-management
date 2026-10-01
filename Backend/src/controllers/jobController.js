@@ -5,6 +5,37 @@ const notificationService = require("../services/notificationService");
 
 /*
 |--------------------------------------------------------------------------
+| Allowed fields (mass-assignment se bachne ke liye)
+|--------------------------------------------------------------------------
+| Citizen sirf job ki details bhej sakta hai. isFeatured / isActive sirf admin
+| badal sakta hai. postedBy, applicationCount kabhi body se nahi liye jaate.
+*/
+const CITIZEN_JOB_FIELDS = [
+  "title",
+  "description",
+  "requirements",
+  "company",
+  "category",
+  "type",
+  "salary",
+  "location",
+  "openings",
+  "applyBy",
+];
+
+const ADMIN_JOB_FIELDS = [...CITIZEN_JOB_FIELDS, "isFeatured", "isActive"];
+
+const pickJobFields = (body, user) => {
+  const allowed = user.role === "admin" ? ADMIN_JOB_FIELDS : CITIZEN_JOB_FIELDS;
+  const data = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) data[key] = body[key];
+  }
+  return data;
+};
+
+/*
+|--------------------------------------------------------------------------
 | GET /api/v1/jobs  (public)
 |--------------------------------------------------------------------------
 */
@@ -91,7 +122,10 @@ const getMyJobs = async (req, res, next) => {
 */
 const createJob = async (req, res, next) => {
   try {
-    const job = await Job.create({ ...req.body, postedBy: req.user._id });
+    const job = await Job.create({
+      ...pickJobFields(req.body, req.user),
+      postedBy: req.user._id,
+    });
 
     // Notify all active citizens (non-blocking)
     User.find({ isActive: true, role: "citizen" })
@@ -124,7 +158,7 @@ const updateJob = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    Object.assign(job, req.body);
+    Object.assign(job, pickJobFields(req.body, req.user));
     await job.save();
 
     return res.status(200).json({ success: true, message: "Job updated", data: { job } });

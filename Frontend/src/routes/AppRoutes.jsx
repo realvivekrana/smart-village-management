@@ -288,6 +288,14 @@ const AdminHouseholds = lazy(
   () => import("../pages/admin/Households")
 );
 
+const AdminContactMessages = lazy(
+  () => import("../pages/admin/ContactMessages")
+);
+
+const AdminFeatureApplications = lazy(
+  () => import("../pages/admin/FeatureApplications")
+);
+
 // ============================================================
 // Loading Fallback
 // ============================================================
@@ -744,6 +752,18 @@ export default function AppRoutes() {
           <Route
             path="/admin/submissions"
             element={<AdminSubmissions />}
+          />
+
+          {/* Contact form messages */}
+          <Route
+            path="/admin/contact-messages"
+            element={<AdminContactMessages />}
+          />
+
+          {/* Yojana / village service applications */}
+          <Route
+            path="/admin/applications"
+            element={<AdminFeatureApplications />}
           />
 
         </Route>

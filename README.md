@@ -599,7 +599,6 @@ npm run seed:government-contacts
 /login
 /register
 /forgot-password
-/reset-password
 ```
 
 ### Citizen Area
@@ -652,6 +651,8 @@ npm run seed:government-contacts
 /admin/government-contacts
 /admin/households
 /admin/submissions
+/admin/applications
+/admin/contact-messages
 /admin/village-features
 ```
 
