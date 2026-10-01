@@ -51,6 +51,7 @@ const galleryRoutes = require("./routes/galleryRoutes");
 */
 
 const homeRoutes = require("./routes/homeRoutes");
+const assistantRoutes = require("./routes/assistantRoutes");
 
 const app = express();
 
@@ -536,6 +537,17 @@ app.use(
 app.use(
   "/api/v1/sos",
   sosRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| AI Assistant
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/assistant",
+  assistantRoutes
 );
 
 /*

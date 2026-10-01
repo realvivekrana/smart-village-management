@@ -1,3 +1,4 @@
+import ChatAssistant from "../assistant/ChatAssistant";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -131,6 +132,7 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+      <ChatAssistant />
     </div>
   );
 }

@@ -64,8 +64,16 @@ const submissionLimiter = createLimiter({
   message: "You are posting too quickly. Please try again after a little while.",
 });
 
+// AI assistant: har message DB queries (aur optional LLM call) chalata hai
+const assistantLimiter = createLimiter({
+  windowMs: 10 * 60 * 1000,
+  limit: 40,
+  message: "Assistant se bahut zyada sawal ho gaye. Thodi der baad try karein.",
+});
+
 module.exports = {
   apiLimiter,
+  assistantLimiter,
   submissionLimiter,
   authLimiter,
   passwordResetLimiter,

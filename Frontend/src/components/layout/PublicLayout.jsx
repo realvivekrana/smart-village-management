@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import MobileMenu from "./MobileMenu";
+import ChatAssistant from "../assistant/ChatAssistant";
 
 export default function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +23,7 @@ export default function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
+      <ChatAssistant />
     </div>
   );
 }
