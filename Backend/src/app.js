@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 
 const { apiLimiter } = require("./middleware/rateLimitMiddleware");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 /*
 |--------------------------------------------------------------------------
@@ -64,11 +65,15 @@ const app = express();
 |--------------------------------------------------------------------------
 */
 
+// Production me hamesha 1 (Render/Railway proxy ke peeche). Warna sabhi users ek hi IP
+// maane jaate hain aur rate limiter (forgot password: 5/hour) sab par ek saath lag jaata hai.
 if (process.env.TRUST_PROXY) {
   app.set(
     "trust proxy",
     Number(process.env.TRUST_PROXY) || 1
   );
+} else if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
 }
 
 /*
@@ -126,10 +131,14 @@ const vercelPreviewRegex =
 // Sirf production ke bahar allow hota hai.
 const localhostRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
 
+// Development me phone se laptop ke LAN IP (192.168.x.x / 10.x.x.x / 172.16-31.x.x) par test karne ke liye
+const lanRegex =
+  /^https?:\/\/(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(:\d+)?$/i;
+
 const isOriginAllowed = (origin) =>
   allowedOrigins.includes(origin) ||
   vercelPreviewRegex.test(origin) ||
-  (process.env.NODE_ENV !== "production" && localhostRegex.test(origin));
+  (process.env.NODE_ENV !== "production" && (localhostRegex.test(origin) || lanRegex.test(origin)));
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -531,144 +540,14 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| 404 Handler
+| 404 + Global Error Handler
 |--------------------------------------------------------------------------
+| middleware/errorMiddleware.js — multer (file size), JWT, CastError,
+| duplicate key aur validation errors sahi status code ke saath handle karta hai.
 */
 
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message:
-      `Route not found: ${req.method} ${req.originalUrl}`,
-  });
-});
-
-/*
-|--------------------------------------------------------------------------
-| Global Error Handler
-|--------------------------------------------------------------------------
-*/
-
-app.use(
-  (err, req, res, next) => {
-    console.error(
-      "Global Error:",
-      err
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | CORS Error
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      err.message ===
-      "Not allowed by CORS"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "CORS policy blocked this request",
-      });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | JSON Parsing Error
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      err instanceof SyntaxError &&
-      err.status === 400 &&
-      err.body
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Invalid JSON request body",
-      });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Mongoose Validation Error
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      err.name ===
-      "ValidationError"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Validation failed",
-
-        errors:
-          Object.values(
-            err.errors
-          ).map(
-            (error) =>
-              error.message
-          ),
-      });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Mongoose Cast Error
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-      err.name ===
-      "CastError"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Invalid resource ID",
-      });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Duplicate Key Error
-    |--------------------------------------------------------------------------
-    */
-
-    if (err.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message:
-          "Duplicate record already exists",
-      });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Error
-    |--------------------------------------------------------------------------
-    */
-
-    return res.status(
-      err.statusCode || 500
-    ).json({
-      success: false,
-
-      message:
-        err.message ||
-        "Internal server error",
-
-      ...(process.env.NODE_ENV ===
-        "development" && {
-        stack: err.stack,
-      }),
-    });
-  }
-);
+app.use(notFound);
+app.use(errorHandler);
 
 /*
 |--------------------------------------------------------------------------

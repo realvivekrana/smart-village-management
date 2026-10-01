@@ -1,3 +1,4 @@
+const escapeRegex = require("../utils/escapeRegex");
 const mongoose = require("mongoose");
 const { getActiveVillageName } = require("../utils/villageHelper");
 
@@ -474,25 +475,25 @@ const getAllSOSAlerts = async (
       filter.$or = [
         {
           userName: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           userPhone: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           "location.address": {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           "location.landmark": {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },

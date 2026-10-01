@@ -1,3 +1,4 @@
+const escapeRegex = require("../utils/escapeRegex");
 const User = require("../models/User");
 const {
   getPagination,
@@ -222,19 +223,19 @@ const getAllUsers = async (
       filter.$or = [
         {
           name: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           email: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           phone: {
-            $regex: search,
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },

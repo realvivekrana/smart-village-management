@@ -1,3 +1,4 @@
+const escapeRegex = require("../utils/escapeRegex");
 const mongoose = require("mongoose");
 const { getActiveVillageName } = require("../utils/villageHelper");
 
@@ -766,25 +767,25 @@ const getAllApplications = async (
       filter.$or = [
         {
           trackingId: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           applicantName: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           applicantPhone: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           featureTitle: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },

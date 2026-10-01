@@ -6,7 +6,8 @@ export const getMyBusiness = () => api.get("/businesses/my");
 export const getAllBusinessesAdmin = (params) => api.get("/businesses/admin/all", { params });
 export const createBusiness = (data) =>
   api.post("/businesses", data, { headers: { "Content-Type": "multipart/form-data" } });
-export const updateBusiness = (id, data) => api.put(`/businesses/${id}`, data);
+export const updateBusiness = (id, data) =>
+  api.put(`/businesses/${id}`, data, { headers: { "Content-Type": "multipart/form-data" } });
 export const reviewBusiness = (id, data) => api.patch(`/businesses/${id}/review`, data);
 export const deleteBusiness = (id) => api.delete(`/businesses/${id}`);
 

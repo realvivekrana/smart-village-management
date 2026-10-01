@@ -12,8 +12,9 @@ export default function AddBusiness() {
   const handleSubmit = async (formData) => {
     setLoading(true);
     try {
-      await createBusiness(formData);
-      toast.success("Business registered! It is now visible to everyone.");
+      const res = await createBusiness(formData);
+      toast.success(res.data?.message || "Business registered!");
+      if (res.data?.warning) toast(res.data.warning, { icon: "⚠️" });
       navigate("/business-owner/my-business");
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not register business");

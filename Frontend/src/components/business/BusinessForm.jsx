@@ -18,6 +18,9 @@ export default function BusinessForm({ initial = {}, onSubmit, loading }) {
     "address.pincode": initial.address?.pincode || "",
   });
   const [images, setImages] = useState([]);
+  const [removed, setRemoved] = useState([]);
+  const existing = (initial.images || []).filter((img) => !removed.includes(String(img._id || img.publicId)));
+  const maxNew = Math.max(0, 5 - existing.length);
 
   const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
 
@@ -36,6 +39,7 @@ export default function BusinessForm({ initial = {}, onSubmit, loading }) {
     fd.append("address[district]", form["address.district"]);
     fd.append("address[state]", form["address.state"]);
     fd.append("address[pincode]", form["address.pincode"]);
+    removed.forEach((id) => fd.append("removeImages", id));
     images.forEach((img) => fd.append("images", img));
     onSubmit(fd);
   };
@@ -94,14 +98,43 @@ export default function BusinessForm({ initial = {}, onSubmit, loading }) {
         </div>
       </fieldset>
       <div className="form-group">
-        <label className="label">Photos (max 5)</label>
+        <label className="label">Photos (max 5, JPG / PNG / WEBP, har photo 5MB tak)</label>
+        {existing.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-2">
+            {existing.map((img) => (
+              <div key={img._id || img.publicId || img.url} className="relative">
+                <img src={img.url} alt="" className="h-16 w-24 object-cover rounded-lg" />
+                <button
+                  type="button"
+                  aria-label="Remove photo"
+                  onClick={() => setRemoved((p) => [...p, String(img._id || img.publicId)])}
+                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-600 text-white text-xs leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <input
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           multiple
           className="input"
-          onChange={(e) => setImages(Array.from(e.target.files).slice(0, 5))}
+          disabled={maxNew === 0}
+          onChange={(e) => {
+            const picked = Array.from(e.target.files).slice(0, maxNew);
+            const tooBig = picked.find((f) => f.size > 5 * 1024 * 1024);
+            if (tooBig) {
+              alert(`"${tooBig.name}" 5MB se badi hai. Chhoti photo chunein.`);
+              e.target.value = "";
+              setImages([]);
+              return;
+            }
+            setImages(picked);
+          }}
         />
+        {maxNew === 0 && <p className="text-xs text-gray-500 mt-1">5 photos ho chuki hain. Nayi add karne ke liye pehle koi hatayein.</p>}
         {images.length > 0 && <p className="text-xs text-gray-500 mt-1">{images.length} image(s) selected</p>}
       </div>
       <div className="flex justify-end pt-2">

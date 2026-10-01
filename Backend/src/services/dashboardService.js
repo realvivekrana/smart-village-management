@@ -406,6 +406,7 @@ const getBusinessOwnerStats = async (
   const businesses =
     await Business.find({
       owner: userId,
+      isActive: true,
     })
       .select(
         "_id name rating status"

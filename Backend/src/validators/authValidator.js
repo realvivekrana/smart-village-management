@@ -10,7 +10,7 @@ const registerValidator = [
     .trim()
     .notEmpty().withMessage("Email is required")
     .isEmail().withMessage("Please enter a valid email address")
-    .normalizeEmail(),
+    .normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
 
   body("phone")
     .trim()
@@ -33,7 +33,7 @@ const loginValidator = [
     .trim()
     .notEmpty().withMessage("Email is required")
     .isEmail().withMessage("Please enter a valid email address")
-    .normalizeEmail(),
+    .normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
 
   body("password")
     .notEmpty().withMessage("Password is required"),
@@ -44,7 +44,7 @@ const forgotPasswordValidator = [
     .trim()
     .notEmpty().withMessage("Email is required")
     .isEmail().withMessage("Please enter a valid email address")
-    .normalizeEmail(),
+    .normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
 ];
 
 const resetPasswordValidator = [

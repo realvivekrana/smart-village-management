@@ -31,6 +31,10 @@ const getBusinessReviews = async (req, res, next) => {
   try {
     const { page, limit, skip } = getPagination(req.query);
 
+    if (!req.params.businessId) {
+      return res.status(400).json({ success: false, message: "Business id is required" });
+    }
+
     const filter = { business: req.params.businessId, isActive: true };
 
     const [reviews, total] = await Promise.all([

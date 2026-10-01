@@ -7,16 +7,24 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [devLink, setDevLink] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await forgotPassword(email);
+      const res = await forgotPassword(email.trim());
+      setDevLink(res.data?.devResetUrl || "");
       setSent(true);
       toast.success("If this email is registered, a reset link has been sent.");
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+    } catch (err) {
+      // Asli wajah dikhao (rate limit, email service down, invalid email ...)
+      const message =
+        err.response?.data?.message ||
+        (err.code === "ECONNABORTED"
+          ? "Server se jawab nahi aaya. Thodi der baad dobara koshish karein."
+          : "Something went wrong. Please try again.");
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -39,6 +47,12 @@ export default function ForgotPassword() {
               <p className="text-sm text-gray-500 mb-6">
                 If an account with <strong>{email}</strong> exists, a password reset link has been sent.
               </p>
+              <p className="text-xs text-gray-400 mb-4">Email nahi mila? Spam folder bhi check karein.</p>
+              {devLink && (
+                <p className="text-xs text-left break-all rounded-lg bg-yellow-50 dark:bg-yellow-900/20 p-3 mb-4 text-yellow-800 dark:text-yellow-200">
+                  Dev mode (SMTP set nahi hai): <a href={devLink} className="underline">{devLink}</a>
+                </p>
+              )}
               <Link to="/login" className="btn-primary">Back to Login</Link>
             </div>
           ) : (

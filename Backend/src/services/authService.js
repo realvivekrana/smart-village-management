@@ -2,6 +2,9 @@ const crypto = require("crypto");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 const env = require("../config/env");
+const ApiError = require("../utils/ApiError");
+const logger = require("../utils/logger");
+const { findUserByEmail } = require("../utils/emailLookup");
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +24,11 @@ const generateResetToken = () => {
   return { plainToken, hashedToken, expiresAt };
 };
 
+const buildResetUrl = (plainToken) =>
+  `${env.frontendUrl}/reset-password?token=${plainToken}`;
+
 const sendPasswordResetEmail = async (user, plainToken) => {
-  const resetUrl = `${env.frontendUrl}/reset-password?token=${plainToken}`;
+  const resetUrl = buildResetUrl(plainToken);
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -59,11 +65,18 @@ const sendPasswordResetEmail = async (user, plainToken) => {
     </div>
   `;
 
-  await sendEmail({
+  const info = await sendEmail({
     to: user.email,
     subject: "Password Reset Request — Smart Village Management",
     html,
   });
+
+  // Terminal me saaf dikhe ki mail kis address par gayi aur Gmail ne kya kaha
+  if (info && !info.skipped) {
+    logger.info(
+      `Password reset mail -> ${user.email} | accepted: ${JSON.stringify(info.accepted)} | rejected: ${JSON.stringify(info.rejected)}`
+    );
+  }
 };
 
 /*
@@ -73,17 +86,20 @@ const sendPasswordResetEmail = async (user, plainToken) => {
 | Returns { success, message } — always same message to prevent email enumeration.
 */
 
-const requestPasswordReset = async (email) => {
-  const user = await User.findOne({ email: email.toLowerCase() }).select(
-    "+passwordResetToken +passwordResetExpires"
-  );
+const GENERIC_MESSAGE = "If an account exists with this email, a reset link has been sent.";
 
-  // Always return success to prevent email enumeration
-  if (!user) {
-    return {
-      success: true,
-      message: "If an account exists with this email, a reset link has been sent.",
-    };
+const requestPasswordReset = async (email, requestOrigin) => {
+  // Production me SMTP nahi hai to chup-chaap "sent" dikhana galat hai — saaf error do.
+  if (!env.email.enabled && env.isProduction) {
+    logger.error("Forgot password: SMTP_HOST / SMTP_USER / SMTP_PASS set nahi hain, email nahi ja sakti.");
+    throw new ApiError(503, "Email service abhi available nahi hai. Kripya admin se sampark karein.");
+  }
+
+  const user = await findUserByEmail(email).select("+passwordResetToken +passwordResetExpires");
+
+  // Email enumeration rokne ke liye hamesha same message
+  if (!user || !user.isActive) {
+    return { success: true, message: GENERIC_MESSAGE };
   }
 
   const { plainToken, hashedToken, expiresAt } = generateResetToken();
@@ -94,18 +110,24 @@ const requestPasswordReset = async (email) => {
 
   try {
     await sendPasswordResetEmail(user, plainToken);
-  } catch {
-    // Clean up token if email fails
+  } catch (error) {
+    logger.error("Password reset email failed:", error.message);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    throw new Error("Failed to send password reset email. Please try again.");
+    throw new ApiError(502, "Reset email bhejne me dikkat aayi. Thodi der baad dobara koshish karein.");
   }
 
-  return {
-    success: true,
-    message: "If an account exists with this email, a reset link has been sent.",
-  };
+  const result = { success: true, message: GENERIC_MESSAGE };
+
+  // Sirf local development me (SMTP bina) link seedha dikha do, taaki test ho sake
+  if (!env.email.enabled && !env.isProduction) {
+    // Spoofable header hai, isliye sirf development me use hota hai
+    const base = requestOrigin ? String(requestOrigin).replace(/\/+$/, "") : env.frontendUrl;
+    result.devResetUrl = `${base}/reset-password?token=${plainToken}`;
+  }
+
+  return result;
 };
 
 /*
@@ -115,7 +137,7 @@ const requestPasswordReset = async (email) => {
 */
 
 const resetPassword = async (plainToken, newPassword) => {
-  const hashedToken = crypto.createHash("sha256").update(plainToken).digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(String(plainToken).trim()).digest("hex");
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,

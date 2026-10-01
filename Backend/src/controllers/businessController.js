@@ -12,11 +12,20 @@ const OWNER_FIELDS = [
   "email", "website", "address", "openingHours", "tags",
 ];
 const ADMIN_FIELDS = [...OWNER_FIELDS, "isFeatured", "isActive"];
-const pickFields = (body, allowed) =>
-  allowed.reduce((out, key) => {
-    if (body[key] !== undefined) out[key] = body[key];
-    return out;
+const pickFields = (body = {}, allowed) => {
+  const out = allowed.reduce((acc, key) => {
+    if (body[key] !== undefined) acc[key] = body[key];
+    return acc;
   }, {});
+
+  // "example.com" likha ho to link relative ban ke toot jaata hai
+  if (typeof out.website === "string" && out.website.trim() && !/^https?:\/\//i.test(out.website.trim())) {
+    out.website = `https://${out.website.trim()}`;
+  }
+  return out;
+};
+
+const toIdList = (value) => (Array.isArray(value) ? value : value ? [value] : []).map(String);
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +78,7 @@ const getBusinessById = async (req, res, next) => {
 
     // Non-approved businesses visible only to owner / admin
     const isAdmin = req.user && req.user.role === "admin";
-    const isOwner = req.user && String(business.owner._id) === String(req.user._id);
+    const isOwner = req.user && business.owner && String(business.owner._id) === String(req.user._id);
     if (business.status !== "approved" && !isAdmin && !isOwner) {
       return res.status(404).json({ success: false, message: "Business not found" });
     }
@@ -87,7 +96,7 @@ const getBusinessById = async (req, res, next) => {
 */
 const getMyBusiness = async (req, res, next) => {
   try {
-    const businesses = await Business.find({ owner: req.user._id })
+    const businesses = await Business.find({ owner: req.user._id, isActive: true })
       .sort({ createdAt: -1 })
       .lean();
     return res.status(200).json({ success: true, data: { businesses } });
@@ -139,7 +148,8 @@ const getAllBusinessesAdmin = async (req, res, next) => {
 const createBusiness = async (req, res, next) => {
   try {
     let images = [];
-    if (req.files && req.files.length > 0 && env.cloudinary.enabled) {
+    const hasFiles = req.files && req.files.length > 0;
+    if (hasFiles && env.cloudinary.enabled) {
       images = await cloudinaryService.uploadMultipleImages(req.files, "smart-village/businesses");
       images[0].isMain = true;
     }
@@ -160,6 +170,9 @@ const createBusiness = async (req, res, next) => {
       message: published
         ? "Business registered. It is now visible to everyone."
         : "Business registered. Pending admin approval.",
+      ...(hasFiles && !env.cloudinary.enabled && {
+        warning: "Photos save nahi hui: server par Cloudinary configure nahi hai.",
+      }),
       data: { business },
     });
   } catch (error) {
@@ -175,9 +188,11 @@ const createBusiness = async (req, res, next) => {
 const updateBusiness = async (req, res, next) => {
   try {
     const business = await Business.findById(req.params.id);
-    if (!business) return res.status(404).json({ success: false, message: "Business not found" });
-
     const isAdmin = req.user.role === "admin";
+    if (!business || (!business.isActive && !isAdmin)) {
+      return res.status(404).json({ success: false, message: "Business not found" });
+    }
+
     if (!isAdmin && String(business.owner) !== String(req.user._id)) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
@@ -186,6 +201,19 @@ const updateBusiness = async (req, res, next) => {
     // "Approval required" mode me edit ke baad dobara pending.
     Object.assign(business, pickFields(req.body, isAdmin ? ADMIN_FIELDS : OWNER_FIELDS));
     if (!isAdmin && REQUIRE_APPROVAL) business.status = "pending";
+
+    // Owner ne jo purani photos hataai hain (removeImages = publicId / _id list)
+    const removeIds = toIdList(req.body.removeImages);
+    if (removeIds.length > 0) {
+      const removed = business.images.filter(
+        (img) => removeIds.includes(String(img._id)) || removeIds.includes(String(img.publicId))
+      );
+      business.images = business.images.filter((img) => !removed.includes(img));
+      cloudinaryService.deleteMultipleImages(removed.map((img) => img.publicId)).catch(() => {});
+      if (business.images.length > 0 && !business.images.some((img) => img.isMain)) {
+        business.images[0].isMain = true;
+      }
+    }
 
     // Newly uploaded photos (if any) are appended to the existing gallery
     if (req.files && req.files.length > 0 && env.cloudinary.enabled) {
@@ -216,13 +244,16 @@ const reviewBusiness = async (req, res, next) => {
     if (!business) return res.status(404).json({ success: false, message: "Business not found" });
 
     business.status = status;
+    if (status === "approved") business.rejectionReason = undefined;
     business.approvedBy = req.user._id;
     if (rejectionReason) business.rejectionReason = rejectionReason;
     await business.save();
 
     // Notify and email owner (non-blocking)
-    notificationService.notifyBusinessStatus(business.owner._id, business).catch(() => {});
-    emailService.sendBusinessStatusEmail(business.owner, business).catch(() => {});
+    if (business.owner) {
+      notificationService.notifyBusinessStatus(business.owner._id, business).catch(() => {});
+      emailService.sendBusinessStatusEmail(business.owner, business).catch(() => {});
+    }
 
     return res.status(200).json({
       success: true,

@@ -22,7 +22,7 @@ const sendWelcomeEmail = async (user) => {
           jobs, and stay connected with your community.
         </p>
         <div style="margin: 24px 0; text-align: center;">
-          <a href="${env.frontendUrl}/dashboard"
+          <a href="${env.frontendUrl}/citizen/dashboard"
              style="background: #16a34a; color: #fff; padding: 12px 24px;
                     text-decoration: none; border-radius: 6px; font-weight: bold;">
             Go to Dashboard

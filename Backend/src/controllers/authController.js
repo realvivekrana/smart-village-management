@@ -2,6 +2,7 @@ const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const authService = require("../services/authService");
 const emailService = require("../services/emailService");
+const { findUserByEmail } = require("../utils/emailLookup");
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +24,7 @@ const register = async (req, res, next) => {
     }
 
     // Check existing email
-    const existingEmail = await User.findOne({
-      email: email.toLowerCase(),
-    });
+    const existingEmail = await findUserByEmail(email);
 
     if (existingEmail) {
       return res.status(409).json({
@@ -59,7 +58,7 @@ const register = async (req, res, next) => {
     // Create user
     const user = await User.create({
       name,
-      email: email.toLowerCase(),
+      email: String(email).trim().toLowerCase(),
       phone,
       password,
       role: userRole,
@@ -104,9 +103,7 @@ const login = async (req, res, next) => {
     }
 
     // Password normally select:false hai
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-    }).select("+password");
+    const user = await findUserByEmail(email).select("+password");
 
     if (!user) {
       return res.status(401).json({
@@ -202,7 +199,7 @@ const logout = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const result = await authService.requestPasswordReset(email);
+    const result = await authService.requestPasswordReset(email, req.get("origin"));
     return res.status(200).json(result);
   } catch (error) {
     next(error);

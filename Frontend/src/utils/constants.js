@@ -1,4 +1,17 @@
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+/*
+| Phone par "localhost" = phone khud. Isliye agar .env me localhost likha hai
+| par page laptop ke IP (e.g. 192.168.1.5:5173) se khula hai, to API bhi usi IP par jaayegi.
+*/
+const resolveApiUrl = () => {
+  const url = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+  if (typeof window === "undefined") return url;
+  const pageHost = window.location.hostname;
+  const isLocalApi = /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/i.test(url);
+  const pageIsLocal = pageHost === "localhost" || pageHost === "127.0.0.1";
+  return isLocalApi && !pageIsLocal ? url.replace(/\/\/(localhost|127\.0\.0\.1)/i, `//${pageHost}`) : url;
+};
+
+export const API_URL = resolveApiUrl();
 export const APP_NAME = import.meta.env.VITE_APP_NAME || "Smart Village";
 
 export const ROLES = {

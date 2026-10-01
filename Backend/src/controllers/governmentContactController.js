@@ -1,3 +1,4 @@
+const escapeRegex = require("../utils/escapeRegex");
 const GovernmentContact = require("../models/GovernmentContact");
 
 /**
@@ -46,25 +47,25 @@ const getGovernmentContacts = async (req, res) => {
       query.$or = [
         {
           name: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           designation: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           department: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           office: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },

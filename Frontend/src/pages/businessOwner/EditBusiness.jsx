@@ -20,7 +20,13 @@ export default function EditBusiness() {
     setError(null);
     getBusinessById(id)
       .then((res) => setBusiness(res.data.data.business))
-      .catch((err) => setError(err.response?.data?.message || "Failed to load business"))
+      .catch((err) =>
+        setError(
+          err.response?.status === 404
+            ? "Ye business ab available nahi hai (shayad delete ho chuka hai)."
+            : err.response?.data?.message || "Failed to load business"
+        )
+      )
       .finally(() => setLoading(false));
   };
 
@@ -29,8 +35,8 @@ export default function EditBusiness() {
   const handleSubmit = async (formData) => {
     setSaving(true);
     try {
-      await updateBusiness(id, formData);
-      toast.success("Business updated. It will be re-reviewed by an admin.");
+      const res = await updateBusiness(id, formData);
+      toast.success(res.data?.message || "Business updated");
       navigate("/business-owner/my-business");
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not update business");

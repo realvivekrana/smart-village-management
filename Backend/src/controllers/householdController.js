@@ -1,3 +1,4 @@
+const escapeRegex = require("../utils/escapeRegex");
 const mongoose = require("mongoose");
 const { getActiveVillageName } = require("../utils/villageHelper");
 
@@ -588,25 +589,25 @@ const getAllHouseholds = async (
       filter.$or = [
         {
           householdHeadName: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           householdHeadPhone: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           houseNumber: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },
         {
           ward: {
-            $regex: search.trim(),
+            $regex: escapeRegex(search),
             $options: "i",
           },
         },

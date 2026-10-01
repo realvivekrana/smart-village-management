@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "test:email": "node src/scripts/testEmail.js",
     "seed:admin": "node src/seeds/adminSeed.js",
     "seed:government-contacts": "node src/seeds/governmentContactSeed.js",
     "seed:village": "node src/seeds/villageSeed.js",

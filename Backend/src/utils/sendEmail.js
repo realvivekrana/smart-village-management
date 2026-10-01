@@ -11,6 +11,10 @@ const getTransporter = () => {
       host: env.email.host,
       port: env.email.port,
       secure: env.email.port === 465,
+      // Hang hone se bachane ke liye (warna request 60s latak jaati hai)
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
       auth: {
         user: env.email.user,
         pass: env.email.pass,

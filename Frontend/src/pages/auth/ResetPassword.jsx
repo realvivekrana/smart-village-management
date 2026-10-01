@@ -16,6 +16,10 @@ export default function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) { toast.error("Passwords do not match"); return; }
+    if (!/[A-Z]/.test(form.password) || !/[0-9]/.test(form.password)) {
+      toast.error("Password me kam se kam 1 capital letter aur 1 number hona chahiye");
+      return;
+    }
     if (!token) { toast.error("Invalid or missing reset token"); return; }
     setLoading(true);
     try {
@@ -23,7 +27,11 @@ export default function ResetPassword() {
       toast.success("Password reset successfully! Please login.");
       navigate("/login");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Reset failed. Token may have expired.");
+      toast.error(
+        err.response?.data?.message === "Invalid or expired reset token."
+          ? "Reset link expire ho gaya ya pehle hi use ho chuka hai. Naya link mangwayein."
+          : err.response?.data?.message || "Reset failed. Token may have expired."
+      );
     } finally {
       setLoading(false);
     }

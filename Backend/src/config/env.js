@@ -44,11 +44,23 @@ const email = {
 
 email.enabled = Boolean(email.host && email.user && email.pass);
 
+if (nodeEnv === "production") {
+  if (!process.env.FRONTEND_URL) {
+    console.warn("WARNING: FRONTEND_URL set nahi hai. Reset password email me link localhost ka jayega!");
+  }
+  if (!email.enabled) {
+    console.warn("WARNING: SMTP_HOST / SMTP_USER / SMTP_PASS set nahi hain. Forgot password email nahi bhej payega.");
+  }
+  if (!process.env.TRUST_PROXY) {
+    console.warn("WARNING: TRUST_PROXY set nahi hai (default 1 use hoga).");
+  }
+}
+
 module.exports = {
   nodeEnv,
   isProduction: nodeEnv === "production",
   port: Number(process.env.PORT) || 5000,
-  frontendUrl: process.env.FRONTEND_URL || "http://localhost:5173",
+  frontendUrl: (process.env.FRONTEND_URL || "http://localhost:5173").trim().replace(/\/+$/, ""),
   mongoUri: process.env.MONGO_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
