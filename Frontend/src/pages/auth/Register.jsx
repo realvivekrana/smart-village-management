@@ -83,6 +83,9 @@ export default function Register() {
                   {showPwd ? t("auth.hide") : t("auth.show")}
                 </button>
               </div>
+              <p className={`mt-1 text-xs ${form.password && !(form.password.length >= 8 && /[A-Z]/.test(form.password) && /\d/.test(form.password)) ? "text-red-500" : "text-gray-500"}`}>
+                {t("auth.passwordPlaceholder")}
+              </p>
             </div>
 
             <div className="form-group">

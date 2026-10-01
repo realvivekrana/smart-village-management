@@ -23,7 +23,7 @@ export default function Hero() {
   const heroBackground =
     village?.heroImage ||
     import.meta.env.VITE_HERO_BACKGROUND ||
-    "/village-hero-bg.png";
+    "/village-hero-bg.webp";
 
   return (
     <section className="relative isolate min-h-[680px] overflow-hidden bg-emerald-950 text-white sm:min-h-[720px] lg:min-h-[760px]">
