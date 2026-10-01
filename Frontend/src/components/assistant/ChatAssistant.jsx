@@ -31,7 +31,8 @@ export default function ChatAssistant() {
   useEffect(() => {
     if (open) {
       endRef.current?.scrollIntoView({ behavior: "smooth" });
-      inputRef.current?.focus();
+      // Phone par auto-focus se keyboard khul kar chat dhak leta hai, isliye sirf bade screen par
+      if (window.matchMedia?.("(min-width: 640px)").matches) inputRef.current?.focus();
     }
   }, [messages, loading, open]);
 
@@ -71,7 +72,7 @@ export default function ChatAssistant() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label={isHi ? "AI सहायक खोलें" : "Open AI assistant"}
-          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-lg px-4 py-3 transition"
+          className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-50 flex items-center gap-2 rounded-full bg-primary-600 hover:bg-primary-700 text-white shadow-lg px-4 py-3 transition"
         >
           <MessageCircle size={22} />
           <span className="hidden sm:inline text-sm font-medium">{isHi ? "AI सहायक" : "Ask AI"}</span>
@@ -105,7 +106,7 @@ export default function ChatAssistant() {
               <div key={i} className="space-y-2">
                 <Bubble role={m.role} text={m.text} error={m.error} />
                 {m.cards?.map((card, ci) => (
-                  <Card key={ci} card={card} onNavigate={() => setOpen(false)} />
+                  <Card key={ci} card={card} isHi={isHi} onNavigate={() => setOpen(false)} />
                 ))}
               </div>
             ))}
@@ -140,7 +141,7 @@ export default function ChatAssistant() {
               e.preventDefault();
               send();
             }}
-            className="flex items-center gap-2 p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+            className="flex items-center gap-2 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
           >
             <input
               ref={inputRef}
@@ -184,7 +185,7 @@ function Bubble({ role, text, error }) {
   );
 }
 
-function Card({ card, onNavigate }) {
+function Card({ card, onNavigate, isHi }) {
   return (
     <div className="rounded-xl bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 overflow-hidden">
       <div className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-gray-600">
@@ -221,7 +222,7 @@ function Card({ card, onNavigate }) {
           onClick={onNavigate}
           className="flex items-center justify-end gap-1 px-3 py-1.5 text-xs font-medium text-primary-700 dark:text-primary-300 border-t border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
         >
-          {card.items.length ? "Sab dekhein" : "Page kholein"} <ChevronRight size={14} />
+          {card.items.length ? (isHi ? "सब देखें" : "Sab dekhein") : (isHi ? "पेज खोलें" : "Page kholein")} <ChevronRight size={14} />
         </Link>
       )}
     </div>
