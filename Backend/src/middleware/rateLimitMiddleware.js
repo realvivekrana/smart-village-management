@@ -26,6 +26,14 @@ const authLimiter = createLimiter({
   message: "Too many login attempts. Please try again after 15 minutes.",
 });
 
+// Password reset: sirf galat attempts count honge (phone guess karne se rokne ke liye)
+const passwordResetLimiter = createLimiter({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  skipSuccessfulRequests: true,
+  message: "Too many reset attempts. Please try again after an hour.",
+});
+
 // Forgot password / verification email
 const emailLimiter = createLimiter({
   windowMs: 60 * 60 * 1000,
@@ -60,6 +68,7 @@ module.exports = {
   apiLimiter,
   submissionLimiter,
   authLimiter,
+  passwordResetLimiter,
   emailLimiter,
   contactLimiter,
   sosLimiter,

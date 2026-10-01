@@ -191,35 +191,16 @@ const logout = async (req, res, next) => {
 
 /*
 |--------------------------------------------------------------------------
-| Forgot Password
-|--------------------------------------------------------------------------
-| POST /api/v1/auth/forgot-password
-*/
-
-const forgotPassword = async (req, res, next) => {
-  try {
-    const { email } = req.body;
-    const result = await authService.requestPasswordReset(email, req.get("origin"));
-    return res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/*
-|--------------------------------------------------------------------------
-| Reset Password
+| Reset Password (direct)
 |--------------------------------------------------------------------------
 | POST /api/v1/auth/reset-password
+| Body: { email, phone, password }
 */
 
 const resetPassword = async (req, res, next) => {
   try {
-    const { token, password } = req.body;
-    const result = await authService.resetPassword(token, password);
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
+    const { email, phone, password } = req.body;
+    const result = await authService.resetPasswordDirect({ email, phone, password });
     return res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -231,6 +212,5 @@ module.exports = {
   login,
   getMe,
   logout,
-  forgotPassword,
   resetPassword,
 };

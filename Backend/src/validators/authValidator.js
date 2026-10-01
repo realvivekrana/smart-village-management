@@ -39,17 +39,17 @@ const loginValidator = [
     .notEmpty().withMessage("Password is required"),
 ];
 
-const forgotPasswordValidator = [
+const resetPasswordValidator = [
   body("email")
     .trim()
     .notEmpty().withMessage("Email is required")
     .isEmail().withMessage("Please enter a valid email address")
     .normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }),
-];
 
-const resetPasswordValidator = [
-  body("token")
-    .notEmpty().withMessage("Reset token is required"),
+  body("phone")
+    .trim()
+    .notEmpty().withMessage("Phone number is required")
+    .matches(/^[6-9]\d{9}$/).withMessage("Please enter a valid 10-digit Indian phone number"),
 
   body("password")
     .notEmpty().withMessage("Password is required")
@@ -61,6 +61,5 @@ const resetPasswordValidator = [
 module.exports = {
   registerValidator,
   loginValidator,
-  forgotPasswordValidator,
   resetPasswordValidator,
 };

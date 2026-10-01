@@ -32,10 +32,6 @@ const ForgotPassword = lazy(
   () => import("../pages/auth/ForgotPassword")
 );
 
-const ResetPassword = lazy(
-  () => import("../pages/auth/ResetPassword")
-);
-
 // ============================================================
 // Public Pages
 // ============================================================
@@ -326,11 +322,6 @@ export default function AppRoutes() {
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
-        />
-
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
         />
 
         {/* ================================================== */}
