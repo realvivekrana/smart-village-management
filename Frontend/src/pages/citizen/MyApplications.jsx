@@ -13,18 +13,19 @@ import { formatDate } from "../../utils/formatDate";
 import { useLanguage } from "../../context/LanguageContext";
 
 const STATUS_META = {
-  submitted: { label: "Jama ho gaya", badge: "badge-blue" },
-  "under-review": { label: "Jaanch me", badge: "badge-yellow" },
-  "documents-required": { label: "Documents chahiye", badge: "badge-red" },
-  approved: { label: "Manjoor", badge: "badge-green" },
-  completed: { label: "Poora hua", badge: "badge-green" },
-  rejected: { label: "Asweekar", badge: "badge-red" },
-  cancelled: { label: "Radd", badge: "badge-gray" },
+  submitted: { key: "app.submitted", label: "Submitted", badge: "badge-blue" },
+  "under-review": { key: "app.underReview", label: "Under review", badge: "badge-yellow" },
+  "documents-required": { key: "app.documentsRequired", label: "Documents needed", badge: "badge-red" },
+  approved: { key: "app.approved", label: "Approved", badge: "badge-green" },
+  completed: { key: "app.completed", label: "Completed", badge: "badge-green" },
+  rejected: { key: "app.rejected", label: "Rejected", badge: "badge-red" },
+  cancelled: { key: "app.cancelled", label: "Cancelled", badge: "badge-gray" },
 };
 
 const FILTERS = ["all", "submitted", "under-review", "documents-required", "approved", "rejected"];
 
 function ApplicationCard({ app }) {
+  const { t } = useLanguage();
   const meta = STATUS_META[app.status] || { label: app.status, badge: "badge-gray" };
   return (
     <div className="card p-5 space-y-3">
@@ -35,7 +36,7 @@ function ApplicationCard({ app }) {
           </h3>
           <p className="text-xs text-gray-500 capitalize">{app.category?.replace("-", " ")}</p>
         </div>
-        <span className={meta.badge}>{meta.label}</span>
+        <span className={meta.badge}>{t(meta.key, meta.label)}</span>
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-sm">
@@ -83,7 +84,7 @@ export default function MyApplications() {
     const params = status === "all" ? {} : { status };
     getMyFeatureApplications(params)
       .then((res) => setApplications(Array.isArray(res?.data) ? res.data : []))
-      .catch((err) => setError(err.message || "Applications load nahi ho paayin"))
+      .catch((err) => setError(err.message || t("ui.couldNotLoadApplications40b", "Could not load applications")))
       .finally(() => setLoading(false));
   };
 
@@ -98,7 +99,7 @@ export default function MyApplications() {
       const res = await getFeatureApplicationById(trackId.trim());
       setTracked(res?.data || null);
     } catch (err) {
-      toast.error(err.message || "Application nahi mili");
+      toast.error(err.message || t("ui.applicationNotFound52f", "Application not found"));
     } finally {
       setTracking(false);
     }
@@ -109,11 +110,11 @@ export default function MyApplications() {
       <BackButton to="/citizen/dashboard" />
 
       <div>
-        <h1 className="section-title">🌾 {t("citizenApps.title", "Meri Yojana / Seva Applications")}</h1>
+        <h1 className="section-title">🌾 {t("citizenApps.title", "My Scheme / Service Applications")}</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
           {t(
             "citizenApps.subtitle",
-            "Sarkari yojana, scholarship, training aur gaon ki sevaon ke liye diye gaye aapke sabhi aavedan."
+            t("ui.allTheApplicationsYouSubmittedcc1", "All the applications you submitted for government schemes, scholarships, training and village services.")
           )}
         </p>
       </div>
@@ -121,12 +122,12 @@ export default function MyApplications() {
       <form onSubmit={handleTrack} className="card p-4 flex flex-col sm:flex-row gap-3">
         <input
           className="input"
-          placeholder={t("citizenApps.trackPlaceholder", "Tracking ID daalein (jaise KAK-123456-ABC123)")}
+          placeholder={t("citizenApps.trackPlaceholder", "Enter tracking ID (e.g. KAK-123456-ABC123)")}
           value={trackId}
           onChange={(e) => setTrackId(e.target.value)}
         />
         <button type="submit" className="btn-primary sm:w-40" disabled={tracking}>
-          {tracking ? "Dhundh rahe hain..." : t("citizenApps.track", "Status dekhein")}
+          {tracking ? t("ui.searching124", "Searching...") : t("citizenApps.track", "View status")}
         </button>
       </form>
 
@@ -150,7 +151,7 @@ export default function MyApplications() {
                 : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700"
             }`}
           >
-            {f === "all" ? "Sabhi" : STATUS_META[f]?.label}
+            {f === "all" ? t("st.all", "All") : t(STATUS_META[f]?.key, STATUS_META[f]?.label)}
           </button>
         ))}
       </div>
@@ -162,14 +163,14 @@ export default function MyApplications() {
       ) : applications.length === 0 ? (
         <EmptyState
           icon="🌾"
-          title={t("citizenApps.emptyTitle", "Abhi tak koi aavedan nahi")}
+          title={t("citizenApps.emptyTitle", "No applications yet")}
           description={t(
             "citizenApps.emptyDesc",
-            "Village Services me jaakar kisi yojana ya seva ke liye aavedan karein."
+            t("ui.goToVillageServicesAndd2e", "Go to Village Services and apply for a scheme or service.")
           )}
           action={
             <Link to="/citizen/village-services" className="btn-primary">
-              {t("citizenApps.browse", "Village Services dekhein")}
+              {t("citizenApps.browse", "View Village Services")}
             </Link>
           }
         />

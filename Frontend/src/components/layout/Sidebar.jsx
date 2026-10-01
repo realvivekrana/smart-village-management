@@ -20,7 +20,7 @@ const adminLinks = [
   { to: "/admin/village-directory", icon: "🗂️", label: "Village Directory", key: "sidebar.villageDirectory" },
   { to: "/admin/households", icon: "🏠", label: "Households", key: "sidebar.households" },
   { to: "/admin/submissions", icon: "✅", label: "Citizen Posts", key: "sidebar.submissions" },
-  { to: "/admin/applications", icon: "📑", label: "Yojana Applications", key: "sidebar.featureApplications" },
+  { to: "/admin/applications", icon: "📑", label: "Scheme Applications", key: "sidebar.featureApplications" },
   { to: "/admin/contact-messages", icon: "✉️", label: "Contact Messages", key: "sidebar.contactMessages" },
 ];
 
@@ -35,7 +35,7 @@ const citizenLinks = [
   { to: "/citizen/my-submissions", icon: "🗒️", label: "My Notices & Events", key: "submit.mySubmissions" },
   { to: "/citizen/sos", icon: "🆘", label: "Emergency SOS", key: "sidebar.emergencySos" },
   { to: "/citizen/village-services", icon: "🌾", label: "Village Services", key: "sidebar.villageServices" },
-  { to: "/citizen/applications", icon: "📝", label: "My Yojana Applications", key: "sidebar.myApplications" },
+  { to: "/citizen/applications", icon: "📝", label: "My Scheme Applications", key: "sidebar.myApplications" },
   { to: "/citizen/job-applications", icon: "🧑‍💼", label: "My Job Applications", key: "sidebar.myJobApplications" },
   { to: "/citizen/household", icon: "🏠", label: "My Household", key: "sidebar.myHousehold" },
   { to: "/citizen/posts", icon: "💬", label: "My Posts", key: "sidebar.myPosts" },

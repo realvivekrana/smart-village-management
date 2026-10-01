@@ -15,9 +15,11 @@ import EmptyState from "../../components/common/EmptyState";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import Pagination from "../../components/common/Pagination";
 
+import { useLanguage } from "../../context/LanguageContext";
 const PAGE_SIZE = 10;
 
 export default function Community() {
+  const { t } = useLanguage();
   const { villageName } = useVillage();
   const { user } = useAuth();
 
@@ -48,8 +50,8 @@ export default function Community() {
         if (!active) return;
         toast.error(
           err.response?.status === 404
-            ? "Ye post ab available nahi hai"
-            : "Post khul nahi payi"
+            ? t("ui.thisPostIsNoLongera3a", "This post is no longer available")
+            : t("ui.couldNotOpenThePostf4b", "Could not open the post")
         );
       });
     return () => {
@@ -120,8 +122,7 @@ export default function Community() {
           {villageName} Community
         </h1>
         <p className="mt-1 text-gray-600 dark:text-gray-400">
-          Gaon walon ke saath baat karo: madad maango, saaman becho/kharido,
-          khoya-paya batao, ya koi sawal poochho.
+          {t("ui.talkWithFellowVillagersAsk645", "Talk with fellow villagers: ask for help, buy or sell things, report lost & found, or ask a question.")}
         </p>
       </div>
 
@@ -130,15 +131,15 @@ export default function Community() {
           <PostForm onSubmit={handleCreate} loading={posting} />
         ) : (
           <div className="card p-4 text-sm text-gray-600 dark:text-gray-300">
-            Post karne ke liye{" "}
+            {t("ui.postTo", "To post, please")}{" "}
             <Link to="/login" className="font-semibold text-primary-600 hover:underline">
-              login
+              {t("ui.loginWord", "log in")}
             </Link>{" "}
-            karo ya{" "}
+            {t("ui.orWord", "or")}{" "}
             <Link to="/register" className="font-semibold text-primary-600 hover:underline">
-              register
-            </Link>{" "}
-            karo.
+              {t("ui.registerWord", "register")}
+            </Link>
+            {t("ui.postSuffix", ".")}
           </div>
         )}
       </div>
@@ -173,7 +174,7 @@ export default function Community() {
         <EmptyState
           icon="💬"
           title="No posts found"
-          description="Koi post nahi mili. Pehli post aap kar sakte ho!"
+          description={t("ui.noPostsFoundYouCanb95", "No posts found. You can make the first post!")}
         />
       ) : (
         <div className="space-y-4">

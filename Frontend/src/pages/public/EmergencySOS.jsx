@@ -82,7 +82,7 @@ export default function EmergencySOS() {
 
     if (!navigator.geolocation) {
       setLocationError(
-        "Aapke browser mein location service available nahi hai."
+        t("ui.locationServiceIsNotAvailable1ff", "Location service is not available in your browser.")
       );
 
       return;
@@ -113,14 +113,14 @@ export default function EmergencySOS() {
         );
 
         let errorMessage =
-          "Current location nahi mil paayi.";
+          t("ui.couldNotGetYourCurrent21d", "Could not get your current location.");
 
         if (
           geoError.code ===
           geoError.PERMISSION_DENIED
         ) {
           errorMessage =
-            "Location permission allow karein.";
+            t("ui.pleaseAllowLocationPermissionc29", "Please allow location permission.");
         }
 
         if (
@@ -128,7 +128,7 @@ export default function EmergencySOS() {
           geoError.POSITION_UNAVAILABLE
         ) {
           errorMessage =
-            "Location temporarily unavailable hai.";
+            t("ui.locationIsTemporarilyUnavailablea60", "Location is temporarily unavailable.");
         }
 
         if (
@@ -136,7 +136,7 @@ export default function EmergencySOS() {
           geoError.TIMEOUT
         ) {
           errorMessage =
-            "Location request timeout ho gayi.";
+            t("ui.locationRequestTimedOut1be", "Location request timed out.");
         }
 
         setLocationError(
@@ -271,7 +271,7 @@ export default function EmergencySOS() {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          "SOS alert send nahi ho paaya. Please dobara try karein."
+          t("ui.couldNotSendTheSos650", "Could not send the SOS alert. Please try again.")
       );
     } finally {
       setSending(false);
@@ -332,10 +332,7 @@ export default function EmergencySOS() {
             </h1>
 
             <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-gray-600 dark:text-gray-300 sm:text-base">
-              Emergency alert village admin ko
-              send kar diya gaya hai. Agar
-              situation serious hai to emergency
-              number par direct call bhi karein.
+              {t("ui.theEmergencyAlertHasBeenadc", "The emergency alert has been sent to the village admin. If the situation is serious, please also call an emergency number directly.")}
             </p>
 
             {sosId && (
@@ -478,10 +475,7 @@ export default function EmergencySOS() {
           </h1>
 
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/90 sm:text-base">
-            Emergency situation mein village
-            admin ko alert bhejein aur ambulance,
-            police ya fire service ko ek tap mein
-            call karein.
+            {t("ui.inAnEmergencyAlertThe588", "In an emergency, alert the village admin and call an ambulance, police or fire service in one tap.")}
           </p>
         </div>
       </section>
@@ -525,10 +519,7 @@ export default function EmergencySOS() {
             </h2>
 
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-500 dark:text-gray-400">
-              SOS button sirf genuine emergency
-              mein use karein. Alert ke saath
-              available location information admin
-              ko send ki ja sakti hai.
+              {t("ui.useTheSosButtonOnly178", "Use the SOS button only for genuine emergencies. Your location, if available, may be sent to the admin along with the alert.")}
             </p>
 
             {/* Big SOS button */}
@@ -574,7 +565,7 @@ export default function EmergencySOS() {
                     <div className="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Loader2 className="h-4 w-4 animate-spin" />
 
-                      Location detect ho rahi hai...
+                      {t("ui.detectingLocation050", "Detecting location...")}
                     </div>
                   ) : location ? (
                     <p className="mt-1 text-sm text-green-700 dark:text-green-300">
@@ -587,7 +578,7 @@ export default function EmergencySOS() {
                     </p>
                   ) : (
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      Location available nahi hai.
+                      {t("ui.locationIsNotAvailableaf9", "Location is not available.")}
                     </p>
                   )}
 
@@ -769,11 +760,7 @@ export default function EmergencySOS() {
               </h3>
 
               <p className="mt-1 text-sm leading-6 text-amber-800 dark:text-amber-200">
-                SOS alert ko genuine emergency ke
-                liye use karein. Life-threatening
-                situation mein local emergency
-                services ko direct call karna bhi
-                zaroori hai.
+                {t("ui.useTheSosAlertOnly6a4", "Use the SOS alert only for genuine emergencies. In a life-threatening situation, it is also important to call local emergency services directly.")}
               </p>
             </div>
           </div>
@@ -799,9 +786,7 @@ export default function EmergencySOS() {
                   </h2>
 
                   <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Ye alert village admin ko
-                    emergency notification ke roop
-                    mein bheja jayega.
+                    {t("ui.thisAlertWillBeSentcf9", "This alert will be sent to the village admin as an emergency notification.")}
                   </p>
                 </div>
               </div>

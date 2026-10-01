@@ -13,7 +13,7 @@ const { findUserByEmail } = require("../utils/emailLookup");
 | dusre ka password badal sakta hai.
 */
 
-const MISMATCH_MESSAGE = "Email ya phone number account se match nahi hua.";
+const MISMATCH_MESSAGE = "Email or phone number does not match the account.";
 
 const resetPasswordDirect = async ({ email, phone, password }) => {
   const user = await findUserByEmail(email).select("+password");
@@ -24,7 +24,7 @@ const resetPasswordDirect = async ({ email, phone, password }) => {
 
   // Admin account is route se reset nahi hoga (seed:admin ya DB se karein)
   if (user.role === "admin") {
-    throw new ApiError(403, "Admin account ka password yahan se reset nahi ho sakta. Developer se sampark karein.");
+    throw new ApiError(403, "The admin account password cannot be reset from here. Please contact the developer.");
   }
 
   user.password = password; // pre-save hook bcrypt se hash karega
@@ -32,7 +32,7 @@ const resetPasswordDirect = async ({ email, phone, password }) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  return { success: true, message: "Password reset ho gaya. Ab naye password se login karein." };
+  return { success: true, message: "Password has been reset. Please log in with your new password." };
 };
 
 module.exports = { resetPasswordDirect };

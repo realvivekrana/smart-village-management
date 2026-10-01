@@ -21,12 +21,12 @@ const mask = (v = "") => (v ? `${v.slice(0, 2)}***${v.slice(-2)} (${v.length} ch
 
   if (!env.email.enabled) {
     console.log("\n❌ SMTP_HOST / SMTP_USER / SMTP_PASS me se koi khali hai.");
-    console.log("   Check: .env file Backend folder ke andar hai? Terminal usi folder me chal raha hai?");
+    console.log("   Check: is the .env file inside the Backend folder? Is the terminal running in that folder?");
     process.exit(1);
   }
 
   if (/\s/.test(env.email.pass) || env.email.pass.length !== 16) {
-    console.log("\n⚠️  App Password 16 letters ka hona chahiye, bina space ke. Abhi length:", env.email.pass.length);
+    console.log("\n⚠️  App Password must be 16 characters with no spaces. Current length:", env.email.pass.length);
   }
 
   const transporter = nodemailer.createTransport({
@@ -54,13 +54,13 @@ const mask = (v = "") => (v ? `${v.slice(0, 2)}***${v.slice(-2)} (${v.length} ch
   } catch (err) {
     console.log("\n❌ FAIL:", err.code || "", "-", err.message);
     if (err.code === "EAUTH" || /535|Username and Password/i.test(err.message)) {
-      console.log("   Matlab: App Password galat hai ya SMTP_USER us Google account ka nahi jisme password bana.");
-      console.log("   Fix: myaccount.google.com/apppasswords se naya banao, spaces hata ke SMTP_PASS me daalo.");
+      console.log("   Meaning: the App Password is wrong, or SMTP_USER is not the Google account the password was created for.");
+      console.log("   Fix: create a new one at myaccount.google.com/apppasswords and put it in SMTP_PASS without spaces.");
     } else if (["ETIMEDOUT", "ECONNECTION", "ESOCKET", "ECONNREFUSED"].includes(err.code)) {
-      console.log("   Matlab: Gmail tak network nahi pahunch raha (firewall / antivirus / WiFi / ISP port block).");
-      console.log("   Fix: SMTP_PORT=465 karke dobara try karo, ya mobile hotspot par try karo.");
+      console.log("   Meaning: the network cannot reach Gmail (firewall / antivirus / WiFi / ISP port block).");
+      console.log("   Fix: try again with SMTP_PORT=465, or try on a mobile hotspot.");
     } else if (err.code === "EDNS" || err.code === "ENOTFOUND") {
-      console.log("   Matlab: SMTP_HOST ka naam galat hai ya internet nahi hai. smtp.gmail.com hona chahiye.");
+      console.log("   Meaning: SMTP_HOST is wrong or there is no internet. It should be smtp.gmail.com.");
     }
     process.exit(1);
   }

@@ -182,8 +182,8 @@ const createListing = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: published
-        ? "Listing published. Ab sabko dikh rahi hai."
-        : "Listing submitted. Admin approval ke baad sabko dikhegi.",
+        ? "Listing published. It is now visible to everyone."
+        : "Listing submitted. It will be visible to everyone after admin approval.",
       data: { listing },
     });
   } catch (error) {
@@ -319,11 +319,11 @@ const reviewListing = async (req, res, next) => {
 
     await createNotification({
       recipient: listing.createdBy,
-      title: status === "approved" ? "Aapki post approve ho gayi" : "Aapki post approve nahi hui",
+      title: status === "approved" ? "Your post was approved" : "Your post was not approved",
       message:
         status === "approved"
-          ? `Aapki ${TYPE_LABEL[listing.type]} post "${listing.title}" ab sabko dikh rahi hai.`
-          : `Aapki ${TYPE_LABEL[listing.type]} post "${listing.title}" reject hui. Karan: ${listing.rejectionReason}`.slice(0, 500),
+          ? `Your ${TYPE_LABEL[listing.type]} post "${listing.title}" is now visible to everyone.`
+          : `Your ${TYPE_LABEL[listing.type]} post "${listing.title}" was rejected. Reason: ${listing.rejectionReason}`.slice(0, 500),
       type: "general",
       link: `/citizen/bazaar?highlight=${listing._id}`,
       refModel: "Listing",

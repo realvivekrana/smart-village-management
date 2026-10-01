@@ -52,7 +52,7 @@ const QUICK_ITEMS = [
 export const QuickAccessGrid = () => {
   const { t } = useLanguage();
   return (
-    <SectionCard title={t("citizenDash.quickAccess", "Gaon ki Sevayein")}>
+    <SectionCard title={t("citizenDash.quickAccess", "Village Services")}>
       <div className="grid grid-cols-2 min-[420px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
         {QUICK_ITEMS.map((item) => (
           <Link
@@ -83,11 +83,11 @@ export const MandiWidget = ({ prices = [] }) => {
   const { t } = useLanguage();
   return (
     <SectionCard
-      title={`🌾 ${t("citizenDash.mandiTitle", "Aaj ka Mandi Bhav")}`}
-      action={<ViewAll to="/citizen/village-services" label={t("citizenDash.viewAll", "Sab dekhein")} />}
+      title={`🌾 ${t("citizenDash.mandiTitle", "Today's Mandi Rates")}`}
+      action={<ViewAll to="/citizen/village-services" label={t("citizenDash.viewAll", "View all")} />}
     >
       {prices.length === 0 ? (
-        <Empty text={t("citizenDash.noMandi", "Abhi koi mandi bhav update nahi hua hai.")} />
+        <Empty text={t("citizenDash.noMandi", "No mandi rates have been updated yet.")} />
       ) : (
         <div className="overflow-x-auto -mx-1">
           <table className="w-full text-sm">
@@ -139,10 +139,10 @@ export const GramSabhaCard = ({ meeting }) => {
   return (
     <SectionCard
       title={`🗳️ ${t("citizenDash.gramSabhaTitle", "Agli Gram Sabha")}`}
-      action={<ViewAll to="/citizen/village-services" label={t("citizenDash.details", "Vivaran")} />}
+      action={<ViewAll to="/citizen/village-services" label={t("citizenDash.details", t("ui.details3ec", "Details"))} />}
     >
       {!meeting ? (
-        <Empty text={t("citizenDash.noGramSabha", "Abhi koi Gram Sabha tay nahi hui hai.")} />
+        <Empty text={t("citizenDash.noGramSabha", "No Gram Sabha has been scheduled yet.")} />
       ) : (
         <div className="space-y-2">
           <p className="font-semibold text-gray-900 dark:text-white">{meeting.title}</p>
@@ -180,11 +180,11 @@ export const NoticesWidget = ({ notices = [] }) => {
   const { t } = useLanguage();
   return (
     <SectionCard
-      title={`📢 ${t("citizenDash.noticesTitle", "Taaza Suchnayein")}`}
-      action={<ViewAll to="/citizen/notices" label={t("citizenDash.viewAll", "Sab dekhein")} />}
+      title={`📢 ${t("citizenDash.noticesTitle", "Latest Notices")}`}
+      action={<ViewAll to="/citizen/notices" label={t("citizenDash.viewAll", "View all")} />}
     >
       {notices.length === 0 ? (
-        <Empty text={t("citizenDash.noNotices", "Koi nayi suchna nahi hai.")} />
+        <Empty text={t("citizenDash.noNotices", "No new notices.")} />
       ) : (
         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
           {notices.map((n) => (
@@ -214,11 +214,11 @@ export const EventsWidget = ({ events = [] }) => {
   const { t } = useLanguage();
   return (
     <SectionCard
-      title={`📅 ${t("citizenDash.eventsTitle", "Aane wale Karyakram")}`}
-      action={<ViewAll to="/citizen/events" label={t("citizenDash.viewAll", "Sab dekhein")} />}
+      title={`📅 ${t("citizenDash.eventsTitle", "Upcoming Events")}`}
+      action={<ViewAll to="/citizen/events" label={t("citizenDash.viewAll", "View all")} />}
     >
       {events.length === 0 ? (
-        <Empty text={t("citizenDash.noEvents", "Abhi koi karyakram tay nahi hai.")} />
+        <Empty text={t("citizenDash.noEvents", "No events scheduled yet.")} />
       ) : (
         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
           {events.map((e) => (
@@ -245,33 +245,33 @@ export const EventsWidget = ({ events = [] }) => {
 export const FamilyCard = ({ household }) => {
   const { t } = useLanguage();
   return (
-    <SectionCard title={`🏠 ${t("citizenDash.familyTitle", "Mera Parivar")}`}>
+    <SectionCard title={`🏠 ${t("citizenDash.familyTitle", "My Family")}`}>
       {!household?.exists ? (
         <div className="space-y-3">
           <Empty
             text={t(
               "citizenDash.noFamily",
-              "Parivar ki jaankari abhi nahi bhari hai. Yojanaon ka labh lene ke liye parivar ka vivaran bharein."
+              t("ui.familyDetailsHaveNotBeen387", "Family details have not been filled in yet. Add your family details to get the benefits of schemes.")
             )}
           />
           <Link to="/citizen/household" className="btn-primary">
-            {t("citizenDash.addFamily", "Parivar jodein")}
+            {t("citizenDash.addFamily", "Add family")}
           </Link>
         </div>
       ) : (
         <div className="space-y-3">
           <div>
-            <p className="text-sm text-gray-500">{t("citizenDash.head", "Mukhiya")}</p>
+            <p className="text-sm text-gray-500">{t("citizenDash.head", t("ui.headOfFamilye9d", "Head of family"))}</p>
             <p className="font-semibold text-gray-900 dark:text-white">{household.headName}</p>
           </div>
           <div className="flex gap-6 text-sm">
             <div>
-              <p className="text-gray-500">{t("citizenDash.members", "Sadasya")}</p>
+              <p className="text-gray-500">{t("citizenDash.members", t("ui.membersef5", "Members"))}</p>
               <p className="text-xl font-bold text-primary-600">{household.memberCount}</p>
             </div>
             {household.houseNumber && (
               <div>
-                <p className="text-gray-500">{t("citizenDash.house", "Ghar No.")}</p>
+                <p className="text-gray-500">{t("citizenDash.house", "House No.")}</p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">{household.houseNumber}</p>
               </div>
             )}
@@ -283,7 +283,7 @@ export const FamilyCard = ({ household }) => {
             )}
           </div>
           <Link to="/citizen/household" className="btn-secondary">
-            {t("citizenDash.manageFamily", "Parivar dekhein / badlein")}
+            {t("citizenDash.manageFamily", "View / edit family")}
           </Link>
         </div>
       )}
@@ -299,11 +299,11 @@ export const HelplineWidget = ({ contacts = [] }) => {
   const { t } = useLanguage();
   return (
     <SectionCard
-      title={`📞 ${t("citizenDash.helplineTitle", "Zaroori Helpline")}`}
-      action={<ViewAll to="/emergency" label={t("citizenDash.viewAll", "Sab dekhein")} />}
+      title={`📞 ${t("citizenDash.helplineTitle", "Important Helplines")}`}
+      action={<ViewAll to="/emergency" label={t("citizenDash.viewAll", "View all")} />}
     >
       {contacts.length === 0 ? (
-        <Empty text={t("citizenDash.noHelpline", "Helpline numbers abhi jode nahi gaye hain.")} />
+        <Empty text={t("citizenDash.noHelpline", "No helpline numbers have been added yet.")} />
       ) : (
         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
           {contacts.map((c) => (

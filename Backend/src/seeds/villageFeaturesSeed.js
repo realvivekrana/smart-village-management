@@ -923,7 +923,7 @@ const FEATURE_EXTRAS = {
     links: [
       { label: "PMAY-G Official Portal", url: "https://pmayg.nrega.nic.in/netiay/home.aspx", type: "official" },
       { label: "Rural Development Ministry", url: "https://rural.gov.in", type: "guideline" },
-      { label: "Apni Gram Panchayat se sampark", url: "/government-contacts", type: "internal" },
+      { label: "Contact your Gram Panchayat", url: "/government-contacts", type: "internal" },
       { label: "Meri application status", url: "/citizen/applications", type: "internal" },
     ],
   },
@@ -968,7 +968,7 @@ const FEATURE_EXTRAS = {
     helplineNumber: "",
     links: [
       { label: "NSAP (National Social Assistance Programme)", url: "https://nsap.nic.in", type: "official" },
-      { label: "Panchayat se sampark", url: "/government-contacts", type: "internal" },
+      { label: "Contact the Panchayat", url: "/government-contacts", type: "internal" },
       { label: "Meri application status", url: "/citizen/applications", type: "internal" },
     ],
   },
@@ -992,7 +992,7 @@ const FEATURE_EXTRAS = {
       { label: "JAC (Class 10th/12th Results)", url: "https://jac.jharkhand.gov.in", type: "official" },
       { label: "JSSC (State Jobs)", url: "https://www.jssc.nic.in", type: "official" },
       { label: "JPSC (State Civil Services)", url: "https://www.jpsc.gov.in", type: "official" },
-      { label: "Jobs board (gaon ke liye)", url: "/jobs", type: "internal" },
+      { label: "Village Jobs board", url: "/jobs", type: "internal" },
     ],
   },
 
@@ -1025,8 +1025,8 @@ const FEATURE_EXTRAS = {
     helplineNumber: "",
     links: [
       { label: "eGramSwaraj", url: "https://egramswaraj.gov.in", type: "official" },
-      { label: "Panchayat Karyalay se sampark", url: "/government-contacts", type: "internal" },
-      { label: "Shikayat darj karein", url: "/citizen/complaints/create", type: "internal" },
+      { label: "Contact the Panchayat Office", url: "/government-contacts", type: "internal" },
+      { label: "File a complaint", url: "/citizen/complaints/create", type: "internal" },
     ],
   },
 
@@ -1036,7 +1036,7 @@ const FEATURE_EXTRAS = {
     helplineNumber: "",
     links: [
       { label: "Jal Jeevan Mission", url: "https://jaljeevanmission.gov.in", type: "official" },
-      { label: "Paani ki shikayat darj karein", url: "/citizen/complaints/create", type: "internal" },
+      { label: "File a water complaint", url: "/citizen/complaints/create", type: "internal" },
       { label: "Government Contacts", url: "/government-contacts", type: "internal" },
     ],
   },
@@ -1049,7 +1049,7 @@ const FEATURE_EXTRAS = {
       { label: "JBVNL Official Website (bill pay / complaint)", url: "https://jbvnl.co.in", type: "official" },
       { label: "Bijli complaint: 1912", url: "tel:1912", type: "helpline" },
       { label: "Toll free: 1800-345-6570", url: "tel:18003456570", type: "helpline" },
-      { label: "Portal par shikayat darj karein", url: "/citizen/complaints/create", type: "internal" },
+      { label: "File a complaint on the portal", url: "/citizen/complaints/create", type: "internal" },
     ],
   },
 
@@ -1082,7 +1082,7 @@ const FEATURE_EXTRAS = {
     helplineNumber: "1800-180-1551",
     links: [
       { label: "Farm Machinery (subsidy & CHC)", url: "https://agrimachinery.nic.in/", type: "official" },
-      { label: "Gaon Bazaar (kiraye ke liye)", url: "/gaon-bazaar", type: "internal" },
+      { label: "Village Bazaar (for rent)", url: "/gaon-bazaar", type: "internal" },
     ],
   },
 
@@ -1127,7 +1127,7 @@ const FEATURE_EXTRAS = {
     links: [
       { label: "Dept. of Animal Husbandry & Dairying", url: "https://dahd.gov.in", type: "official" },
       { label: "Pashu Health Helpline: 1962", url: "tel:1962", type: "helpline" },
-      { label: "Gaon Bazaar (pashu khareed-bikri)", url: "/gaon-bazaar", type: "internal" },
+      { label: "Village Bazaar (livestock buy/sell)", url: "/gaon-bazaar", type: "internal" },
     ],
   },
 
@@ -1138,7 +1138,7 @@ const FEATURE_EXTRAS = {
     links: [
       { label: "Government Contacts", url: "/government-contacts", type: "internal" },
       { label: "Local Businesses", url: "/businesses", type: "internal" },
-      { label: "Gaon ke baare me", url: "/about", type: "internal" },
+      { label: "About the village", url: "/about", type: "internal" },
       { label: "Contact Village", url: "/contact", type: "internal" },
     ],
   },
@@ -1160,7 +1160,7 @@ const FEATURE_EXTRAS = {
     applicationUrl: "",
     helplineNumber: "112",
     links: [
-      { label: "Gaon Bazaar (Lost & Found)", url: "/gaon-bazaar", type: "internal" },
+      { label: "Village Bazaar (Lost & Found)", url: "/gaon-bazaar", type: "internal" },
       { label: "Village Community", url: "/community", type: "internal" },
       { label: "Emergency: 112", url: "tel:112", type: "helpline" },
     ],
@@ -1171,7 +1171,7 @@ const FEATURE_EXTRAS = {
     applicationUrl: "",
     helplineNumber: "",
     links: [
-      { label: "Gaon Bazaar (kharido-becho)", url: "/gaon-bazaar", type: "internal" },
+      { label: "Village Bazaar (buy/sell)", url: "/gaon-bazaar", type: "internal" },
       { label: "Meri Bazaar posts", url: "/citizen/bazaar", type: "internal" },
     ],
   },
@@ -1192,7 +1192,7 @@ const FEATURE_EXTRAS = {
     applicationUrl: "",
     helplineNumber: "112",
     links: [
-      { label: "Emergency SOS bhejein", url: "/citizen/sos", type: "internal" },
+      { label: "Send Emergency SOS", url: "/citizen/sos", type: "internal" },
       { label: "Emergency Contacts", url: "/emergency", type: "internal" },
       { label: "Call 112 (all emergencies)", url: "tel:112", type: "helpline" },
       { label: "Call 108 (ambulance)", url: "tel:108", type: "helpline" },

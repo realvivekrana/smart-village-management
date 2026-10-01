@@ -36,6 +36,7 @@ import {
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
 
+import { useLanguage } from "../../context/LanguageContext";
 /*
 |--------------------------------------------------------------------------
 | Constants
@@ -294,6 +295,7 @@ function getCategoryIcon(category) {
 */
 
 export default function VillageFeatures() {
+  const { t } = useLanguage();
   const { villageName } = useVillage();
   const [features, setFeatures] =
     useState([]);
@@ -357,7 +359,7 @@ export default function VillageFeatures() {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          "Village features load nahi ho paaye."
+          t("ui.couldNotLoadVillageFeaturese64", "Could not load village features.")
       );
     } finally {
       setLoading(false);
@@ -551,7 +553,7 @@ export default function VillageFeatures() {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          "Feature delete nahi ho paaya."
+          t("ui.couldNotDeleteTheFeature06e", "Could not delete the feature.")
       );
     } finally {
       setDeletingId(null);
@@ -648,7 +650,7 @@ export default function VillageFeatures() {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          "Feature save nahi ho paaya."
+          t("ui.couldNotSaveTheFeature7fd", "Could not save the feature.")
       );
     } finally {
       setSaving(false);
@@ -810,7 +812,7 @@ export default function VillageFeatures() {
                     event.target.value
                   )
                 }
-                placeholder="Feature search karein..."
+                placeholder={t("ui.searchFeaturesafd", "Search features...")}
                 className="w-full rounded-xl border border-gray-300 dark:border-gray-600 py-3 pl-10 pr-4 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900"
               />
             </div>
@@ -1268,6 +1270,7 @@ function FeatureFormModal({
   onClose,
   onSubmit,
 }) {
+  const { t } = useLanguage();
   const [form, setForm] =
     useState(emptyForm);
 
@@ -1717,7 +1720,7 @@ Track status`}
             {/* Official website */}
             <Field
               label="Official Website / Apply URL"
-              hint="https:// se shuru hona chahiye"
+              hint={t("ui.mustStartWithHttps664", "Must start with https://")}
               className="sm:col-span-2"
             >
               <input
@@ -1843,7 +1846,7 @@ Notices | /notices | internal`}
                   )
                 }
                 label="Publish Feature"
-                description="Citizen portal par visible hoga."
+                description={t("ui.willBeVisibleOnThe876", "Will be visible on the citizen portal.")}
               />
 
               <Toggle
@@ -1857,7 +1860,7 @@ Notices | /notices | internal`}
                   )
                 }
                 label="Featured"
-                description="Important services mein highlight karein."
+                description={t("ui.highlightInImportantServicesc7f", "Highlight in Important services.")}
               />
 
               <Toggle
@@ -1871,7 +1874,7 @@ Notices | /notices | internal`}
                   )
                 }
                 label="Online Application"
-                description="Citizen ko application option dikhega."
+                description={t("ui.citizensWillSeeAnApply234", "Citizens will see an apply option.")}
               />
             </div>
           </div>

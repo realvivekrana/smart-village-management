@@ -7,7 +7,9 @@ import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import BackButton from "../../components/common/BackButton";
 
+import { useLanguage } from "../../context/LanguageContext";
 export default function EditBusiness() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [business, setBusiness] = useState(null);
@@ -23,7 +25,7 @@ export default function EditBusiness() {
       .catch((err) =>
         setError(
           err.response?.status === 404
-            ? "Ye business ab available nahi hai (shayad delete ho chuka hai)."
+            ? t("ui.thisBusinessIsNoLonger68a", "This business is no longer available (it may have been deleted).")
             : err.response?.data?.message || "Failed to load business"
         )
       )

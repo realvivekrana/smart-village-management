@@ -18,8 +18,10 @@ import {
   FamilyCard,
   HelplineWidget,
 } from "../../components/citizen/DashboardSections";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -95,7 +97,7 @@ export default function Dashboard() {
           <p className="text-2xl font-bold text-primary-600">{stats.applications.total}</p>
         </div>
         <Link to="/citizen/applications" className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
-          <p className="text-xs text-gray-500 mb-1">Yojana / Seva Applications</p>
+          <p className="text-xs text-gray-500 mb-1">{t("ui.schemeServiceApplications6b9", "Scheme / Service Applications")}</p>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.featureApplications?.total ?? 0}</p>
         </Link>
         <Link to="/citizen/applications" className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
@@ -129,7 +131,7 @@ export default function Dashboard() {
         <Link to="/citizen/events/new" className="btn-primary">🎉 Add Event</Link>
         <Link to="/citizen/my-submissions" className="btn-secondary">🗒️ My Notices &amp; Events</Link>
         <Link to="/citizen/posts" className="btn-secondary">💬 Community Posts</Link>
-        <Link to="/citizen/applications" className="btn-secondary">🌾 My Yojana Applications</Link>
+        <Link to="/citizen/applications" className="btn-secondary">🌾 {t("ui.mySchemeApplicationscfc", "My Scheme Applications")}</Link>
         <Link to="/citizen/job-applications" className="btn-secondary">💼 My Job Applications</Link>
         <Link to="/jobs" className="btn-secondary">💼 Browse Jobs</Link>
       </div>

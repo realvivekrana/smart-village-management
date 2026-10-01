@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../services/authService";
 import toast from "react-hot-toast";
 
+import { useLanguage } from "../../context/LanguageContext";
 export default function ForgotPassword() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", phone: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ export default function ForgotPassword() {
     e.preventDefault();
 
     if (!/^[6-9]\d{9}$/.test(form.phone.trim())) {
-      toast.error("Valid 10-digit phone number daalein");
+      toast.error(t("ui.enterAValid10Digitf43", "Enter a valid 10-digit phone number"));
       return;
     }
     if (form.password !== form.confirmPassword) {
@@ -22,7 +24,7 @@ export default function ForgotPassword() {
       return;
     }
     if (!/[A-Z]/.test(form.password) || !/[0-9]/.test(form.password)) {
-      toast.error("Password me kam se kam 1 capital letter aur 1 number hona chahiye");
+      toast.error(t("ui.passwordMustHaveAtLeast6ec", "Password must have at least 1 capital letter and 1 number"));
       return;
     }
 
@@ -33,13 +35,13 @@ export default function ForgotPassword() {
         phone: form.phone.trim(),
         password: form.password,
       });
-      toast.success("Password reset ho gaya! Ab login karein.");
+      toast.success(t("ui.passwordResetSuccessfullyPleaseLoge03", "Password reset successfully! Please log in now."));
       navigate("/login");
     } catch (err) {
       const message =
         err.response?.data?.message ||
         (err.code === "ECONNABORTED"
-          ? "Server se jawab nahi aaya. Thodi der baad dobara koshish karein."
+          ? t("ui.noResponseFromTheServerb33", "No response from the server. Please try again in a while.")
           : "Something went wrong. Please try again.");
       toast.error(message);
     } finally {
@@ -53,7 +55,7 @@ export default function ForgotPassword() {
         <div className="text-center mb-8">
           <Link to="/" className="text-4xl">🏘️</Link>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">Forgot Password</h1>
-          <p className="text-gray-500 text-sm mt-1">Apna email aur registered phone number daalkar naya password set karein</p>
+          <p className="text-gray-500 text-sm mt-1">{t("ui.enterYourEmailAndRegistered07e", "Enter your email and registered phone number to set a new password")}</p>
         </div>
 
         <div className="card p-8 shadow-lg">

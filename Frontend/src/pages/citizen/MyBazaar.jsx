@@ -23,6 +23,7 @@ const MAX_IMAGES = 3;
 const MAX_SIZE = 5 * 1024 * 1024;
 
 function ListingForm({ initial, onSubmit, onCancel, submitting }) {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const editing = !!initial;
 
@@ -44,11 +45,11 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
   const handleFiles = (e) => {
     const picked = Array.from(e.target.files || []);
     if (picked.length > MAX_IMAGES) {
-      toast.error(`Zyada se zyada ${MAX_IMAGES} photo`);
+      toast.error(t("ui.atMostPhotos", "At most {max} photos", { max: MAX_IMAGES }));
     }
     const valid = picked.slice(0, MAX_IMAGES).filter((f) => {
       if (f.size > MAX_SIZE) {
-        toast.error(`${f.name} 5MB se badi hai`);
+        toast.error(t("ui.fileTooBig", "{name} is larger than 5 MB", { name: f.name }));
         return false;
       }
       return true;
@@ -58,9 +59,9 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
 
   const submit = (e) => {
     e.preventDefault();
-    if (form.title.trim().length < 3) return toast.error("Title kam se kam 3 akshar ka ho");
+    if (form.title.trim().length < 3) return toast.error(t("ui.titleMustBeAtLeast6cf", "Title must be at least 3 characters"));
     if (!/^[0-9+\-\s]{10,15}$/.test(form.contactPhone.trim())) {
-      return toast.error("Sahi phone number daalein");
+      return toast.error(t("ui.enterAValidPhoneNumber011", "Enter a valid phone number"));
     }
 
     if (editing) {
@@ -84,7 +85,7 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
     <form onSubmit={submit} className="space-y-4">
       {!editing && (
         <div className="form-group">
-          <label className="label">Kis tarah ka vigyapan?</label>
+          <label className="label">{t("ui.whatKindOfListing296", "What kind of listing?")}</label>
           <div className="grid grid-cols-3 gap-2">
             {LISTING_TYPES.map((tp) => (
               <button
@@ -98,7 +99,7 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
                 }`}
               >
                 <div className="text-2xl">{tp.icon}</div>
-                {tp.label}
+                {t(tp.key, tp.label)}
               </button>
             ))}
           </div>
@@ -107,10 +108,10 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
 
       {isLost && (
         <div className="form-group">
-          <label className="label">Kya hua?</label>
+          <label className="label">{t("ui.whatHappenedfa6", "What happened?")}</label>
           <select className="input" value={form.itemStatus} onChange={set("itemStatus")}>
-            <option value="lost">Meri cheez kho gayi hai</option>
-            <option value="found">Mujhe kisi ki cheez mili hai</option>
+            <option value="lost">{t("ui.iLostSomething104", "I lost something")}</option>
+            <option value="found">{t("ui.iFoundSomethingd46", "I found something")}</option>
           </select>
         </div>
       )}
@@ -121,7 +122,7 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
       </div>
 
       <div className="form-group">
-        <label className="label">Vivaran</label>
+        <label className="label">{t("ui.details3ec", "Details")}</label>
         <textarea
           className="input"
           rows={3}
@@ -134,16 +135,16 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
       {!isLost && (
         <div className="grid grid-cols-2 gap-3">
           <div className="form-group">
-            <label className="label">Keemat (₹)</label>
+            <label className="label">{t("ui.price6e2", "Price (₹)")}</label>
             <input className="input" type="number" min="0" value={form.price} onChange={set("price")} />
           </div>
           {isRental && (
             <div className="form-group">
-              <label className="label">Kiraya kis hisaab se</label>
+              <label className="label">{t("ui.rentChargedPer93c", "Rent charged per")}</label>
               <select className="input" value={form.priceUnit} onChange={set("priceUnit")}>
                 {RENTAL_UNITS.map((u) => (
                   <option key={u.value} value={u.value}>
-                    {u.label}
+                    {t(u.key, u.label)}
                   </option>
                 ))}
               </select>
@@ -153,13 +154,13 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
       )}
 
       <div className="form-group">
-        <label className="label">Jagah / Mohalla</label>
+        <label className="label">{t("ui.placeLocality2a2", "Place / Locality")}</label>
         <input className="input" value={form.location} onChange={set("location")} maxLength={200} />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="form-group">
-          <label className="label">Naam</label>
+          <label className="label">{t("ui.name49e", "Name")}</label>
           <input className="input" value={form.contactName} onChange={set("contactName")} />
         </div>
         <div className="form-group">
@@ -188,16 +189,16 @@ function ListingForm({ initial, onSubmit, onCancel, submitting }) {
       )}
 
       <p className="text-xs text-amber-700 dark:text-amber-300 rounded-lg bg-amber-50 dark:bg-amber-950/30 p-3">
-        Admin ki manjoori ke baad hi ye vigyapan sabko dikhega.
-        {editing && " Badlav karne par dobara manjoori chahiye hogi."}
+        {t("ui.thisListingWillBeVisiblec7c", "This listing will be visible to everyone only after admin approval.")}
+        {editing && " " + t("ui.changesNeedApprovalAgain", "Changes will need approval again.")}
       </p>
 
       <div className="flex justify-end gap-2">
         <button type="button" className="btn-secondary" onClick={onCancel}>
-          Radd karein
+          {t("ui.cancelea4", "Cancel")}
         </button>
         <button type="submit" className="btn-primary" disabled={submitting}>
-          {submitting ? "Bhej rahe hain..." : editing ? "Save karein" : "Post karein"}
+          {submitting ? t("ui.sending7b0", "Sending...") : editing ? t("ui.savec9c", "Save") : t("ui.post03d", "Post")}
         </button>
       </div>
     </form>
@@ -223,7 +224,7 @@ export default function MyBazaar() {
     setError(null);
     getMyListings({ limit: 50 })
       .then((res) => setListings(res.data?.data?.listings || []))
-      .catch((err) => setError(err.response?.data?.message || "Vigyapan load nahi ho paye"))
+      .catch((err) => setError(err.response?.data?.message || t("ui.couldNotLoadListings16a", "Could not load listings")))
       .finally(() => setLoading(false));
   };
 
@@ -245,12 +246,12 @@ export default function MyBazaar() {
       const res = editTarget
         ? await updateListing(editTarget._id, payload)
         : await createListing(payload);
-      toast.success(res.data?.message || "Ho gaya");
+      toast.success(res.data?.message || t("ui.donef92", "Done"));
       setFormOpen(false);
       setEditTarget(null);
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Vigyapan save nahi ho paya");
+      toast.error(err.response?.data?.message || t("ui.couldNotSaveTheListingfde", "Could not save the listing"));
     } finally {
       setSubmitting(false);
     }
@@ -262,7 +263,7 @@ export default function MyBazaar() {
       const updated = res.data?.data?.listing;
       setListings((prev) => prev.map((x) => (x._id === l._id ? { ...x, isClosed: updated.isClosed } : x)));
     } catch (err) {
-      toast.error(err.response?.data?.message || "Badlav nahi ho paya");
+      toast.error(err.response?.data?.message || t("ui.couldNotMakeTheChange26b", "Could not make the change"));
     }
   };
 
@@ -271,11 +272,11 @@ export default function MyBazaar() {
     setDeleting(true);
     try {
       await deleteListing(deleteTarget._id);
-      toast.success("Vigyapan hata diya gaya");
+      toast.success(t("ui.listingRemovedc90", "Listing removed"));
       setListings((prev) => prev.filter((x) => x._id !== deleteTarget._id));
       setDeleteTarget(null);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Vigyapan hata nahi paya");
+      toast.error(err.response?.data?.message || t("ui.couldNotRemoveTheListingb7a", "Could not remove the listing"));
     } finally {
       setDeleting(false);
     }
@@ -287,16 +288,16 @@ export default function MyBazaar() {
 
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="section-title">🛒 {t("myBazaar.title", "Mere Bazaar Vigyapan")}</h1>
+          <h1 className="section-title">🛒 {t("myBazaar.title", "My Bazaar Listings")}</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
             {t(
               "myBazaar.subtitle",
-              "Saman bechein, khoya-paya batayein ya kheti ka saman kiraye par dein. Admin ki manjoori ke baad sabko dikhega."
+              t("ui.sellItemsReportLostFound04a", "Sell items, report lost & found, or rent out farm equipment. It will be visible to everyone after admin approval.")
             )}
           </p>
         </div>
         <button className="btn-primary" onClick={openCreate}>
-          ➕ Naya vigyapan
+          ➕ {t("ui.newListing407", "New listing")}
         </button>
       </div>
 
@@ -307,11 +308,11 @@ export default function MyBazaar() {
       ) : listings.length === 0 ? (
         <EmptyState
           icon="🛒"
-          title="Aapne abhi koi vigyapan nahi daala"
-          description="Bechne, khoye-paye ya kiraye ke liye pehla vigyapan daalein."
+          title={t("ui.youHaventPostedAnyListingd92", "You haven't posted any listing yet")}
+          description={t("ui.postYourFirstListingTo3ed", "Post your first listing to sell, report lost & found, or rent.")}
           action={
             <button className="btn-primary" onClick={openCreate}>
-              ➕ Naya vigyapan
+              ➕ {t("ui.newListing407", "New listing")}
             </button>
           }
         />
@@ -325,7 +326,7 @@ export default function MyBazaar() {
               </button>
               {l.status === "approved" && (
                 <button className="btn-outline" onClick={() => handleToggle(l)}>
-                  {l.isClosed ? "Dobara kholein" : getTypeMeta(l.type).closedLabel}
+                  {l.isClosed ? t("ui.reopenb82", "Reopen") : t(getTypeMeta(l.type).closedKey, getTypeMeta(l.type).closedLabel)}
                 </button>
               )}
               <button className="btn-danger" onClick={() => setDeleteTarget(l)}>
@@ -340,7 +341,7 @@ export default function MyBazaar() {
       <Modal
         isOpen={formOpen}
         onClose={() => setFormOpen(false)}
-        title={editTarget ? "Vigyapan badlein" : "Naya vigyapan"}
+        title={editTarget ? t("ui.editListingf26", "Edit listing") : t("ui.newListing407", "New listing")}
         size="lg"
       >
         <ListingForm
@@ -356,9 +357,9 @@ export default function MyBazaar() {
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Vigyapan hatayein"
-        message="Kya aap sach me is vigyapan ko hatana chahte hain?"
-        confirmLabel="Hatayein"
+        title={t("ui.removeListing102", "Remove listing")}
+        message={t("ui.doYouReallyWantTob01", "Do you really want to remove this listing?")}
+        confirmLabel={t("ui.remove106", "Remove")}
         loading={deleting}
       />
     </div>

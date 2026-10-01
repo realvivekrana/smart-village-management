@@ -2,6 +2,7 @@ const Notice = require("../models/Notice");
 const User = require("../models/User");
 const { getPagination, getPaginationMeta } = require("../utils/pagination");
 const notificationService = require("../services/notificationService");
+const Notification = require("../models/Notification");
 const emailService = require("../services/emailService");
 const { APPROVED_ONLY, REQUIRE_APPROVAL, submissionStatus, notExpired, pick } = require("../utils/publicVisibility");
 
@@ -295,6 +296,10 @@ const deleteNotice = async (req, res, next) => {
 
     notice.isActive = false;
     await notice.save();
+
+    // remove stale notifications so nobody clicks into a deleted notice
+    await Notification.deleteMany({ refModel: "Notice", refId: notice._id }).catch(() => {});
+
     res.status(200).json({ success: true, message: "Notice deleted" });
   } catch (error) {
     next(error);

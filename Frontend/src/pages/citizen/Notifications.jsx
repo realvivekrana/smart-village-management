@@ -9,6 +9,7 @@ import EmptyState from "../../components/common/EmptyState";
 import Button from "../../components/common/Button";
 import BackButton from "../../components/common/BackButton";
 
+import { useLanguage } from "../../context/LanguageContext";
 const typeIcons = {
   complaint_update: "📋", job_application: "💼", new_notice: "📢",
   new_event: "📅", new_job: "💼", business_status: "🏪",
@@ -17,6 +18,7 @@ const typeIcons = {
 };
 
 export default function Notifications() {
+  const { t } = useLanguage();
   const { notifications, unreadCount, loading, markRead, markAllRead, remove } = useContext(NotificationContext);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ export default function Notifications() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">{n.message}</p>
                   <div className="flex items-center gap-3 mt-1">
                     <p className="text-xs text-gray-400">{formatRelative(n.createdAt)}</p>
-                    {target && <span className="text-xs font-medium text-primary-600 dark:text-primary-400">Dekhein →</span>}
+                    {target && <span className="text-xs font-medium text-primary-600 dark:text-primary-400">{t("ui.view24b", "View →")}</span>}
                   </div>
                 </div>
                 <button

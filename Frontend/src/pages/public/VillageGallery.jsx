@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 
+import { useLanguage } from "../../context/LanguageContext";
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
 
 const VillageGallery = () => {
+  const { t } = useLanguage();
   const [village, setVillage] = useState(null);
   const [images, setImages] = useState([]);
 
@@ -89,7 +91,7 @@ const VillageGallery = () => {
               .map((p) => ({
                 id: `photo-${p._id}`,
                 url: p.image.url,
-                title: p.caption || "Gaon ki photo",
+                title: p.caption || t("ui.villagePhoto92d", "Village photo"),
                 caption: p.createdBy?.name ? `Photo by ${p.createdBy.name}` : "",
                 category: p.category
                   ? p.category.charAt(0).toUpperCase() + p.category.slice(1)

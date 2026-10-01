@@ -11,6 +11,7 @@ import {
   Table,
   Toolbar,
 } from "./AdminUI";
+import { useLanguage } from "../../context/LanguageContext";
 
 /*
  * Admin → Households (Parivar)
@@ -19,6 +20,7 @@ import {
  */
 
 export default function Households() {
+  const { t } = useLanguage();
   const [rows, setRows] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
@@ -45,7 +47,7 @@ export default function Households() {
       setRows(response.data?.data || []);
       setPagination(response.data?.pagination || null);
     } catch (err) {
-      setError(err.response?.data?.message || "Households load nahi ho paye");
+      setError(err.response?.data?.message || t("ui.couldNotLoadHouseholds7c9", "Could not load households"));
     } finally {
       setLoading(false);
     }
@@ -73,7 +75,7 @@ export default function Households() {
       }
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || "Update fail ho gaya");
+      setError(err.response?.data?.message || t("ui.updateFailed6d7", "Update failed"));
     } finally {
       setBusyId("");
     }
@@ -86,7 +88,7 @@ export default function Households() {
       const response = await api.get(`/households/admin/${row._id}`);
       setDetail(response.data?.data || row);
     } catch (err) {
-      setError(err.response?.data?.message || "Detail load nahi ho paya");
+      setError(err.response?.data?.message || t("ui.couldNotLoadDetailsc46", "Could not load details"));
     } finally {
       setDetailLoading(false);
     }
@@ -99,13 +101,13 @@ export default function Households() {
 
   return (
     <Page
-      title="Households (Parivar)"
-      subtitle="Gaon ke ghar aur parivar ki jaankari check karke verify karein."
+      title={t("ui.householdsFamiliesc4f", "Households (Families)")}
+      subtitle={t("ui.checkTheDetailsOfVillage881", "Check the details of village houses and families, then verify them.")}
     >
       <Toolbar
         search={search}
         setSearch={setSearch}
-        placeholder="Naam, phone, ghar number ya ward..."
+        placeholder={t("ui.namePhoneHouseNumberOr518", "Name, phone, house number or ward...")}
         filters={
           <select
             className="input"
@@ -113,7 +115,7 @@ export default function Households() {
             onChange={(e) => setVerified(e.target.value)}
           >
             <option value="">Sab</option>
-            <option value="false">Verify baaki</option>
+            <option value="false">{t("ui.pendingVerification08e", "Pending verification")}</option>
             <option value="true">Verified</option>
           </select>
         }
@@ -127,11 +129,11 @@ export default function Households() {
       ) : (
         <Table
           rows={rows}
-          empty="Koi household nahi mila"
+          empty={t("ui.noHouseholdsFounda16", "No households found")}
           columns={[
             {
               key: "householdHeadName",
-              label: "Mukhiya",
+              label: t("ui.headOfFamilye9d", "Head of family"),
               render: (h) => (
                 <div>
                   <p className="font-medium">{h.householdHeadName}</p>
@@ -141,10 +143,10 @@ export default function Households() {
                 </div>
               ),
             },
-            { key: "address", label: "Pata", render: address },
+            { key: "address", label: t("ui.addressdd7", "Address"), render: address },
             {
               key: "members",
-              label: "Sadasya",
+              label: t("ui.membersef5", "Members"),
               render: (h) =>
                 (h.members || []).filter((m) => m.isActive !== false).length,
             },
@@ -159,7 +161,7 @@ export default function Households() {
             },
             {
               key: "createdAt",
-              label: "Joda gaya",
+              label: t("ui.addedf29", "Added"),
               render: (h) => fmtDate(h.createdAt),
             },
             {
@@ -172,7 +174,7 @@ export default function Households() {
                     type="button"
                     onClick={() => openDetail(h)}
                   >
-                    Dekhein
+                    {t("ui.view435", "View")}
                   </button>
                   <button
                     className={h.isVerified ? "btn-danger" : "btn-primary"}
@@ -198,13 +200,13 @@ export default function Households() {
           ) : (
             <div className="space-y-4 text-sm">
               <div className="grid gap-3 sm:grid-cols-2">
-                <Info label="Mukhiya" value={detail.householdHeadName} />
+                <Info label={t("ui.headOfFamilye9d", "Head of family")} value={detail.householdHeadName} />
                 <Info label="Phone" value={detail.householdHeadPhone} />
-                <Info label="Pata" value={address(detail)} />
+                <Info label={t("ui.addressdd7", "Address")} value={address(detail)} />
                 <Info label="Panchayat" value={detail.panchayat} />
-                <Info label="Block / Zila" value={[detail.block, detail.district].filter(Boolean).join(", ")} />
-                <Info label="Ghar ka type" value={detail.houseType} />
-                <Info label="Parivar type" value={detail.familyType} />
+                <Info label={t("ui.blockDistrict9bb", "Block / District")} value={[detail.block, detail.district].filter(Boolean).join(", ")} />
+                <Info label={t("ui.houseType0aa", "House type")} value={detail.houseType} />
+                <Info label={t("ui.familyType3a0", "Family type")} value={detail.familyType} />
                 <Info
                   label="Account"
                   value={
@@ -218,22 +220,22 @@ export default function Households() {
                   value={
                     detail.isVerified
                       ? `${detail.verifiedBy?.name || "Admin"} · ${fmtDate(detail.verifiedAt)}`
-                      : "Abhi verify nahi hua"
+                      : t("ui.notVerifiedYet3c3", "Not verified yet")
                   }
                 />
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold">Parivar ke sadasya</h3>
+                <h3 className="mb-2 font-semibold">{t("ui.familyMembers6f5", "Family members")}</h3>
                 <Table
                   rows={(detail.members || []).filter((m) => m.isActive !== false)}
-                  empty="Koi sadasya nahi joda gaya"
+                  empty={t("ui.noMembersAdded523", "No members added")}
                   columns={[
-                    { key: "name", label: "Naam" },
-                    { key: "relation", label: "Rishta" },
-                    { key: "age", label: "Umar", render: (m) => m.age ?? "—" },
-                    { key: "gender", label: "Ling" },
-                    { key: "occupation", label: "Kaam" },
+                    { key: "name", label: t("ui.name49e", "Name") },
+                    { key: "relation", label: t("ui.relation671", "Relation") },
+                    { key: "age", label: t("ui.age9d8", "Age"), render: (m) => m.age ?? "—" },
+                    { key: "gender", label: t("ui.gender019", "Gender") },
+                    { key: "occupation", label: t("ui.occupation752", "Occupation") },
                     { key: "bloodGroup", label: "Blood" },
                   ]}
                 />
@@ -253,7 +255,7 @@ export default function Households() {
                   disabled={busyId === detail._id}
                   onClick={() => toggleVerify(detail)}
                 >
-                  {detail.isVerified ? "Unverify" : "Verify karein"}
+                  {detail.isVerified ? "Unverify" : t("ui.verify5a7", "Verify")}
                 </button>
               </div>
             </div>

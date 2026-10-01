@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { Badge, ErrorBox, Loading, Modal, Page, Table, Toolbar, fmtDateTime } from "./AdminUI";
 
+import { useLanguage } from "../../context/LanguageContext";
 const STATUSES = ["new", "read", "replied", "resolved"];
 
 const toneFor = (status) =>
   status === "new" ? "red" : status === "read" ? "yellow" : status === "replied" ? "blue" : "green";
 
 export default function ContactMessages() {
+  const { t } = useLanguage();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,7 +25,7 @@ export default function ContactMessages() {
       const response = await api.get("/contact");
       setRows(response.data?.data || []);
     } catch (err) {
-      setError(err.response?.data?.message || "Messages load nahi ho paye");
+      setError(err.response?.data?.message || t("ui.couldNotLoadMessages7a4", "Could not load messages"));
     } finally {
       setLoading(false);
     }
@@ -41,7 +43,7 @@ export default function ContactMessages() {
       setRows((list) => list.map((r) => (r._id === row._id ? { ...r, status: next } : r)));
       setSelected((cur) => (cur && cur._id === row._id ? { ...cur, status: next } : cur));
     } catch (err) {
-      setError(err.response?.data?.message || "Status update nahi hua");
+      setError(err.response?.data?.message || t("ui.couldNotUpdateStatusa01", "Could not update status"));
     } finally {
       setBusy(false);
     }
@@ -53,13 +55,13 @@ export default function ContactMessages() {
   };
 
   const remove = async (row) => {
-    if (!window.confirm("Ye message hamesha ke liye delete ho jayega. Delete karein?")) return;
+    if (!window.confirm(t("ui.thisMessageWillBeDeletedb35", "This message will be deleted permanently. Delete it?"))) return;
     try {
       await api.delete(`/contact/${row._id}`);
       setRows((list) => list.filter((r) => r._id !== row._id));
       setSelected(null);
     } catch (err) {
-      setError(err.response?.data?.message || "Delete nahi hua");
+      setError(err.response?.data?.message || t("ui.couldNotDeletee8a", "Could not delete"));
     }
   };
 
@@ -77,12 +79,12 @@ export default function ContactMessages() {
   return (
     <Page
       title="Contact Messages"
-      subtitle={`Contact form se aaye gaon walon ke sandesh. Naye: ${newCount}`}
+      subtitle={t("ui.contactFormMessages", "Messages from villagers sent via the contact form. New: {count}", { count: newCount })}
     >
       <Toolbar
         search={search}
         setSearch={setSearch}
-        placeholder="Naam, email, phone ya message khojein..."
+        placeholder={t("ui.searchNameEmailPhoneOr3c2", "Search name, email, phone or message...")}
         onRefresh={load}
         filters={
           <select className="input" value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -102,7 +104,7 @@ export default function ContactMessages() {
         <Loading />
       ) : (
         <Table
-          empty="Abhi koi message nahi aaya"
+          empty={t("ui.noMessagesYet981", "No messages yet")}
           rows={filtered}
           columns={[
             {
@@ -184,7 +186,7 @@ export default function ContactMessages() {
             </div>
 
             <div>
-              <p className="mb-2 text-xs text-gray-500">Status badlein</p>
+              <p className="mb-2 text-xs text-gray-500">{t("ui.changeStatusaf5", "Change status")}</p>
               <div className="flex flex-wrap gap-2">
                 {STATUSES.map((s) => (
                   <button

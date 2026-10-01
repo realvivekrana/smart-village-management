@@ -12,13 +12,18 @@ export default function NoticeDetails() {
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
   const load = () => {
     setLoading(true);
     setError(null);
+    setNotFound(false);
     getNoticeById(id)
       .then((res) => setNotice(res.data.data.notice))
-      .catch((err) => setError(err.response?.data?.message || "Failed to load notice"))
+      .catch((err) => {
+        setNotFound(err.response?.status === 404);
+        setError(err.response?.data?.message || "Failed to load notice");
+      })
       .finally(() => setLoading(false));
   };
 
@@ -28,7 +33,10 @@ export default function NoticeDetails() {
   if (error) return (
     <div className="page-container">
       <div className="mb-4"><BackButton to={`${base}/notices`} label="Back to Notices" /></div>
-      <ErrorMessage message={error} onRetry={load} />
+      <ErrorMessage
+        message={notFound ? "This notice is no longer available. It may have been removed." : error}
+        onRetry={notFound ? undefined : load}
+      />
     </div>
   );
   if (!notice) return null;

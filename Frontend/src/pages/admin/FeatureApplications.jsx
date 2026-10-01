@@ -12,6 +12,7 @@ import {
   fmtDate,
   fmtDateTime,
 } from "./AdminUI";
+import { useLanguage } from "../../context/LanguageContext";
 
 const STATUSES = [
   "submitted",
@@ -33,6 +34,7 @@ const toneFor = (status) => {
 const label = (s) => String(s || "").replaceAll("-", " ");
 
 export default function FeatureApplications() {
+  const { t } = useLanguage();
   const [rows, setRows] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
@@ -65,7 +67,7 @@ export default function FeatureApplications() {
       setRows(response.data?.data || []);
       setPagination(response.data?.pagination || null);
     } catch (err) {
-      setError(err.response?.data?.message || "Applications load nahi ho payi");
+      setError(err.response?.data?.message || t("ui.couldNotLoadApplications40b", "Could not load applications"));
     } finally {
       setLoading(false);
     }
@@ -89,7 +91,7 @@ export default function FeatureApplications() {
 
   const save = async () => {
     if (form.status === "rejected" && !form.rejectionReason.trim()) {
-      setModalError("Reject karne ka karan likhna zaroori hai.");
+      setModalError(t("ui.aReasonIsRequiredTo024", "A reason is required to reject."));
       return;
     }
     setSaving(true);
@@ -104,31 +106,31 @@ export default function FeatureApplications() {
       setSelected(null);
       await load();
     } catch (err) {
-      setModalError(err.response?.data?.message || "Update nahi ho paya");
+      setModalError(err.response?.data?.message || t("ui.couldNotUpdatee8d", "Could not update"));
     } finally {
       setSaving(false);
     }
   };
 
   const remove = async (row) => {
-    if (!window.confirm("Ye application delete ho jayegi. Delete karein?")) return;
+    if (!window.confirm(t("ui.thisApplicationWillBeDeleted7de", "This application will be deleted. Delete it?"))) return;
     try {
       await api.delete(`/village-features/admin/applications/${row._id}`);
       await load();
     } catch (err) {
-      setError(err.response?.data?.message || "Delete nahi hua");
+      setError(err.response?.data?.message || t("ui.couldNotDeletee8a", "Could not delete"));
     }
   };
 
   return (
     <Page
-      title="Yojana Applications"
-      subtitle="Gaon walon ne jin yojanaon aur sevaon ke liye aavedan kiya hai, unhe yahan dekhein aur approve ya reject karein."
+      title={t("ui.schemeApplicationsa94", "Scheme Applications")}
+      subtitle={t("ui.reviewTheApplicationsVillagersSubmitted948", "Review the applications villagers submitted for schemes and services, then approve or reject them.")}
     >
       <Toolbar
         search={search}
         setSearch={setSearch}
-        placeholder="Tracking ID, naam, phone ya yojana khojein..."
+        placeholder={t("ui.searchTrackingIdNamePhone14b", "Search tracking ID, name, phone or scheme...")}
         onRefresh={load}
         filters={
           <select
@@ -156,7 +158,7 @@ export default function FeatureApplications() {
       ) : (
         <>
           <Table
-            empty="Koi application nahi mili"
+            empty={t("ui.noApplicationsFounda2c", "No applications found")}
             rows={rows}
             columns={[
               {
@@ -166,7 +168,7 @@ export default function FeatureApplications() {
               },
               {
                 key: "featureTitle",
-                label: "Yojana / Seva",
+                label: t("ui.schemeServiceff6", "Scheme / Service"),
                 render: (row) => (
                   <div>
                     <p className="font-medium">{row.featureTitle || row.feature?.title || "—"}</p>
@@ -245,7 +247,7 @@ export default function FeatureApplications() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs text-gray-500">Applicant ko dikhne wala sandesh</label>
+              <label className="mb-1 block text-xs text-gray-500">{t("ui.messageShownToTheApplicantdb6", "Message shown to the applicant")}</label>
               <textarea
                 className="input"
                 rows={2}
@@ -256,7 +258,7 @@ export default function FeatureApplications() {
 
             {form.status === "rejected" ? (
               <div>
-                <label className="mb-1 block text-xs text-gray-500">Reject karne ka karan</label>
+                <label className="mb-1 block text-xs text-gray-500">{t("ui.reasonForRejectionb90", "Reason for rejection")}</label>
                 <textarea
                   className="input"
                   rows={2}

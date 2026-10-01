@@ -61,7 +61,7 @@ const submissionLimiter = createLimiter({
   windowMs: 60 * 60 * 1000,
   limit: 20,
   keyGenerator: (req) => (req.user ? `user:${req.user._id}` : ipKeyGenerator(req.ip)),
-  message: "Aap bahut jaldi-jaldi post kar rahe hain. Thodi der baad dobara koshish karein.",
+  message: "You are posting too quickly. Please try again after a little while.",
 });
 
 module.exports = {

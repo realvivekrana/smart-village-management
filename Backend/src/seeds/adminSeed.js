@@ -115,7 +115,7 @@ const seed = async () => {
     );
 
     if (generatedPassword) {
-      console.log(`   Password: ${password}   (sirf abhi dikh raha hai, note kar lo)`);
+      console.log(`   Password: ${password}   (shown only now, please note it down)`);
     }
 
     console.log(

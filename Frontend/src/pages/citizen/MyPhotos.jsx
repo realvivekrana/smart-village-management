@@ -35,7 +35,7 @@ export default function MyPhotos() {
     setError(null);
     getMyPhotos({ limit: 60 })
       .then((res) => setPhotos(res.data?.data?.photos || []))
-      .catch((err) => setError(err.response?.data?.message || "Photos load nahi ho paayin"))
+      .catch((err) => setError(err.response?.data?.message || t("ui.couldNotLoadPhotos3a3", "Could not load photos")))
       .finally(() => setLoading(false));
   };
 
@@ -43,10 +43,10 @@ export default function MyPhotos() {
 
   const handleFiles = (e) => {
     const picked = Array.from(e.target.files || []);
-    if (picked.length > MAX_IMAGES) toast.error(`Ek baar me zyada se zyada ${MAX_IMAGES} photo`);
+    if (picked.length > MAX_IMAGES) toast.error(t("ui.atMostPhotosAtATime", "Up to {max} photos at a time", { max: MAX_IMAGES }));
     const valid = picked.slice(0, MAX_IMAGES).filter((f) => {
       if (f.size > MAX_SIZE) {
-        toast.error(`${f.name} 5MB se badi hai`);
+        toast.error(t("ui.fileTooBig", "{name} is larger than 5 MB", { name: f.name }));
         return false;
       }
       return true;
@@ -56,7 +56,7 @@ export default function MyPhotos() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (files.length === 0) return toast.error("Pehle photo chuniye");
+    if (files.length === 0) return toast.error(t("ui.pleaseChooseAPhotoFirst926", "Please choose a photo first"));
 
     const fd = new FormData();
     files.forEach((f) => fd.append("images", f));
@@ -66,13 +66,13 @@ export default function MyPhotos() {
     setUploading(true);
     try {
       const res = await uploadPhotos(fd);
-      toast.success(res.data?.message || "Photo bhej di gayi");
+      toast.success(res.data?.message || t("ui.photoSubmittedbdd", "Photo submitted"));
       setFiles([]);
       setCaption("");
       setInputKey((k) => k + 1);
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Photo upload nahi ho payi");
+      toast.error(err.response?.data?.message || t("ui.couldNotUploadThePhotoa4f", "Could not upload the photo"));
     } finally {
       setUploading(false);
     }
@@ -83,11 +83,11 @@ export default function MyPhotos() {
     setDeleting(true);
     try {
       await deletePhoto(deleteTarget._id);
-      toast.success("Photo hata di gayi");
+      toast.success(t("ui.photoRemoveda95", "Photo removed"));
       setPhotos((prev) => prev.filter((p) => p._id !== deleteTarget._id));
       setDeleteTarget(null);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Photo hata nahi payi");
+      toast.error(err.response?.data?.message || t("ui.couldNotRemoveThePhotoc66", "Could not remove the photo"));
     } finally {
       setDeleting(false);
     }
@@ -98,18 +98,18 @@ export default function MyPhotos() {
       <BackButton to="/citizen/dashboard" />
 
       <div>
-        <h1 className="section-title">📷 {t("myPhotos.title", "Meri Gallery Photos")}</h1>
+        <h1 className="section-title">📷 {t("myPhotos.title", "My Gallery Photos")}</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
           {t(
             "myPhotos.subtitle",
-            "Gaon ki photo daalein. Admin ki manjoori ke baad ye sabko Gallery me dikhengi."
+            t("ui.uploadVillagePhotosAfterAdmin5d5", "Upload village photos. After admin approval they will appear in the Gallery for everyone.")
           )}
         </p>
       </div>
 
       <form onSubmit={handleUpload} className="card p-5 space-y-4">
         <div className="form-group">
-          <label className="label">Photo chuniye (max {MAX_IMAGES}, har ek 5MB tak)</label>
+          <label className="label">{t("ui.choosePhotosMax", "Choose photos (max {max}, up to 5 MB each)", { max: MAX_IMAGES })}</label>
           <input
             key={inputKey}
             type="file"
@@ -129,7 +129,7 @@ export default function MyPhotos() {
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               maxLength={200}
-              placeholder="Jaise: Holi ka mela"
+              placeholder={t("ui.eGHoliFairaef", "e.g. Holi fair")}
             />
           </div>
           <div className="form-group">
@@ -137,7 +137,7 @@ export default function MyPhotos() {
             <select className="input" value={category} onChange={(e) => setCategory(e.target.value)}>
               {GALLERY_CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>
-                  {c.label}
+                  {t(c.key, c.label)}
                 </option>
               ))}
             </select>
@@ -145,7 +145,7 @@ export default function MyPhotos() {
         </div>
 
         <button type="submit" className="btn-primary" disabled={uploading}>
-          {uploading ? "Bhej rahe hain..." : "📤 Photo daalein"}
+          {uploading ? t("ui.sending7b0", "Sending...") : `📤 ${t("ui.uploadPhoto", "Upload photo")}`}
         </button>
       </form>
 
@@ -154,23 +154,23 @@ export default function MyPhotos() {
       ) : error ? (
         <ErrorMessage message={error} onRetry={load} />
       ) : photos.length === 0 ? (
-        <EmptyState icon="📷" title="Aapne abhi koi photo nahi daali" description="Upar se pehli photo bhejein." />
+        <EmptyState icon="📷" title={t("ui.youHaventAddedAnyPhotoc3f", "You haven't added any photo yet")} description={t("ui.uploadYourFirstPhotoAboved80", "Upload your first photo above.")} />
       ) : (
         <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {photos.map((p) => {
             const review = REVIEW_STATUS[p.status];
             return (
               <div key={p._id} data-highlight-id={p._id} className={`card overflow-hidden ${hlClass(p._id)}`}>
-                <img src={p.image?.url} alt={p.caption || "Gaon ki photo"} className="h-40 w-full object-cover" loading="lazy" />
+                <img src={p.image?.url} alt={p.caption || t("ui.villagePhoto92d", "Village photo")} className="h-40 w-full object-cover" loading="lazy" />
                 <div className="p-3 space-y-2">
-                  {review && <span className={review.badge}>{review.label}</span>}
+                  {review && <span className={review.badge}>{t(review.key, review.label)}</span>}
                   {p.caption && <p className="text-sm text-gray-800 dark:text-gray-200">{p.caption}</p>}
                   <p className="text-xs text-gray-500">{formatDate(p.createdAt)}</p>
                   {p.status === "rejected" && p.rejectionReason && (
-                    <p className="text-xs text-red-700 dark:text-red-300">Karan: {p.rejectionReason}</p>
+                    <p className="text-xs text-red-700 dark:text-red-300">{t("bz.reason", "Reason")}: {p.rejectionReason}</p>
                   )}
                   <button className="btn-danger w-full" onClick={() => setDeleteTarget(p)}>
-                    🗑️ Hatayein
+                    🗑️ {t("ui.removePhotoBtn", "Remove")}
                   </button>
                 </div>
               </div>
@@ -183,9 +183,9 @@ export default function MyPhotos() {
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Photo hatayein"
-        message="Kya aap sach me ye photo hatana chahte hain?"
-        confirmLabel="Hatayein"
+        title={t("ui.removePhoto453", "Remove photo")}
+        message={t("ui.doYouReallyWantTo4de", "Do you really want to remove this photo?")}
+        confirmLabel={t("ui.remove106", "Remove")}
         loading={deleting}
       />
     </div>

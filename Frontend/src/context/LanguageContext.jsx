@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import extraTranslations from "./extraTranslations";
+import uiTranslations from "./uiTranslations";
 import { useVillage } from "./VillageContext";
 
 /*
@@ -1953,6 +1954,8 @@ const deepMerge = (target, source) => {
 
 deepMerge(translations.en, extraTranslations.en);
 deepMerge(translations.hi, extraTranslations.hi);
+deepMerge(translations.en, uiTranslations.en);
+deepMerge(translations.hi, uiTranslations.hi);
 
 const interpolate = (text, vars) => {
   if (typeof text !== "string" || !vars) return text;

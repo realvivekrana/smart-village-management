@@ -2,7 +2,9 @@ import { useState } from "react";
 import Button from "../common/Button";
 import { BUSINESS_CATEGORIES } from "../../utils/constants";
 
+import { useLanguage } from "../../context/LanguageContext";
 export default function BusinessForm({ initial = {}, onSubmit, loading }) {
+  const { t } = useLanguage();
   const [form, setForm] = useState({
     name: initial.name || "",
     description: initial.description || "",
@@ -126,7 +128,7 @@ export default function BusinessForm({ initial = {}, onSubmit, loading }) {
             const picked = Array.from(e.target.files).slice(0, maxNew);
             const tooBig = picked.find((f) => f.size > 5 * 1024 * 1024);
             if (tooBig) {
-              alert(`"${tooBig.name}" 5MB se badi hai. Chhoti photo chunein.`);
+              alert(t("ui.fileTooBigChoose", "\"{name}\" is larger than 5 MB. Please choose a smaller photo.", { name: tooBig.name }));
               e.target.value = "";
               setImages([]);
               return;
@@ -134,7 +136,7 @@ export default function BusinessForm({ initial = {}, onSubmit, loading }) {
             setImages(picked);
           }}
         />
-        {maxNew === 0 && <p className="text-xs text-gray-500 mt-1">5 photos ho chuki hain. Nayi add karne ke liye pehle koi hatayein.</p>}
+        {maxNew === 0 && <p className="text-xs text-gray-500 mt-1">{t("ui.youAlreadyHave5Photos495", "You already have 5 photos. Remove one before adding a new one.")}</p>}
         {images.length > 0 && <p className="text-xs text-gray-500 mt-1">{images.length} image(s) selected</p>}
       </div>
       <div className="flex justify-end pt-2">

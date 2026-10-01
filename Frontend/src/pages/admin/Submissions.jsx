@@ -17,6 +17,7 @@ import Pagination from "../../components/common/Pagination";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import BackButton from "../../components/common/BackButton";
 
+import { useLanguage } from "../../context/LanguageContext";
 /*
  * Citizen ki daali hui cheezein (Gaon Bazaar + Gallery photos)
  * yahin se approve / reject hoti hain.
@@ -24,13 +25,14 @@ import BackButton from "../../components/common/BackButton";
  */
 
 const STATUS_FILTERS = [
-  { value: "", label: "Sabhi (nayi posts)" },
-  { value: "approved", label: "Live" },
-  { value: "rejected", label: "Hataai gayi" },
-  { value: "pending", label: "Review baaki" },
+  { value: "", key: "st.allNewPosts", label: "All (new posts)" },
+  { value: "approved", key: "st.live", label: "Live" },
+  { value: "rejected", key: "st.removed", label: "Removed" },
+  { value: "pending", key: "st.pendingReview", label: "Pending review" },
 ];
 
 export default function Submissions() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState("bazaar");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
@@ -64,7 +66,7 @@ export default function Submissions() {
         setItems(isBazaar ? d.listings || [] : d.photos || []);
         setPagination(res.data?.pagination || null);
       })
-      .catch((err) => setError(err.response?.data?.message || "Load nahi ho paya"))
+      .catch((err) => setError(err.response?.data?.message || t("ui.couldNotLoad3dc", "Could not load")))
       .finally(() => setLoading(false));
   }, [tab, status, page, isBazaar]);
 
@@ -87,19 +89,19 @@ export default function Submissions() {
     try {
       const fn = isBazaar ? reviewListing : reviewPhoto;
       await fn(item._id, { status: newStatus, rejectionReason });
-      toast.success(newStatus === "approved" ? "Approve ho gaya" : "Reject ho gaya");
+      toast.success(newStatus === "approved" ? t("ui.approved6f8", "Approved") : t("ui.rejectedd37", "Rejected"));
       setRejectTarget(null);
       setReason("");
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Update nahi ho paya");
+      toast.error(err.response?.data?.message || t("ui.couldNotUpdatee8d", "Could not update"));
     } finally {
       setBusyId(null);
     }
   };
 
   const confirmReject = () => {
-    if (!reason.trim()) return toast.error("Reject karne ka karan likhiye");
+    if (!reason.trim()) return toast.error(t("ui.pleaseWriteTheReasonFor2bb", "Please write the reason for rejection"));
     review(rejectTarget, "rejected", reason.trim());
   };
 
@@ -108,11 +110,11 @@ export default function Submissions() {
     setDeleting(true);
     try {
       await (isBazaar ? deleteListing : deletePhoto)(deleteTarget._id);
-      toast.success("Hata diya gaya");
+      toast.success(t("ui.removed93f", "Removed"));
       setDeleteTarget(null);
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Hata nahi paya");
+      toast.error(err.response?.data?.message || t("ui.couldNotRemove31e", "Could not remove"));
     } finally {
       setDeleting(false);
     }
@@ -142,14 +144,14 @@ export default function Submissions() {
       <div>
         <h1 className="section-title">✅ Citizen Approvals</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Gaon walon ke daale hue Bazaar vigyapan aur Gallery photos yahan se approve karein. Approve hone ke baad hi ye sabko dikhte hain.
+          {t("ui.approveBazaarListingsAndGallery05d", "Approve Bazaar listings and Gallery photos posted by villagers here. They become visible to everyone only after approval.")}
         </p>
-        <p className="text-xs text-gray-500 mt-1">Dukaanon ka approval &quot;Businesses&quot; page par hota hai.</p>
+        <p className="text-xs text-gray-500 mt-1">{t("ui.businessApprovalsAreHandledOnfeb", "Business approvals are handled on the Businesses page.")}</p>
       </div>
 
       <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 pb-3">
         {[
-          { value: "bazaar", label: "🛒 Gaon Bazaar" },
+          { value: "bazaar", label: `🛒 ${t("ui.villageBazaarTab", "Village Bazaar")}` },
           { value: "gallery", label: "📷 Gallery Photos" },
         ].map((tb) => (
           <button
@@ -177,7 +179,7 @@ export default function Submissions() {
                 : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700"
             }`}
           >
-            {f.label}
+            {t(f.key, f.label)}
           </button>
         ))}
       </div>
@@ -189,8 +191,8 @@ export default function Submissions() {
       ) : items.length === 0 ? (
         <EmptyState
           icon={isBazaar ? "🛒" : "📷"}
-          title="Yahan kuchh nahi hai"
-          description={status === "pending" ? "Koi bhi cheez approval ke liye baaki nahi hai." : "Is filter me kuchh nahi mila."}
+          title={t("ui.nothingHerec65", "Nothing here")}
+          description={status === "pending" ? t("ui.nothingIsWaitingForApproval487", "Nothing is waiting for approval.") : t("ui.nothingFoundForThisFilter7b1", "Nothing found for this filter.")}
         />
       ) : isBazaar ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -206,16 +208,16 @@ export default function Submissions() {
             const rv = REVIEW_STATUS[p.status];
             return (
               <div key={p._id} className="card overflow-hidden flex flex-col">
-                <img src={p.image?.url} alt={p.caption || "Gaon ki photo"} className="h-44 w-full object-cover" loading="lazy" />
+                <img src={p.image?.url} alt={p.caption || t("ui.villagePhoto92d", "Village photo")} className="h-44 w-full object-cover" loading="lazy" />
                 <div className="p-3 space-y-2 flex-1 flex flex-col">
-                  {rv && <span className={rv.badge}>{rv.label}</span>}
+                  {rv && <span className={rv.badge}>{t(rv.key, rv.label)}</span>}
                   {p.caption && <p className="text-sm text-gray-800 dark:text-gray-200">{p.caption}</p>}
                   <p className="text-xs text-gray-500">
                     {p.createdBy?.name || "—"}
                     {p.createdBy?.phone ? ` • ${p.createdBy.phone}` : ""} • {formatDate(p.createdAt)}
                   </p>
                   {p.status === "rejected" && p.rejectionReason && (
-                    <p className="text-xs text-red-700 dark:text-red-300">Karan: {p.rejectionReason}</p>
+                    <p className="text-xs text-red-700 dark:text-red-300">{t("bz.reason", "Reason")}: {p.rejectionReason}</p>
                   )}
                   <div className="flex flex-wrap gap-2 mt-auto pt-1">
                     {renderReviewButtons(p)}
@@ -235,7 +237,7 @@ export default function Submissions() {
           setRejectTarget(null);
           setReason("");
         }}
-        title="Reject karne ka karan"
+        title={t("ui.reasonForRejectionb90", "Reason for rejection")}
         size="sm"
       >
         <div className="space-y-4">
@@ -248,7 +250,7 @@ export default function Submissions() {
             maxLength={500}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="Jaise: Photo saaf nahi hai / Jaankari adhuri hai"
+            placeholder={t("ui.eGPhotoIsUnclear202", "e.g. Photo is unclear / Details are incomplete")}
           />
           <div className="flex justify-end gap-2">
             <button
@@ -271,9 +273,9 @@ export default function Submissions() {
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
-        title="Hatayein"
-        message="Kya aap sach me ise hatana chahte hain? Ye wapas nahi aayega."
-        confirmLabel="Hatayein"
+        title={t("ui.remove106", "Remove")}
+        message={t("ui.doYouReallyWantToffc", "Do you really want to remove this? This cannot be undone.")}
+        confirmLabel={t("ui.remove106", "Remove")}
         loading={deleting}
       />
     </div>

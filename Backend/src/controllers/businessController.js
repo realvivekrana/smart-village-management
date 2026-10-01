@@ -171,7 +171,7 @@ const createBusiness = async (req, res, next) => {
         ? "Business registered. It is now visible to everyone."
         : "Business registered. Pending admin approval.",
       ...(hasFiles && !env.cloudinary.enabled && {
-        warning: "Photos save nahi hui: server par Cloudinary configure nahi hai.",
+        warning: "Photos were not saved: Cloudinary is not configured on the server.",
       }),
       data: { business },
     });

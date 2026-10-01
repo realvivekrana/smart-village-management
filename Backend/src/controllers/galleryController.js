@@ -101,7 +101,7 @@ const uploadPhotos = async (req, res, next) => {
     if (!env.cloudinary.enabled) {
       return res.status(503).json({
         success: false,
-        message: "Photo upload abhi set up nahi hai (Cloudinary configure nahi hai)",
+        message: "Photo upload is not set up yet (Cloudinary is not configured)",
       });
     }
 
@@ -126,8 +126,8 @@ const uploadPhotos = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: published
-        ? "Photos published. Ab gallery me sabko dikh rahi hain."
-        : "Photos submitted. Admin approval ke baad gallery me dikhengi.",
+        ? "Photos published. They are now visible to everyone in the gallery."
+        : "Photos submitted. They will appear in the gallery after admin approval.",
       data: { photos },
     });
   } catch (error) {
@@ -190,11 +190,11 @@ const reviewPhoto = async (req, res, next) => {
 
     await createNotification({
       recipient: photo.createdBy,
-      title: status === "approved" ? "Aapki photo approve ho gayi" : "Aapki photo approve nahi hui",
+      title: status === "approved" ? "Your photo was approved" : "Your photo was not approved",
       message:
         status === "approved"
-          ? "Aapki photo ab gaon ki Gallery me sabko dikh rahi hai."
-          : `Aapki photo reject hui. Karan: ${photo.rejectionReason}`.slice(0, 500),
+          ? "Your photo is now visible to everyone in the village Gallery."
+          : `Your photo was rejected. Reason: ${photo.rejectionReason}`.slice(0, 500),
       type: "general",
       link: `/citizen/photos?highlight=${photo._id}`,
       refModel: "GalleryPhoto",

@@ -1,14 +1,16 @@
 import { formatDate } from "../../utils/formatDate";
 import { formatListingPrice, getTypeMeta, REVIEW_STATUS } from "../../utils/bazaar";
 
+import { useLanguage } from "../../context/LanguageContext";
 /*
  * Ek listing ka card.
  * - showStatus : citizen/admin ko approval status dikhata hai
  * - children   : neeche action buttons (edit / approve / delete ...)
  */
 export default function ListingCard({ listing, showStatus = false, showOwner = false, children }) {
+  const { t } = useLanguage();
   const meta = getTypeMeta(listing.type);
-  const price = formatListingPrice(listing);
+  const price = formatListingPrice(listing, t);
   const image = listing.images?.[0]?.url;
   const review = REVIEW_STATUS[listing.status];
 
@@ -25,15 +27,15 @@ export default function ListingCard({ listing, showStatus = false, showOwner = f
       <div className="p-4 flex-1 flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className="badge-blue">
-            {meta.icon} {meta.label}
+            {meta.icon} {t(meta.key, meta.label)}
           </span>
           {listing.type === "lost-found" && (
             <span className={listing.itemStatus === "found" ? "badge-green" : "badge-red"}>
-              {listing.itemStatus === "found" ? "Mila hai" : "Kho gaya hai"}
+              {listing.itemStatus === "found" ? t("ui.found5d6", "Found") : t("ui.lostb57", "Lost")}
             </span>
           )}
-          {listing.isClosed && <span className="badge-gray">{meta.closedLabel}</span>}
-          {showStatus && review && <span className={review.badge}>{review.label}</span>}
+          {listing.isClosed && <span className="badge-gray">{t(meta.closedKey, meta.closedLabel)}</span>}
+          {showStatus && review && <span className={review.badge}>{t(review.key, review.label)}</span>}
         </div>
 
         <h3 className="font-semibold text-gray-900 dark:text-white">{listing.title}</h3>

@@ -46,13 +46,13 @@ email.enabled = Boolean(email.host && email.user && email.pass);
 
 if (nodeEnv === "production") {
   if (!process.env.FRONTEND_URL) {
-    console.warn("WARNING: FRONTEND_URL set nahi hai. Reset password email me link localhost ka jayega!");
+    console.warn("WARNING: FRONTEND_URL is not set. The reset-password email link will point to localhost!");
   }
   if (!email.enabled) {
-    console.warn("WARNING: SMTP_HOST / SMTP_USER / SMTP_PASS set nahi hain. Forgot password email nahi bhej payega.");
+    console.warn("WARNING: SMTP_HOST / SMTP_USER / SMTP_PASS are not set. The forgot-password email cannot be sent.");
   }
   if (!process.env.TRUST_PROXY) {
-    console.warn("WARNING: TRUST_PROXY set nahi hai (default 1 use hoga).");
+    console.warn("WARNING: TRUST_PROXY is not set (default of 1 will be used).");
   }
 }
 

@@ -49,6 +49,7 @@ import useAuth from "../../hooks/useAuth";
 import { formatDate } from "../../utils/formatDate";
 import BackButton from "../../components/common/BackButton";
 
+import { useLanguage } from "../../context/LanguageContext";
 /*
 |--------------------------------------------------------------------------
 | Feature Icons  (backend ke saare categories covered)
@@ -91,11 +92,11 @@ const CATEGORY_LABELS = {
   "exam-alert": "Exam Alert",
   "skill-training": "Skill Training",
   farmer: "Farmer",
-  mandi: "Mandi Bhav",
+  mandi: "Mandi Rates",
   weather: "Weather",
   "crop-advice": "Crop Advice",
   "equipment-rental": "Equipment Rental",
-  "fertilizer-seed": "Khaad & Beej",
+  "fertilizer-seed": "Fertilizer & Seeds",
   "gram-sabha": "Gram Sabha",
   "bill-tax": "Bills & Tax",
   "health-camp": "Health",
@@ -161,12 +162,18 @@ const LINK_TYPE_META = {
 const getFeatureIcon = (category) =>
   FEATURE_ICONS[category] || FEATURE_ICONS.default;
 
-const getCategoryLabel = (category) =>
-  CATEGORY_LABELS[category] ||
-  category
-    ?.replace(/-/g, " ")
-    ?.replace(/\b\w/g, (letter) => letter.toUpperCase()) ||
-  "Village Service";
+const getCategoryLabel = (category, t) => {
+  const english =
+    CATEGORY_LABELS[category] ||
+    category
+      ?.replace(/-/g, " ")
+      ?.replace(/\b\w/g, (letter) => letter.toUpperCase()) ||
+    "Village Service";
+  if (!t) return english;
+  return CATEGORY_LABELS[category]
+    ? t("cat." + category, english)
+    : english;
+};
 
 const featureKey = (feature) =>
   feature?._id || feature?.id || feature?.slug;
@@ -314,6 +321,7 @@ function SmartLink({ url, className = "", children }) {
 */
 
 export default function VillageServices() {
+  const { t } = useLanguage();
   const { villageName } = useVillage();
   const isDashboard = useLocation().pathname.startsWith("/citizen");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -340,7 +348,7 @@ export default function VillageServices() {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          "Village services load nahi ho paayi."
+          t("ui.couldNotLoadVillageServicesb8f", "Could not load village services.")
       );
     } finally {
       setLoading(false);
@@ -442,7 +450,7 @@ export default function VillageServices() {
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="flex flex-col items-center gap-3 text-gray-600 dark:text-gray-300">
           <Loader2 className="h-8 w-8 animate-spin" />
-          <p className="text-sm">Village services load ho rahi hain...</p>
+          <p className="text-sm">{t("ui.loadingVillageServices370", "Loading village services...")}</p>
         </div>
       </div>
     );
@@ -465,13 +473,11 @@ export default function VillageServices() {
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Gaon ki zaroori services, ek hi jagah
+              {t("ui.importantVillageServicesAllInc1c", "Important village services, all in one place")}
             </h1>
 
             <p className="mt-3 max-w-2xl text-sm leading-6 text-white/85 sm:text-base">
-              Sarkari yojana, farmer services, Gram Sabha, health, education,
-              bills, local services aur community information — official
-              links, helpline aur apply option ke saath.
+              {t("ui.governmentSchemesFarmerServicesGram84c", "Government schemes, farmer services, Gram Sabha, health, education, bills, local services and community information — with official links, helplines and apply options.")}
             </p>
           </div>
 
@@ -493,7 +499,7 @@ export default function VillageServices() {
 
               <div className="flex-1">
                 <p className="font-medium text-red-800 dark:text-red-200">
-                  Services load nahi ho paayi
+                  {t("ui.couldNotLoadServices395", "Could not load services")}
                 </p>
                 <p className="mt-1 text-sm text-red-700 dark:text-red-300">
                   {error}
@@ -522,7 +528,7 @@ export default function VillageServices() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Service, yojana, farmer, scholarship, department search karein..."
+                placeholder={t("ui.searchServiceSchemeFarmerScholarship913", "Search service, scheme, farmer, scholarship, department...")}
                 className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-3 pl-10 pr-10 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 dark:text-gray-100 dark:placeholder-gray-400"
               />
 
@@ -565,7 +571,7 @@ export default function VillageServices() {
                       : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
                   }`}
                 >
-                  {category === "all" ? "All" : getCategoryLabel(category)}
+                  {category === "all" ? "All" : getCategoryLabel(category, t)}
                 </button>
               );
             })}
@@ -604,11 +610,11 @@ export default function VillageServices() {
             </div>
 
             <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Koi service nahi mili
+              {t("ui.noServicesFound960", "No services found")}
             </h3>
 
             <p className="mx-auto mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
-              Search ya category filter change karke dobara try karein.
+              {t("ui.tryAgainAfterChangingTheb02", "Try again after changing the search or category filter.")}
             </p>
 
             <button
@@ -664,6 +670,7 @@ function StatCard({ value, label }) {
 */
 
 function ServiceCard({ feature, onView }) {
+  const { t } = useLanguage();
   const Icon = getFeatureIcon(feature?.category);
   const isEmergency = feature?.category === "emergency";
   const links = getAllLinks(feature);
@@ -698,7 +705,7 @@ function ServiceCard({ feature, onView }) {
               : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
           }`}
         >
-          {getCategoryLabel(feature?.category)}
+          {getCategoryLabel(feature?.category, t)}
         </span>
       </div>
 
@@ -778,6 +785,7 @@ function ServiceCard({ feature, onView }) {
 */
 
 function FeatureModal({ feature, onClose }) {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -823,7 +831,7 @@ function FeatureModal({ feature, onClose }) {
         await navigator.share({ title: feature.title, url });
       } else {
         await navigator.clipboard.writeText(url);
-        toast.success("Link copy ho gaya");
+        toast.success(t("ui.linkCopiedacf", "Link copied"));
       }
     } catch {
       /* user ne share cancel kiya */
@@ -832,7 +840,7 @@ function FeatureModal({ feature, onClose }) {
 
   const handleApplyClick = () => {
     if (!user) {
-      toast("Apply karne ke liye pehle login karein");
+      toast(t("ui.pleaseLogInFirstTo9cb", "Please log in first to apply"));
       navigate("/login", {
         state: {
           // Login sirf pathname padhta hai, isliye query yahin jod di
@@ -861,9 +869,9 @@ function FeatureModal({ feature, onClose }) {
 
       const application = response?.data || response;
       setSubmitted(application);
-      toast.success("Application jama ho gayi");
+      toast.success(t("ui.applicationSubmittedea6", "Application submitted"));
     } catch (err) {
-      const message = err?.message || "Application submit nahi ho paayi.";
+      const message = err?.message || t("ui.couldNotSubmitTheApplication3b1", "Could not submit the application.");
       setApplyError(message);
     } finally {
       setSubmitting(false);
@@ -907,7 +915,7 @@ function FeatureModal({ feature, onClose }) {
                 {feature?.title}
               </h2>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                {getCategoryLabel(feature?.category)}
+                {getCategoryLabel(feature?.category, t)}
                 {feature?.department ? ` · ${feature.department}` : ""}
               </p>
             </div>
@@ -1006,7 +1014,7 @@ function FeatureModal({ feature, onClose }) {
           )}
 
           <ListBlock title="Agenda" items={agenda} />
-          <ListBlock title="Fasal Salah (Crop Advice)" items={cropAdvice} />
+          <ListBlock title={t("ui.cropAdvice33a", "Crop Advice")} items={cropAdvice} />
           <ListBlock title="Services Included" items={includedServices} />
 
           {/* Eligibility */}
@@ -1161,7 +1169,7 @@ function FeatureModal({ feature, onClose }) {
                 <div className="text-center">
                   <CheckCircle2 className="mx-auto h-10 w-10 text-green-600" />
                   <h3 className="mt-2 text-base font-bold text-gray-900 dark:text-gray-100">
-                    Application jama ho gayi!
+                    {t("ui.applicationSubmitted601", "Application submitted!")}
                   </h3>
 
                   {submitted?.trackingId && (
@@ -1177,7 +1185,7 @@ function FeatureModal({ feature, onClose }) {
                     to="/citizen/applications"
                     className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700"
                   >
-                    Meri Applications dekhein
+                    {t("ui.viewMyApplications3fe", "View My Applications")}
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
@@ -1188,8 +1196,7 @@ function FeatureModal({ feature, onClose }) {
                   </h3>
 
                   <p className="text-xs text-gray-600 dark:text-gray-300">
-                    Aapka naam, phone aur parivar ki details profile / household se
-                    apne aap li jaayengi.
+                    {t("ui.yourNamePhoneAndFamily586", "Your name, phone and family details will be taken automatically from your profile / household.")}
                   </p>
 
                   <textarea
@@ -1197,21 +1204,21 @@ function FeatureModal({ feature, onClose }) {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     maxLength={1000}
-                    placeholder="Koi extra jaankari ya message (optional)"
+                    placeholder={t("ui.anyExtraDetailsOrMessageae0", "Any extra details or message (optional)")}
                     className="w-full resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900 dark:text-gray-100"
                   />
 
                   {applyError && (
                     <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-300">
                       {alreadyApplied
-                        ? "Aap is service ke liye pehle hi apply kar chuke hain."
+                        ? t("ui.youHaveAlreadyAppliedFor7b7", "You have already applied for this service.")
                         : applyError}{" "}
                       {alreadyApplied && (
                         <Link
                           to="/citizen/applications"
                           className="font-semibold underline"
                         >
-                          Status dekhein
+                          {t("ui.viewStatus47c", "View status")}
                         </Link>
                       )}
                     </div>
@@ -1235,10 +1242,10 @@ function FeatureModal({ feature, onClose }) {
                       {submitting ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Submit ho raha hai...
+                          {t("ui.submittingf39", "Submitting...")}
                         </>
                       ) : (
-                        "Application Submit Karein"
+                        t("ui.submitApplicationf83", "Submit Application")
                       )}
                     </button>
                   </div>
@@ -1253,7 +1260,7 @@ function FeatureModal({ feature, onClose }) {
                       : "bg-green-600 hover:bg-green-700"
                   }`}
                 >
-                  {user ? "Apply / Register" : "Login karke Apply karein"}
+                  {user ? "Apply / Register" : t("ui.logInToApply027", "Log in to Apply")}
                   <ArrowRight className="h-4 w-4" />
                 </button>
               )}

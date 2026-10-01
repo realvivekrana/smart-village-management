@@ -14,6 +14,7 @@ import Modal from "../../components/common/Modal";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import BackButton from "../../components/common/BackButton";
 
+import { useLanguage } from "../../context/LanguageContext";
 const FAMILY_TYPES = ["nuclear", "joint", "extended", "other"];
 const HOUSE_TYPES = ["kutcha", "semi-pucca", "pucca", "other"];
 const GENDERS = ["male", "female", "other", "prefer-not-to-say"];
@@ -30,6 +31,7 @@ const emptyMember = {
 const label = (v) => v.replace(/-/g, " ");
 
 export default function MyHousehold() {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const { villageName } = useVillage();
 
@@ -137,7 +139,7 @@ export default function MyHousehold() {
   return (
     <div className="page-container max-w-3xl">
       <div className="mb-4"><BackButton to="/citizen/dashboard" label="Back to Dashboard" /></div>
-      <h1 className="section-title mb-1">🏠 Mera Parivar</h1>
+      <h1 className="section-title mb-1">🏠 {t("ui.myFamilyd44", "My Family")}</h1>
       <p className="mb-6 text-sm text-gray-500">
         {villageName} ke records ke liye apne ghar aur parivar ki jaankari.
         {household?.isVerified && (
@@ -146,16 +148,16 @@ export default function MyHousehold() {
       </p>
 
       <form onSubmit={handleSave} className="card mb-8 space-y-4 p-5">
-        <h2 className="font-semibold text-gray-900 dark:text-white">Ghar ki jaankari</h2>
+        <h2 className="font-semibold text-gray-900 dark:text-white">{t("ui.houseDetails608", "House details")}</h2>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="text-sm">
-            Mukhiya ka naam *
+            {t("ui.headOfFamilysName5f6", "Head of family's name *")}
             <input required className="input mt-1" value={form.householdHeadName}
               onChange={(e) => setField("householdHeadName", e.target.value)} />
           </label>
           <label className="text-sm">
-            Mukhiya ka phone *
+            {t("ui.headOfFamilysPhonea9e", "Head of family's phone *")}
             <input required className="input mt-1" value={form.householdHeadPhone}
               onChange={(e) => setField("householdHeadPhone", e.target.value)} />
           </label>
@@ -184,12 +186,12 @@ export default function MyHousehold() {
             </select>
           </label>
           <label className="text-sm">
-            Emergency contact naam
+            {t("ui.emergencyContactName2d6", "Emergency contact name")}
             <input className="input mt-1" value={form.emergencyContactName}
               onChange={(e) => setField("emergencyContactName", e.target.value)} />
           </label>
           <label className="text-sm">
-            Emergency contact phone
+            {t("ui.emergencyContactPhone961", t("ui.emergencyContactPhone961", "Emergency contact phone"))}
             <input className="input mt-1" value={form.emergencyContactPhone}
               onChange={(e) => setField("emergencyContactPhone", e.target.value)} />
           </label>
@@ -197,11 +199,11 @@ export default function MyHousehold() {
 
         <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
           {[
-            ["electricityConnection", "Bijli"],
-            ["waterConnection", "Nal ka paani"],
-            ["toiletAvailable", "Shauchalay"],
-            ["gasConnection", "Gas connection"],
-            ["isFarmer", "Kisan parivar"],
+            ["electricityConnection", t("ui.electricity656", "Electricity")],
+            ["waterConnection", t("ui.tapWater023", "Tap water")],
+            ["toiletAvailable", t("ui.toilet151", "Toilet")],
+            ["gasConnection", t("ui.gasConnection0ee", t("ui.gasConnection0ee", "Gas connection"))],
+            ["isFarmer", t("ui.farmerFamilyd38", "Farmer family")],
           ].map(([name, text]) => (
             <label key={name} className="flex items-center gap-2">
               <input type="checkbox" checked={!!form[name]}
@@ -229,15 +231,15 @@ export default function MyHousehold() {
         <section>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900 dark:text-white">
-              Parivar ke sadasya ({members.length})
+              {t("ui.familyMembers6f5", "Family members")} ({members.length})
             </h2>
             <button type="button" className="btn-primary" onClick={() => setMemberOpen(true)}>
-              ➕ Sadasya jodo
+              ➕ {t("ui.addMember9b6", "Add member")}
             </button>
           </div>
 
           {members.length === 0 ? (
-            <p className="card p-4 text-sm text-gray-500">Abhi koi sadasya nahi joda gaya.</p>
+            <p className="card p-4 text-sm text-gray-500">{t("ui.noMembersAddedYet347", "No members added yet.")}</p>
           ) : (
             <div className="space-y-3">
               {members.map((m) => (
@@ -246,7 +248,7 @@ export default function MyHousehold() {
                     <p className="font-semibold text-gray-900 dark:text-white">{m.name}</p>
                     <p className="text-xs text-gray-500">
                       {m.relation}
-                      {m.age ? ` • ${m.age} saal` : ""}
+                      {m.age ? ` • ${t("ui.yearsOld", "{age} years", { age: m.age })}` : ""}
                       {m.bloodGroup ? ` • ${m.bloodGroup}` : ""}
                       {m.occupation ? ` • ${m.occupation}` : ""}
                     </p>
@@ -263,9 +265,9 @@ export default function MyHousehold() {
         </section>
       )}
 
-      <Modal isOpen={memberOpen} onClose={() => setMemberOpen(false)} title="Sadasya jodo" size="md">
+      <Modal isOpen={memberOpen} onClose={() => setMemberOpen(false)} title={t("ui.addMember9b6", "Add member")} size="md">
         <form onSubmit={handleAddMember} className="space-y-3">
-          <input required className="input" placeholder="Naam *" value={member.name}
+          <input required className="input" placeholder={t("ui.name268", "Name *")} value={member.name}
             onChange={(e) => setMember({ ...member, name: e.target.value })} />
           <div className="grid grid-cols-2 gap-3">
             <select className="input" value={member.relation}
@@ -276,12 +278,12 @@ export default function MyHousehold() {
               onChange={(e) => setMember({ ...member, gender: e.target.value })}>
               {GENDERS.map((g) => <option key={g} value={g}>{label(g)}</option>)}
             </select>
-            <input type="number" min="0" max="120" className="input" placeholder="Umar"
+            <input type="number" min="0" max="120" className="input" placeholder={t("ui.age9d8", "Age")}
               value={member.age}
               onChange={(e) => setMember({ ...member, age: e.target.value })} />
             <input className="input" placeholder="Phone" value={member.phone}
               onChange={(e) => setMember({ ...member, phone: e.target.value })} />
-            <input className="input" placeholder="Kaam / Padhai" value={member.occupation}
+            <input className="input" placeholder={t("ui.occupationStudyee4", "Occupation / Study")} value={member.occupation}
               onChange={(e) => setMember({ ...member, occupation: e.target.value })} />
             <select className="input" value={member.bloodGroup}
               onChange={(e) => setMember({ ...member, bloodGroup: e.target.value })}>
@@ -301,8 +303,8 @@ export default function MyHousehold() {
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDeleteMember}
-        title="Sadasya hatao?"
-        message={`${deleteTarget?.name || "Yeh sadasya"} ko list se hata diya jayega.`}
+        title={t("ui.removeMemberc67", "Remove member?")}
+        message={t("ui.memberWillBeRemoved", "{name} will be removed from the list.", { name: deleteTarget?.name || t("ui.thisMember", "This member") })}
       />
     </div>
   );

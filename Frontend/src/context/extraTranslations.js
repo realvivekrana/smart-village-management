@@ -23,7 +23,7 @@ const en = {
     services: "Services",
     emergency: "Emergency",
     govtContacts: "Govt. Contacts",
-    bazaar: "Gaon Bazaar",
+    bazaar: "Village Bazaar",
     gallery: "Gallery",
     about: "About Village",
     contact: "Contact",
@@ -71,9 +71,9 @@ const en = {
     myJobs: "My Jobs",
     notifications: "Notifications",
     profile: "Profile",
-    myApplications: "My Yojana Applications",
+    myApplications: "My Scheme Applications",
     myJobApplications: "My Job Applications",
-    myBazaar: "My Bazaar Posts",
+    myBazaar: "My Bazaar Listings",
     myPhotos: "My Photos",
     submissions: "Citizen Posts",
   },
@@ -96,7 +96,7 @@ const en = {
       jobs: "Jobs",
       businesses: "Village Shops",
       govtContacts: "Govt. Contacts",
-      bazaar: "Gaon Bazaar",
+      bazaar: "Village Bazaar",
       photos: "Add Photo to Gallery",
       sos: "Emergency SOS",
     },
@@ -125,7 +125,7 @@ const en = {
   },
 
   citizenApps: {
-    title: "My Yojana / Service Applications",
+    title: "My Scheme / Service Applications",
     subtitle: "All applications you have made for government schemes, scholarships, training and village services.",
     trackPlaceholder: "Enter Tracking ID (e.g. KAK-123456-ABC123)",
     track: "Check status",
@@ -136,13 +136,13 @@ const en = {
   },
 
   bazaar: {
-    title: "Gaon Bazaar",
+    title: "Village Bazaar",
     subtitle: "Village buy & sell, lost & found, and farm equipment rental — all in one place.",
     post: "Post your ad",
   },
 
   myBazaar: {
-    title: "My Bazaar Posts",
+    title: "My Bazaar Listings",
     subtitle: "Sell items, report lost & found, or rent out farm equipment. Everyone sees it right away.",
   },
 

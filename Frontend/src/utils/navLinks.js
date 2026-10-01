@@ -13,7 +13,7 @@ export const primaryNavLinks = [
 
 export const moreNavLinks = [
   { to: "/community", label: "Community", key: "nav.community" },
-  { to: "/gaon-bazaar", label: "Gaon Bazaar", key: "nav.bazaar" },
+  { to: "/gaon-bazaar", label: "Village Bazaar", key: "nav.bazaar" },
   { to: "/jobs", label: "Jobs", key: "nav.jobs" },
   { to: "/businesses", label: "Businesses", key: "nav.businesses" },
   { to: "/services", label: "Services", key: "nav.services" },
