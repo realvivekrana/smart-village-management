@@ -68,8 +68,6 @@ const app = express();
 |--------------------------------------------------------------------------
 */
 
-// Production me hamesha 1 (Render/Railway proxy ke peeche). Warna sabhi users ek hi IP
-// maane jaate hain aur rate limiter (forgot password: 5/hour) sab par ek saath lag jaata hai.
 if (process.env.TRUST_PROXY) {
   app.set(
     "trust proxy",
@@ -93,15 +91,21 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| Response Compression (JSON 70-80% chhota => site tez)
+| Response Compression
 |--------------------------------------------------------------------------
-| `npm install compression` karna hai. Package na ho to bhi server chalega.
+|
+| `npm install compression` karna hai.
+| Package na ho to bhi server chalega.
+|--------------------------------------------------------------------------
 */
+
 try {
   const compression = require("compression");
   app.use(compression());
 } catch (err) {
-  console.warn("compression package not installed - run: npm install compression");
+  console.warn(
+    "compression package not installed - run: npm install compression"
+  );
 }
 
 /*
@@ -114,19 +118,23 @@ try {
 | 1. Local development
 | 2. Production Vercel
 | 3. Vercel preview deployments
-| 4. Postman / server-to-server requests
+| 4. Custom production domain
+| 5. Postman / server-to-server requests
 |
 |--------------------------------------------------------------------------
 */
 
-// Extra origins (comma separated) env se: CORS_ORIGINS=https://a.com,https://b.com
+// Extra origins (comma separated) env se:
+// CORS_ORIGINS=https://a.com,https://b.com
+
 const extraOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
   .map((o) => o.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL && process.env.FRONTEND_URL.replace(/\/$/, ""),
+  process.env.FRONTEND_URL &&
+    process.env.FRONTEND_URL.replace(/\/$/, ""),
 
   // Local development
   "http://localhost:5173",
@@ -135,47 +143,123 @@ const allowedOrigins = [
   // Production Vercel
   "https://smart-village-management.vercel.app",
 
+  // Custom production domain
+  "https://smartvillagekakarcholi.in",
+  "https://www.smartvillagekakarcholi.in",
+
   ...extraOrigins,
 ].filter(Boolean);
 
-// Vercel deployment / preview URLs, e.g.
-// https://smart-village-management-8hizmiin6-vivek-kumar-rana-s-projects.vercel.app
+/*
+|--------------------------------------------------------------------------
+| Vercel Preview Deployments
+|--------------------------------------------------------------------------
+|
+| Example:
+| https://smart-village-management-8hizmiin6-vivek-kumar-rana-s-projects.vercel.app
+|
+|--------------------------------------------------------------------------
+*/
+
 const vercelPreviewRegex =
   /^https:\/\/smart-village-management[a-z0-9-]*\.vercel\.app$/i;
 
-// Local development: localhost / 127.0.0.1 ka koi bhi port (5173, 5174, ...)
-// Sirf production ke bahar allow hota hai.
-const localhostRegex = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
+/*
+|--------------------------------------------------------------------------
+| Local Development
+|--------------------------------------------------------------------------
+|
+| localhost / 127.0.0.1 ka koi bhi port
+| (5173, 5174, 5175...) allow hoga.
+|
+|--------------------------------------------------------------------------
+*/
 
-// Development me phone se laptop ke LAN IP (192.168.x.x / 10.x.x.x / 172.16-31.x.x) par test karne ke liye
+const localhostRegex =
+  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
+
+/*
+|--------------------------------------------------------------------------
+| LAN Development
+|--------------------------------------------------------------------------
+|
+| Development me phone se laptop ke LAN IP par
+| test karne ke liye.
+|--------------------------------------------------------------------------
+*/
+
 const lanRegex =
   /^https?:\/\/(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(:\d+)?$/i;
+
+/*
+|--------------------------------------------------------------------------
+| Origin Check
+|--------------------------------------------------------------------------
+*/
 
 const isOriginAllowed = (origin) =>
   allowedOrigins.includes(origin) ||
   vercelPreviewRegex.test(origin) ||
-  (process.env.NODE_ENV !== "production" && (localhostRegex.test(origin) || lanRegex.test(origin)));
+  (
+    process.env.NODE_ENV !== "production" &&
+    (
+      localhostRegex.test(origin) ||
+      lanRegex.test(origin)
+    )
+  );
+
+/*
+|--------------------------------------------------------------------------
+| CORS Options
+|--------------------------------------------------------------------------
+*/
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Postman / server-to-server (no Origin header)
-    if (!origin) return callback(null, true);
+    // Postman / server-to-server
+    // No Origin header
+    if (!origin) {
+      return callback(null, true);
+    }
 
-    if (isOriginAllowed(origin)) return callback(null, true);
+    // Allowed origins
+    if (isOriginAllowed(origin)) {
+      return callback(null, true);
+    }
 
-    // Error throw nahi karte: warna 403 bina CORS headers ke jata hai
-    // aur browser me confusing "CORS blocked" error dikhta hai.
+    // Error throw nahi karte
+    // Browser me confusing CORS error avoid karne ke liye
     console.warn(`CORS blocked origin: ${origin}`);
+
     return callback(null, false);
   },
+
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+
+  methods: [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+  ],
+
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+  ],
+
   optionsSuccessStatus: 204,
 };
 
-// cors middleware preflight (OPTIONS) khud handle kar leta hai.
-// NOTE: Express 5 me app.options("*", ...) crash karta hai, isliye hata diya.
+/*
+|--------------------------------------------------------------------------
+| Apply CORS
+|--------------------------------------------------------------------------
+*/
+
 app.use(cors(corsOptions));
 
 /*
@@ -244,10 +328,13 @@ if (
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
+
     message:
       "Smart Village Management API is running",
+
     environment:
       process.env.NODE_ENV || "development",
+
     timestamp:
       new Date().toISOString(),
   });
@@ -256,9 +343,12 @@ app.get("/", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
+
     message: "API is healthy",
+
     environment:
       process.env.NODE_ENV || "development",
+
     timestamp:
       new Date().toISOString(),
   });
@@ -300,8 +390,13 @@ app.use(
 |--------------------------------------------------------------------------
 | Home page highlights refresh
 |--------------------------------------------------------------------------
-| Jab bhi koi community post, notice, event, bazaar listing, business ya job
-| add / edit / delete / approve ho, home page ka cache turant clear ho jaye.
+|
+| Jab bhi koi community post, notice, event,
+| bazaar listing, business ya job add / edit /
+| delete / approve ho, home page ka cache
+| turant clear ho jaye.
+|
+|--------------------------------------------------------------------------
 */
 
 app.use(
@@ -316,9 +411,12 @@ app.use(
   (req, res, next) => {
     if (req.method !== "GET") {
       res.on("finish", () => {
-        if (res.statusCode < 400) clearHomeCache();
+        if (res.statusCode < 400) {
+          clearHomeCache();
+        }
       });
     }
+
     next();
   }
 );
@@ -336,7 +434,11 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| Special Contacts (Mukhiya, Sachiv, Ward Member, BDO, MLA ...)
+| Special Contacts
+|--------------------------------------------------------------------------
+|
+| Mukhiya, Sachiv, Ward Member, BDO, MLA ...
+|
 |--------------------------------------------------------------------------
 */
 
@@ -607,11 +709,16 @@ app.use(
 |--------------------------------------------------------------------------
 | 404 + Global Error Handler
 |--------------------------------------------------------------------------
-| middleware/errorMiddleware.js — multer (file size), JWT, CastError,
-| duplicate key aur validation errors sahi status code ke saath handle karta hai.
+|
+| middleware/errorMiddleware.js — multer (file size),
+| JWT, CastError, duplicate key aur validation errors
+| sahi status code ke saath handle karta hai.
+|
+|--------------------------------------------------------------------------
 */
 
 app.use(notFound);
+
 app.use(errorHandler);
 
 /*
