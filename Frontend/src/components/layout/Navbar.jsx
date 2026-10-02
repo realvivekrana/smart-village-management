@@ -51,7 +51,7 @@ export default function Navbar({ onMenuOpen }) {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-primary-700 dark:text-primary-400 text-lg">
+          <Link to="/" className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 font-bold text-primary-700 dark:text-primary-400 text-lg sm:justify-start">
             🏘️ <span className="hidden sm:block">{t("layout.brand")}</span>
           </Link>
 

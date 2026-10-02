@@ -799,7 +799,7 @@ export default function VillageFeatures() {
         {/* ============================================================ */}
 
         <div className="mt-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
-          <div className="grid gap-3 lg:grid-cols-[1fr_220px_180px]">
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_220px_180px]">
             {/* Search */}
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />

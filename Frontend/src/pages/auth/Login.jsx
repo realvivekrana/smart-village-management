@@ -65,7 +65,7 @@ export default function Login() {
               <div className="relative">
                 <input
                   type={showPwd ? "text" : "password"}
-                  className="input pr-10"
+                  className="input pr-16"
                   placeholder="••••••••"
                   value={form.password}
                   onChange={set("password")}
@@ -74,7 +74,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPwd((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 px-3 py-2.5 text-gray-500 hover:text-gray-700 text-sm"
                 >
                   {showPwd ? t("auth.hide") : t("auth.show")}
                 </button>
@@ -82,7 +82,7 @@ export default function Login() {
             </div>
 
             <div className="flex justify-end">
-              <Link to="/forgot-password" className="text-sm text-primary-600 hover:underline">
+              <Link to="/forgot-password" className="inline-block py-2 text-sm text-primary-600 hover:underline">
                 {t("auth.forgotPassword")}
               </Link>
             </div>

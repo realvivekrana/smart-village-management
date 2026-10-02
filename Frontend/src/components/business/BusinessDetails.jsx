@@ -58,8 +58,8 @@ export default function BusinessDetails({ business }) {
         <div className="space-y-2 text-sm">
           <p>📞 <a href={`tel:${business.phone}`} className="text-primary-600">{business.phone}</a></p>
           {business.alternatePhone && <p>📞 <a href={`tel:${business.alternatePhone}`} className="text-primary-600">{business.alternatePhone}</a></p>}
-          {business.email && <p>✉️ <a href={`mailto:${business.email}`} className="text-primary-600">{business.email}</a></p>}
-          {business.website && <p>🌐 <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-primary-600">{business.website}</a></p>}
+          {business.email && <p>✉️ <a href={`mailto:${business.email}`} className="break-all text-primary-600">{business.email}</a></p>}
+          {business.website && <p>🌐 <a href={business.website} target="_blank" rel="noopener noreferrer" className="break-all text-primary-600">{business.website}</a></p>}
           {business.address?.street && <p>📍 {[business.address.street, business.address.village, business.address.district].filter(Boolean).join(", ")}</p>}
         </div>
       </div>

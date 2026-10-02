@@ -9,7 +9,7 @@ export default function ErrorMessage({ message, onRetry }) {
           {onRetry && (
             <button
               onClick={onRetry}
-              className="mt-2 text-sm font-medium text-red-600 hover:underline"
+              className="mt-1 -ml-2 px-2 py-2.5 text-sm font-medium text-red-600 hover:underline"
             >
               Try again
             </button>

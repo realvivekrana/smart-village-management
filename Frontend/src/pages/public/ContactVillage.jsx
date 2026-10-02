@@ -253,7 +253,7 @@ const ContactVillage = () => {
           </div>
         )}
 
-        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.82fr_1.18fr]">
           {/* Contact details */}
           <div>
             <div className="mb-6">

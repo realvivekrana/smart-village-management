@@ -247,7 +247,7 @@ export default function BusinessDetails() {
 
         <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
 
-          <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto]">
 
             <div>
 
@@ -332,7 +332,7 @@ export default function BusinessDetails() {
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
 
           {/* =================================================
               LEFT CONTENT

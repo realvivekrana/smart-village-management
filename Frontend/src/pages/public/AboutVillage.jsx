@@ -237,7 +237,7 @@ export default function AboutVillage() {
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 pb-28 pt-20 sm:px-6 lg:px-8 lg:pb-36 lg:pt-28">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.2fr_.8fr]">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.2fr_.8fr]">
 
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100 backdrop-blur-md">
@@ -342,7 +342,7 @@ export default function AboutVillage() {
           ABOUT + DETAILS
       ========================================================= */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1.25fr_.75fr]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.25fr_.75fr]">
 
           <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-9">
             <SectionHeading

@@ -122,7 +122,7 @@ export default function VillagePlaces() {
       </p>
 
       {/* Search + Category filter */}
-      <div className="card mb-6 grid gap-4 p-4 lg:grid-cols-[1fr_260px]">
+      <div className="card mb-6 grid grid-cols-1 gap-4 p-4 lg:grid-cols-[1fr_260px]">
         <input
           type="search"
           value={search}
@@ -153,7 +153,7 @@ export default function VillagePlaces() {
             key={item.value}
             type="button"
             onClick={() => setCategory(item.value)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+            className={`min-h-[40px] rounded-full px-3.5 py-2 text-xs font-medium transition ${
               category === item.value
                 ? "bg-blue-600 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
@@ -261,7 +261,7 @@ const PlaceCard = ({ place }) => {
           {place.phone && (
             <a
               href={`tel:${place.phone}`}
-              className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400"
+              className="inline-flex items-center min-h-[40px] rounded-lg bg-blue-50 px-3.5 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400"
             >
               📞 Call
             </a>
@@ -272,7 +272,7 @@ const PlaceCard = ({ place }) => {
               href={mapUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+              className="inline-flex items-center min-h-[40px] rounded-lg bg-gray-100 px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
             >
               🗺️ View Map
             </a>

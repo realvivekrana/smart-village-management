@@ -76,7 +76,7 @@ export default function Hero() {
 
       <div className="relative mx-auto flex min-h-[680px] max-w-7xl items-center px-4 py-16 sm:px-6 sm:py-20 lg:min-h-[760px] lg:px-8">
 
-        <div className="grid w-full items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="grid grid-cols-1 w-full items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
 
           {/* ============================================================ */}
           {/* LEFT CONTENT                                                   */}

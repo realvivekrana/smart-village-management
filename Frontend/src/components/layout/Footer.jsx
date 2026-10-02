@@ -310,6 +310,8 @@ export default function Footer() {
               <Link
                 to="/"
                 className="
+                  inline-block
+                  py-2
                   text-gray-500
                   hover:text-primary-400
                   transition-colors
@@ -321,6 +323,8 @@ export default function Footer() {
               <Link
                 to="/about"
                 className="
+                  inline-block
+                  py-2
                   text-gray-500
                   hover:text-primary-400
                   transition-colors
@@ -332,6 +336,8 @@ export default function Footer() {
               <Link
                 to="/notices"
                 className="
+                  inline-block
+                  py-2
                   text-gray-500
                   hover:text-primary-400
                   transition-colors
@@ -343,6 +349,8 @@ export default function Footer() {
               <Link
                 to="/emergency"
                 className="
+                  inline-block
+                  py-2
                   text-gray-500
                   hover:text-red-400
                   transition-colors
