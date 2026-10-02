@@ -42,14 +42,18 @@ const email = {
     process.env.EMAIL_FROM || "Smart Village <no-reply@smartvillage.com>",
 };
 
-email.enabled = Boolean(email.host && email.user && email.pass);
+// Brevo (HTTPS API) - Render/Railway jaise hosts par SMTP port block hota hai, API nahi.
+email.brevoApiKey = (process.env.BREVO_API_KEY || "").trim();
+email.smtpEnabled = Boolean(email.host && email.user && email.pass);
+email.enabled = Boolean(email.brevoApiKey || email.smtpEnabled);
+email.provider = email.brevoApiKey ? "brevo" : email.smtpEnabled ? "smtp" : "none";
 
 if (nodeEnv === "production") {
   if (!process.env.FRONTEND_URL) {
     console.warn("WARNING: FRONTEND_URL is not set. The reset-password email link will point to localhost!");
   }
   if (!email.enabled) {
-    console.warn("WARNING: SMTP_HOST / SMTP_USER / SMTP_PASS are not set. The forgot-password email cannot be sent.");
+    console.warn("WARNING: Neither BREVO_API_KEY nor SMTP_HOST / SMTP_USER / SMTP_PASS is set. The forgot-password email cannot be sent.");
   }
   if (!process.env.TRUST_PROXY) {
     console.warn("WARNING: TRUST_PROXY is not set (default of 1 will be used).");

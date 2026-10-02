@@ -2,6 +2,7 @@ const crypto = require("crypto");
 
 const User = require("../models/User");
 const ApiError = require("../utils/ApiError");
+const logger = require("../utils/logger");
 const sendEmail = require("../utils/sendEmail");
 const { findUserByEmail } = require("../utils/emailLookup");
 
@@ -326,6 +327,8 @@ const sendResetOtp = async ({ email, phone }) => {
     }
 
     // Email failed, invalidate OTP
+    logger.error("Forgot-password OTP email failed:", error.code || "", error.message);
+
     user.passwordResetOtp = undefined;
     user.passwordResetOtpExpires = undefined;
     user.passwordResetOtpAttempts = 0;
