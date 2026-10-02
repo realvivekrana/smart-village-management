@@ -15,6 +15,7 @@ const services = [
   { to: "/services", label: "Government Services", key: "footer.governmentServices", icon: "🏛️" },
   { to: "/emergency", label: "Emergency Contacts", key: "footer.emergencyContacts", icon: "🚨" },
   { to: "/government-contacts", label: "Government Contacts", key: "footer.governmentContacts", icon: "📇" },
+  { to: "/special-contacts", label: "Special Contacts", key: "footer.specialContacts", icon: "⭐" },
 ];
 
 const communityLinks = [

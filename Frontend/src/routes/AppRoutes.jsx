@@ -105,6 +105,10 @@ const GovernmentContacts = lazy(
   () => import("../pages/public/GovernmentContacts")
 );
 
+const SpecialContacts = lazy(
+  () => import("../pages/public/SpecialContacts")
+);
+
 const Community = lazy(
   () => import("../pages/public/Community")
 );
@@ -281,6 +285,10 @@ const AdminGovernmentContacts = lazy(
   () => import("../pages/admin/GovernmentContacts")
 );
 
+const AdminSpecialContacts = lazy(
+  () => import("../pages/admin/SpecialContacts")
+);
+
 const AdminHouseholds = lazy(
   () => import("../pages/admin/Households")
 );
@@ -433,6 +441,11 @@ export default function AppRoutes() {
           <Route
             path="/government-contacts"
             element={<GovernmentContacts />}
+          />
+
+          <Route
+            path="/special-contacts"
+            element={<SpecialContacts />}
           />
 
           {/* Community (public read, login to post) */}
@@ -743,6 +756,11 @@ export default function AppRoutes() {
           <Route
             path="/admin/government-contacts"
             element={<AdminGovernmentContacts />}
+          />
+
+          <Route
+            path="/admin/special-contacts"
+            element={<AdminSpecialContacts />}
           />
 
           {/* Households (Parivar) */}

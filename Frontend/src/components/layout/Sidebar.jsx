@@ -15,6 +15,7 @@ const adminLinks = [
   { to: "/admin/emergency", icon: "🚨", label: "Emergency", key: "sidebar.emergency" },
   { to: "/admin/village-features", icon: "🌾", label: "Village Features", key: "sidebar.villageFeatures" },
   { to: "/admin/government-contacts", icon: "🏛️", label: "Government Contacts", key: "sidebar.governmentContacts" },
+  { to: "/admin/special-contacts", icon: "⭐", label: "Special Contacts", key: "sidebar.specialContacts" },
   { to: "/admin/community", icon: "💬", label: "Community", key: "sidebar.community" },
   { to: "/admin/reports", icon: "📈", label: "Reports", key: "sidebar.reports" },
   { to: "/admin/village-settings", icon: "⚙️", label: "Village Settings", key: "sidebar.villageSettings" },

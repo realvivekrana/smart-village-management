@@ -18,6 +18,7 @@ export const moreNavLinks = [
   { to: "/businesses", label: "Businesses", key: "nav.businesses" },
   { to: "/services", label: "Services", key: "nav.services" },
   { to: "/government-contacts", label: "Govt. Contacts", key: "nav.govtContacts" },
+  { to: "/special-contacts", label: "Special Contacts", key: "nav.specialContacts" },
   { to: "/gallery", label: "Gallery", key: "nav.gallery" },
   { to: "/about", label: "About Village", key: "nav.about" },
   { to: "/contact", label: "Contact", key: "nav.contact" },

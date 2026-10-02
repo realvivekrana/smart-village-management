@@ -15,6 +15,7 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const authRoutes = require("./routes/authRoutes");
 const governmentContactRoutes = require("./routes/governmentContactRoutes");
+const specialContactRoutes = require("./routes/specialContactRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const villageRoutes = require("./routes/villageRoutes");
 const businessRoutes = require("./routes/businessRoutes");
@@ -303,6 +304,17 @@ app.use(
 app.use(
   "/api/v1/government-contacts",
   governmentContactRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Special Contacts (Mukhiya, Sachiv, Ward Member, BDO, MLA ...)
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/special-contacts",
+  specialContactRoutes
 );
 
 /*
