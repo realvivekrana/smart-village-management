@@ -1,7 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
+
 import {
   getEventById,
   toggleInterested,
@@ -11,11 +11,15 @@ import EventDetailsView from "../../components/events/EventDetails";
 import Loader from "../../components/common/Loader";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import SEO from "../../components/common/SEO";
+import BreadcrumbSchema from "../../components/common/BreadcrumbSchema";
 import { useVillage } from "../../context/VillageContext";
 import BackButton from "../../components/common/BackButton";
 
 export default function EventDetails() {
-  const base = useLocation().pathname.startsWith("/citizen") ? "/citizen" : "";
+  const base = useLocation().pathname.startsWith("/citizen")
+    ? "/citizen"
+    : "";
+
   const { villageName } = useVillage();
   const { id } = useParams();
 
@@ -23,6 +27,10 @@ export default function EventDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toggling, setToggling] = useState(false);
+
+  // ============================================================
+  // LOAD EVENT
+  // ============================================================
 
   const load = async () => {
     setLoading(true);
@@ -43,6 +51,76 @@ export default function EventDetails() {
   useEffect(() => {
     load();
   }, [id]);
+
+  // ============================================================
+  // EVENT STRUCTURED DATA / SCHEMA
+  // ============================================================
+
+  useEffect(() => {
+    if (!event) return;
+
+    const eventName =
+      event.title || event.name || "Village Event";
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Event",
+
+      name: eventName,
+
+      description:
+        event.description ||
+        `Details about ${eventName} in ${villageName}.`,
+
+      startDate: event.startDate,
+
+      ...(event.endDate && {
+        endDate: event.endDate,
+      }),
+
+      ...(event.location && {
+        location: {
+          "@type": "Place",
+          name: event.location,
+        },
+      }),
+
+      ...(event.image?.url && {
+        image: [event.image.url],
+      }),
+
+      url: `https://smart-village-management.vercel.app/events/${id}`,
+
+      inLanguage: "en-IN",
+    };
+
+    const scriptId = "event-structured-data";
+
+    let script = document.getElementById(scriptId);
+
+    if (!script) {
+      script = document.createElement("script");
+      script.id = scriptId;
+      script.type = "application/ld+json";
+
+      document.head.appendChild(script);
+    }
+
+    script.textContent = JSON.stringify(schema);
+
+    return () => {
+      const existingScript =
+        document.getElementById(scriptId);
+
+      if (existingScript) {
+        existingScript.remove();
+      }
+    };
+  }, [event, id, villageName]);
+
+  // ============================================================
+  // TOGGLE INTERESTED
+  // ============================================================
 
   const handleToggle = async () => {
     if (toggling) return;
@@ -68,11 +146,16 @@ export default function EventDetails() {
     }
   };
 
+  // ============================================================
+  // LOADING
+  // ============================================================
+
   if (loading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
           <Loader />
+
           <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
             Loading event details...
           </p>
@@ -81,12 +164,20 @@ export default function EventDetails() {
     );
   }
 
+  // ============================================================
+  // ERROR
+  // ============================================================
+
   if (error) {
     return (
       <div className="min-h-[70vh] bg-gray-50 dark:bg-gray-950 flex items-center">
         <div className="page-container w-full">
           <div className="max-w-2xl mx-auto">
-            <ErrorMessage message={error} onRetry={load} />
+
+            <ErrorMessage
+              message={error}
+              onRetry={load}
+            />
 
             <div className="text-center mt-6">
               <Link
@@ -108,17 +199,25 @@ export default function EventDetails() {
                 ← Back to Events
               </Link>
             </div>
+
           </div>
         </div>
       </div>
     );
   }
 
+  // ============================================================
+  // EVENT NOT FOUND
+  // ============================================================
+
   if (!event) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
-          <div className="text-6xl mb-4">📅</div>
+
+          <div className="text-6xl mb-4">
+            📅
+          </div>
 
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Event Not Found
@@ -145,13 +244,22 @@ export default function EventDetails() {
           >
             ← Explore Events
           </Link>
+
         </div>
       </div>
     );
   }
 
+  // ============================================================
+  // MAIN EVENT PAGE
+  // ============================================================
+
   return (
     <main className="min-h-dvh bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+
+      {/* ========================================================
+          SEO
+      ========================================================= */}
 
       <SEO
         title={`${event.title || event.name || "Event"} in ${villageName}`}
@@ -165,35 +273,79 @@ export default function EventDetails() {
         path={`/events/${id}`}
       />
 
-      {/* Top decorative background */}
-      <div className="relative overflow-hidden">
-        <div className="
-          absolute -top-32 -left-32
-          w-72 h-72
-          rounded-full
-          bg-primary-500/10
-          blur-3xl
-          pointer-events-none
-        " />
+      {/* ========================================================
+          BREADCRUMB STRUCTURED DATA
+      ========================================================= */}
 
-        <div className="
-          absolute -top-32 -right-32
-          w-72 h-72
-          rounded-full
-          bg-purple-500/10
-          blur-3xl
-          pointer-events-none
-        " />
+      <BreadcrumbSchema
+        items={[
+          {
+            name: "Home",
+            url: `https://smart-village-management.vercel.app${
+              base ? "/citizen/dashboard" : "/"
+            }`,
+          },
+          {
+            name: "Events",
+            url: `https://smart-village-management.vercel.app${base}/events`,
+          },
+          {
+            name:
+              event.title ||
+              event.name ||
+              "Event Details",
+            url: `https://smart-village-management.vercel.app${base}/events/${id}`,
+          },
+        ]}
+      />
+
+      {/* ========================================================
+          TOP DECORATIVE BACKGROUND
+      ========================================================= */}
+
+      <div className="relative overflow-hidden">
+
+        <div
+          className="
+            absolute -top-32 -left-32
+            w-72 h-72
+            rounded-full
+            bg-primary-500/10
+            blur-3xl
+            pointer-events-none
+          "
+        />
+
+        <div
+          className="
+            absolute -top-32 -right-32
+            w-72 h-72
+            rounded-full
+            bg-purple-500/10
+            blur-3xl
+            pointer-events-none
+          "
+        />
 
         <div className="relative page-container max-w-5xl">
 
-          {/* Back */}
+          {/* ====================================================
+              BACK BUTTON
+          ==================================================== */}
+
           <div className="pt-6">
-            <BackButton to={`${base}/events`} label="Back to Events" />
+            <BackButton
+              to={`${base}/events`}
+              label="Back to Events"
+            />
           </div>
 
-          {/* Breadcrumb */}
+          {/* ====================================================
+              VISUAL BREADCRUMB
+          ==================================================== */}
+
           <div className="flex items-center gap-2 pt-4 mb-6 text-sm">
+
             <Link
               to={base ? "/citizen/dashboard" : "/"}
               className="text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
@@ -201,7 +353,9 @@ export default function EventDetails() {
               Home
             </Link>
 
-            <span className="text-gray-400">/</span>
+            <span className="text-gray-400">
+              /
+            </span>
 
             <Link
               to={`${base}/events`}
@@ -210,54 +364,71 @@ export default function EventDetails() {
               Events
             </Link>
 
-            <span className="text-gray-400">/</span>
+            <span className="text-gray-400">
+              /
+            </span>
 
             <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
               Event Details
             </span>
+
           </div>
 
-          {/* Event container */}
-          <div className="
-            overflow-hidden
-            rounded-3xl
-            border border-gray-200/80
-            dark:border-gray-700
-            bg-white
-            dark:bg-gray-900
-            shadow-xl
-            shadow-gray-900/5
-            dark:shadow-black/20
-          ">
+          {/* ====================================================
+              EVENT CONTAINER
+          ==================================================== */}
 
-            {/* Top accent */}
-            <div className="
-              h-1.5
-              bg-gradient-to-r
-              from-primary-600
-              via-purple-600
-              to-indigo-600
-            " />
+          <div
+            className="
+              overflow-hidden
+              rounded-3xl
+              border border-gray-200/80
+              dark:border-gray-700
+              bg-white
+              dark:bg-gray-900
+              shadow-xl
+              shadow-gray-900/5
+              dark:shadow-black/20
+            "
+          >
+
+            <div
+              className="
+                h-1.5
+                bg-gradient-to-r
+                from-primary-600
+                via-purple-600
+                to-indigo-600
+              "
+            />
 
             <div className="p-4 sm:p-6 lg:p-8">
+
               <EventDetailsView
                 event={event}
                 onToggleInterested={handleToggle}
                 toggling={toggling}
               />
+
             </div>
+
           </div>
 
-          {/* Bottom navigation */}
-          <div className="
-            flex
-            flex-col
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-            gap-4
-            py-8
-          ">
+          {/* ====================================================
+              BOTTOM NAVIGATION
+          ==================================================== */}
+
+          <div
+            className="
+              flex
+              flex-col
+              sm:flex-row
+              sm:items-center
+              sm:justify-between
+              gap-4
+              py-8
+            "
+          >
 
             <Link
               to={`${base}/events`}
@@ -287,6 +458,7 @@ export default function EventDetails() {
             </Link>
 
             <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/30">
                 📅
               </span>
@@ -297,11 +469,15 @@ export default function EventDetails() {
                   {villageName}
                 </strong>
               </span>
+
             </div>
+
           </div>
 
         </div>
+
       </div>
+
     </main>
   );
 }

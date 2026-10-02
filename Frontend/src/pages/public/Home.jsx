@@ -12,6 +12,7 @@ import { getHomeData } from "../../services/homeService";
 
 // SEO
 import SEO from "../../components/common/SEO";
+import StructuredData from "../../components/common/StructuredData";
 
 export default function Home() {
   const [homeData, setHomeData] = useState({
@@ -82,6 +83,7 @@ export default function Home() {
         description="Official Smart Village Management portal for Kakarcholi village. Explore village information, government schemes, public services, notices, events, emergency contacts and important local resources."
         path="/"
       />
+      <StructuredData />
 
       {/* =====================================================
           HOMEPAGE
