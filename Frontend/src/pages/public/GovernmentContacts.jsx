@@ -11,6 +11,7 @@ const categoryIcons = {
   "District Administration": "🏛️",
   "Block Administration": "👥",
   Panchayat: "🏢",
+  "Elected Representatives": "🗳️",
   Police: "👮",
   Health: "🏥",
   Education: "🎓",

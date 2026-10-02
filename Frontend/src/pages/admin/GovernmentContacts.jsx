@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { Badge, ErrorBox, Form, Loading, Modal, Page, Table, Toolbar } from "./AdminUI";
 
-const categories = ["Emergency", "District Administration", "Block Administration", "Panchayat", "Police", "Health", "Education", "Agriculture", "Electricity", "Water Supply", "Transport", "Legal", "Government Services", "Other"];
+const categories = ["Emergency", "District Administration", "Block Administration", "Panchayat", "Elected Representatives", "Police", "Health", "Education", "Agriculture", "Electricity", "Water Supply", "Transport", "Legal", "Government Services", "Other"];
 const fields = [
   { name: "name", label: "Name", required: true }, { name: "designation", label: "Designation", required: true }, { name: "department", label: "Department", required: true },
   { name: "category", label: "Category", options: categories.map((x) => ({ value: x, label: x })), required: true }, { name: "office", label: "Office" },
