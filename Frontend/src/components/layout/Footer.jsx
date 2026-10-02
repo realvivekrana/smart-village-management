@@ -296,6 +296,11 @@ export default function Footer() {
               ">
                 {t("footer.builtFor")}
               </p>
+
+              <p className="mt-1 text-xs text-gray-600">
+                Made with <span className="text-red-400">❤</span> by{" "}
+                <span className="font-semibold text-gray-400">Vivek Rana</span>
+              </p>
             </div>
 
             {/* Quick bottom links */}
