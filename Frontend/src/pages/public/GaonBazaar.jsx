@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getListings } from "../../services/listingService";
@@ -62,7 +61,7 @@ export default function GaonBazaar() {
       <SEO
         title="Village Bazaar"
         description="Explore the village bazaar for buying and selling local items, lost and found listings, farm equipment rentals and useful marketplace opportunities for villagers."
-        path="/bazaar"
+        path="/gaon-bazaar"
       />
 
       <div className="page-container space-y-6">

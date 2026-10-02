@@ -16,7 +16,7 @@
   </url>
 
   <url>
-    <loc>https://smart-village-management.vercel.app/places</loc>
+    <loc>https://smart-village-management.vercel.app/village-places</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -48,7 +48,7 @@
   </url>
 
   <url>
-    <loc>https://smart-village-management.vercel.app/bazaar</loc>
+    <loc>https://smart-village-management.vercel.app/gaon-bazaar</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

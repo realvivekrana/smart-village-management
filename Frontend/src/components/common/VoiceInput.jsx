@@ -407,7 +407,7 @@ export default function VoiceInput({
               disabled={
                 disabled
               }
-              className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 pr-14 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+              className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 pr-14 text-base sm:text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
             />
           ) : (
             <input
@@ -427,7 +427,7 @@ export default function VoiceInput({
               disabled={
                 disabled
               }
-              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-14 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-14 text-base sm:text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
             />
           )}
         </div>
@@ -470,7 +470,7 @@ export default function VoiceInput({
             disabled={
               disabled
             }
-            className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 pr-16 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+            className="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 pr-16 text-base sm:text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
           />
         ) : (
           <input
@@ -490,7 +490,7 @@ export default function VoiceInput({
             disabled={
               disabled
             }
-            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-16 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-16 text-base sm:text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
           />
         )}
 

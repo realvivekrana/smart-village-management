@@ -261,7 +261,7 @@ const Users = () => {
                               event.target.value
                             )
                           }
-                          className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm capitalize outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-base sm:text-sm capitalize outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="citizen">
                             Citizen

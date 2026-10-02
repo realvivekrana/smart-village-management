@@ -113,7 +113,7 @@ export default function VillagePlaces() {
       <SEO
         title="Places of Interest in Kakarcholi"
         description="Explore schools, colleges, hospitals, temples, mosques, railway stations, markets, government offices, tourist places and other important places in Kakarcholi village."
-        path="/places"
+        path="/village-places"
       />
 
       <h1 className="section-title mb-2">🗺️ Places of Interest</h1>

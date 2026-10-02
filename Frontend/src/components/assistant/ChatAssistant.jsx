@@ -727,7 +727,8 @@ export default function ChatAssistant() {
 
                 px-3.5
 
-                text-sm
+                text-base
+                sm:text-sm
 
                 focus:outline-none
                 focus:ring-2
