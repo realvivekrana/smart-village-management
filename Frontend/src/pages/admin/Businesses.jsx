@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import BackButton from "../../components/common/BackButton";
+import RejectModal from "./RejectModal";
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);
@@ -8,6 +9,7 @@ const Businesses = () => {
   const [actionLoading, setActionLoading] =
     useState(null);
   const [error, setError] = useState("");
+  const [rejecting, setRejecting] = useState(null);
 
   const fetchBusinesses = async () => {
     try {
@@ -47,7 +49,8 @@ const Businesses = () => {
 
   const updateBusinessStatus = async (
     businessId,
-    status
+    status,
+    rejectionReason
   ) => {
     try {
       setActionLoading(businessId);
@@ -55,12 +58,13 @@ const Businesses = () => {
 
       await api.patch(
         `/businesses/${businessId}/review`,
-        {
-          status,
-        }
+        rejectionReason
+          ? { status, rejectionReason }
+          : { status }
       );
 
       await fetchBusinesses();
+      return true;
     } catch (err) {
       console.error(
         "Failed to update business status:",
@@ -71,9 +75,16 @@ const Businesses = () => {
         err?.response?.data?.message ||
           "Failed to update business status."
       );
+      return false;
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const confirmReject = async (reason) => {
+    const id = rejecting?._id || rejecting?.id;
+    const ok = await updateBusinessStatus(id, "rejected", reason);
+    if (ok) setRejecting(null);
   };
 
   const deleteBusiness = async (
@@ -359,10 +370,7 @@ const Businesses = () => {
                                   businessId
                                 }
                                 onClick={() =>
-                                  updateBusinessStatus(
-                                    businessId,
-                                    "rejected"
-                                  )
+                                  setRejecting(business)
                                 }
                                 className="rounded-md bg-red-100 dark:bg-red-900/30 px-3 py-1.5 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-200 dark:bg-red-900/40 disabled:opacity-50"
                               >
@@ -416,6 +424,14 @@ const Businesses = () => {
           </table>
         </div>
       </div>
+
+      {rejecting ? (
+        <RejectModal
+          title={rejecting.name || "Business"}
+          onClose={() => setRejecting(null)}
+          onConfirm={confirmReject}
+        />
+      ) : null}
     </div>
   );
 };
