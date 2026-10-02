@@ -3,14 +3,14 @@ import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
 import Loader from "../components/common/Loader";
+// Landing page + public layout eager: ek kam network round-trip (tez first load)
+import PublicLayout from "../components/layout/PublicLayout";
+import Home from "../pages/public/Home";
 
 // ============================================================
 // Layouts
 // ============================================================
 
-const PublicLayout = lazy(
-  () => import("../components/layout/PublicLayout")
-);
 
 const DashboardLayout = lazy(
   () => import("../components/layout/DashboardLayout")
@@ -36,9 +36,6 @@ const ForgotPassword = lazy(
 // Public Pages
 // ============================================================
 
-const Home = lazy(
-  () => import("../pages/public/Home")
-);
 
 const AboutVillage = lazy(
   () => import("../pages/public/AboutVillage")

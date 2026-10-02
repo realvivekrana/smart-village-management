@@ -138,22 +138,80 @@
       crossorigin
     />
 
+    <!-- Google Font (non-blocking: page font ka wait nahi karta) -->
     <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      />
+    </noscript>
+
+    <!-- Hero image pehle se download shuru -->
+    <link
+      rel="preload"
+      as="image"
+      href="/village-hero-bg.webp"
+      type="image/webp"
+      fetchpriority="high"
     />
 
-    <!-- Google Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Structured data (JS ke bina bhi Google ko dikhta hai) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://smart-village-management.vercel.app/#website",
+            "url": "https://smart-village-management.vercel.app/",
+            "name": "Kakarcholi Village Portal",
+            "alternateName": ["Kakarcholi", "Smart Village Management"],
+            "inLanguage": "en-IN"
+          },
+          {
+            "@type": "Place",
+            "@id": "https://smart-village-management.vercel.app/#place",
+            "name": "Kakarcholi",
+            "description": "Kakarcholi village, Jharkhand, India - official village portal with services, notices, events, jobs and local businesses.",
+            "url": "https://smart-village-management.vercel.app/",
+            "address": {
+              "@type": "PostalAddress",
+              "addressRegion": "Jharkhand",
+              "addressCountry": "IN"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
 
   <body>
     <!-- React Application -->
-    <div id="root"></div>
+    <div id="root">
+      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:0 auto;padding:48px 20px;color:#0f172a">
+        <h1 style="font-size:28px;margin:0 0 12px">Kakarcholi Village - Official Village Portal</h1>
+        <p style="line-height:1.6;margin:0 0 16px">
+          Village information, government schemes, public services, notices, events,
+          emergency contacts, jobs and local businesses of Kakarcholi, Jharkhand.
+        </p>
+        <nav>
+          <a href="/about">About Village</a> &middot;
+          <a href="/services">Services</a> &middot;
+          <a href="/notices">Notices</a> &middot;
+          <a href="/events">Events</a> &middot;
+          <a href="/jobs">Jobs</a> &middot;
+          <a href="/businesses">Businesses</a> &middot;
+          <a href="/emergency">Emergency</a> &middot;
+          <a href="/contact">Contact</a>
+        </nav>
+      </main>
+    </div>
 
     <!-- React Entry -->
     <script
