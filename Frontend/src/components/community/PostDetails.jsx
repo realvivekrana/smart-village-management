@@ -1,6 +1,7 @@
 import { formatRelative } from "../../utils/formatDate";
 import CommentSection from "./CommentSection";
 
+import { ZoomImage } from "../common/ImageLightbox";
 export default function PostDetails({ post, onClose }) {
   if (!post) return null;
   return (
@@ -17,8 +18,8 @@ export default function PostDetails({ post, onClose }) {
       <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed mb-4">{post.content}</p>
       {post.images?.length > 0 && (
         <div className="flex gap-2 overflow-x-auto mb-4">
-          {post.images.map((img) => (
-            <img key={img.url} src={img.url} alt="" className="h-48 w-auto rounded-lg object-cover" />
+          {post.images.map((img, i) => (
+            <ZoomImage key={img.url} src={img.url} group={post.images} index={i} alt="" className="h-48 w-auto rounded-lg object-cover" />
           ))}
         </div>
       )}

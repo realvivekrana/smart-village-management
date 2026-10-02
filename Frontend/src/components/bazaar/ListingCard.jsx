@@ -2,6 +2,7 @@ import { formatDate } from "../../utils/formatDate";
 import { formatListingPrice, getTypeMeta, REVIEW_STATUS } from "../../utils/bazaar";
 
 import { useLanguage } from "../../context/LanguageContext";
+import { ZoomImage } from "../common/ImageLightbox";
 /*
  * Ek listing ka card.
  * - showStatus : citizen/admin ko approval status dikhata hai
@@ -17,7 +18,7 @@ export default function ListingCard({ listing, showStatus = false, showOwner = f
   return (
     <div className={`card overflow-hidden flex flex-col ${listing.isClosed ? "opacity-70" : ""}`}>
       {image ? (
-        <img src={image} alt={listing.title} className="h-44 w-full object-cover" loading="lazy" />
+        <ZoomImage src={image} group={listing.images} index={0} alt={listing.title} className="h-44 w-full object-cover" loading="lazy" />
       ) : (
         <div className="h-32 w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-5xl">
           {meta.icon}

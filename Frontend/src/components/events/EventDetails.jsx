@@ -2,6 +2,7 @@ import { formatDateTime, formatDateRange } from "../../utils/formatDate";
 import Button from "../common/Button";
 import useAuth from "../../hooks/useAuth";
 
+import { ZoomImage } from "../common/ImageLightbox";
 export default function EventDetails({ event, onToggleInterested, toggling }) {
   const { user } = useAuth();
   const interested = event.interestedUsers?.some((id) => id === user?._id || id?._id === user?._id);
@@ -9,7 +10,7 @@ export default function EventDetails({ event, onToggleInterested, toggling }) {
   return (
     <article className="card p-6 lg:p-8">
       {event.images?.[0]?.url && (
-        <img src={event.images[0].url} alt={event.title} className="w-full h-64 object-cover rounded-xl mb-6" />
+        <ZoomImage src={event.images[0].url} group={event.images} index={0} alt={event.title} className="w-full h-64 object-cover rounded-xl mb-6" />
       )}
       <span className="badge badge-blue capitalize mb-3 inline-block">{event.category}</span>
       <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4">{event.title}</h1>

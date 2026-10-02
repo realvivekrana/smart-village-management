@@ -9,6 +9,7 @@ import { useLanguage } from "../../context/LanguageContext";
 import { LanguageToggle } from "../common/LanguageSwitcher";
 import { primaryNavLinks, moreNavLinks } from "../../utils/navLinks";
 
+import Avatar from "../common/Avatar";
 export default function Navbar({ onMenuOpen }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { unreadCount } = useContext(NotificationContext);
@@ -138,9 +139,7 @@ export default function Navbar({ onMenuOpen }) {
                     onClick={() => setProfileOpen((v) => !v)}
                     className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
-                    <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
-                      {user.name?.charAt(0).toUpperCase()}
-                    </div>
+                    <Avatar user={user} size="sm" />
                     <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-200 max-w-24 truncate">
                       {user.name}
                     </span>
@@ -160,7 +159,7 @@ export default function Navbar({ onMenuOpen }) {
                         {t("layout.dashboard")}
                       </Link>
                       <Link
-                        to="/citizen/profile"
+                        to={user.role === "admin" ? "/admin/profile" : "/citizen/profile"}
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                         onClick={() => setProfileOpen(false)}
                       >

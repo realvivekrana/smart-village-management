@@ -3,6 +3,8 @@ import { formatRelative } from "../../utils/formatDate";
 import { toggleLike } from "../../services/communityService";
 import useAuth from "../../hooks/useAuth";
 
+import Avatar from "../common/Avatar";
+import { ZoomImage } from "../common/ImageLightbox";
 export default function PostCard({ post, onView, onEdit, onDelete }) {
   const { user } = useAuth();
   const [liked, setLiked] = useState(post.likes?.some((id) => id === user?._id || id?._id === user?._id));
@@ -21,9 +23,7 @@ export default function PostCard({ post, onView, onEdit, onDelete }) {
   return (
     <div className="card p-5">
       <div className="flex items-center gap-3 mb-3">
-        <div className="h-9 w-9 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-          {post.createdBy?.name?.charAt(0).toUpperCase()}
-        </div>
+        <Avatar user={post.createdBy} size={36} zoom />
         <div>
           <p className="text-sm font-semibold text-gray-900 dark:text-white">{post.createdBy?.name}</p>
           <p className="text-xs text-gray-400">{formatRelative(post.createdAt)}</p>
@@ -57,8 +57,8 @@ export default function PostCard({ post, onView, onEdit, onDelete }) {
 
       {post.images?.length > 0 && (
         <div className="flex gap-2 overflow-x-auto mb-3">
-          {post.images.map((img) => (
-            <img key={img.url} src={img.url} alt="" className="h-32 w-auto rounded-lg object-cover shrink-0" />
+          {post.images.map((img, i) => (
+            <ZoomImage key={img.url} src={img.url} group={post.images} index={i} alt="" className="h-32 w-auto rounded-lg object-cover shrink-0" />
           ))}
         </div>
       )}

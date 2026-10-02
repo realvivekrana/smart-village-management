@@ -51,7 +51,7 @@ const getJobs = async (req, res, next) => {
 
     const [jobs, total] = await Promise.all([
       Job.find(filter)
-        .populate("postedBy", "name")
+        .populate("postedBy", "name avatar")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -77,7 +77,7 @@ const getJobs = async (req, res, next) => {
 const getJobById = async (req, res, next) => {
   try {
     const job = await Job.findById(req.params.id)
-      .populate("postedBy", "name email")
+      .populate("postedBy", "name avatar email")
       .populate("business", "name category")
       .lean();
 

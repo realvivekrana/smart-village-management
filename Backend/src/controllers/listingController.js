@@ -130,7 +130,7 @@ const getAllListingsAdmin = async (req, res, next) => {
 
     const [listings, total] = await Promise.all([
       Listing.find(filter)
-        .populate("createdBy", "name phone email")
+        .populate("createdBy", "name avatar phone email")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)

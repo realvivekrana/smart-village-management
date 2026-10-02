@@ -18,6 +18,7 @@ import ConfirmDialog from "../../components/common/ConfirmDialog";
 import BackButton from "../../components/common/BackButton";
 
 import { useLanguage } from "../../context/LanguageContext";
+import { ZoomImage } from "../../components/common/ImageLightbox";
 /*
  * Citizen ki daali hui cheezein (Gaon Bazaar + Gallery photos)
  * yahin se approve / reject hoti hain.
@@ -208,7 +209,7 @@ export default function Submissions() {
             const rv = REVIEW_STATUS[p.status];
             return (
               <div key={p._id} className="card overflow-hidden flex flex-col">
-                <img src={p.image?.url} alt={p.caption || t("ui.villagePhoto92d", "Village photo")} className="h-44 w-full object-cover" loading="lazy" />
+                <ZoomImage src={p.image?.url} alt={p.caption || t("ui.villagePhoto92d", "Village photo")} className="h-44 w-full object-cover" loading="lazy" />
                 <div className="p-3 space-y-2 flex-1 flex flex-col">
                   {rv && <span className={rv.badge}>{t(rv.key, rv.label)}</span>}
                   {p.caption && <p className="text-sm text-gray-800 dark:text-gray-200">{p.caption}</p>}

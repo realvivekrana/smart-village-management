@@ -71,6 +71,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Cloudinary public id (purani photo delete karne ke liye).
+    // API response me kabhi nahi jaata.
+    avatarPublicId: {
+      type: String,
+      default: "",
+      select: false,
+    },
+
     // --------------------------------------------------
     // Address
     // --------------------------------------------------
@@ -236,6 +244,7 @@ userSchema.methods.toJSON = function () {
   const user = this.toObject();
 
   delete user.password;
+  delete user.avatarPublicId;
 
   // Password reset security fields
   delete user.passwordResetToken;

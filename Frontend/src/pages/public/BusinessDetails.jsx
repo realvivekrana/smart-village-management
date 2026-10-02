@@ -17,6 +17,7 @@ import SEO from "../../components/common/SEO";
 import useAuth from "../../hooks/useAuth";
 import { formatRelative } from "../../utils/formatDate";
 
+import Avatar from "../../components/common/Avatar";
 export default function BusinessDetails() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -585,12 +586,7 @@ export default function BusinessDetails() {
 
                           <div className="flex min-w-0 items-center gap-3">
 
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-100 font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
-                              {(review.reviewer?.name ||
-                                "U")
-                                .charAt(0)
-                                .toUpperCase()}
-                            </div>
+                            <Avatar user={review.reviewer} name={review.reviewer?.name || "U"} size="md" zoom />
 
                             <div className="min-w-0">
 

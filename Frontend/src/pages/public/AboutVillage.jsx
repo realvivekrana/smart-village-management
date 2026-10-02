@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../services/api";
 import SEO from "../../components/common/SEO";
 
+import { ZoomImage } from "../../components/common/ImageLightbox";
 const PLACE_TYPE_ICONS = {
   temple: "🛕",
   mosque: "🕌",
@@ -946,7 +947,7 @@ function PlaceCard({ place }) {
     <article className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">
       {place.imageUrl ? (
         <div className="relative overflow-hidden">
-          <img
+          <ZoomImage
             src={place.imageUrl}
             alt={place.name}
             className="h-52 w-full object-cover transition duration-700 group-hover:scale-105"

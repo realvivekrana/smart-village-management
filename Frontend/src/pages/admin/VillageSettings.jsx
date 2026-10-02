@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BackButton from "../../components/common/BackButton";
 
+import { ZoomImage } from "../../components/common/ImageLightbox";
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
 
@@ -761,7 +762,7 @@ const VillageSettings = () => {
                     key={image._id || image.url || index}
                     className="group relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
                   >
-                    <img
+                    <ZoomImage
                       src={image.url}
                       alt={image.caption || "Village photo"}
                       className="h-28 w-full object-cover"

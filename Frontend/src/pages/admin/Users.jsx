@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../services/api";
 import BackButton from "../../components/common/BackButton";
 
+import Avatar from "../../components/common/Avatar";
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -224,12 +225,7 @@ const Users = () => {
                     >
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                            {user.name
-                              ?.charAt(0)
-                              ?.toUpperCase() ||
-                              "U"}
-                          </div>
+                          <Avatar user={user} name={user.name || "U"} size="md" zoom />
 
                           <div>
                             <div className="font-medium text-gray-900 dark:text-white">

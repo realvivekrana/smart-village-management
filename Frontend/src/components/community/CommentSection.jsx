@@ -6,6 +6,7 @@ import useAuth from "../../hooks/useAuth";
 import Button from "../common/Button";
 import ConfirmDialog from "../common/ConfirmDialog";
 
+import Avatar from "../common/Avatar";
 export default function CommentSection({ postId }) {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
@@ -89,9 +90,7 @@ export default function CommentSection({ postId }) {
             const isEditing = editingId === c._id;
             return (
               <div key={c._id} className="flex gap-2">
-                <div className="h-7 w-7 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-semibold shrink-0">
-                  {c.createdBy?.name?.charAt(0).toUpperCase()}
-                </div>
+                <Avatar user={c.createdBy} size="sm" zoom />
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-xl px-3 py-2 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-xs font-semibold text-gray-800 dark:text-white">{c.createdBy?.name}</p>

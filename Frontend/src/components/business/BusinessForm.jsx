@@ -3,6 +3,7 @@ import Button from "../common/Button";
 import { BUSINESS_CATEGORIES } from "../../utils/constants";
 
 import { useLanguage } from "../../context/LanguageContext";
+import { ZoomImage } from "../common/ImageLightbox";
 export default function BusinessForm({ initial = {}, onSubmit, loading }) {
   const { t } = useLanguage();
   const [form, setForm] = useState({
@@ -105,7 +106,7 @@ export default function BusinessForm({ initial = {}, onSubmit, loading }) {
           <div className="flex flex-wrap gap-2 mb-2">
             {existing.map((img) => (
               <div key={img._id || img.publicId || img.url} className="relative">
-                <img src={img.url} alt="" className="h-16 w-24 object-cover rounded-lg" />
+                <ZoomImage src={img.url} group={existing} index={existing.indexOf(img)} alt="" className="h-16 w-24 object-cover rounded-lg" />
                 <button
                   type="button"
                   aria-label="Remove photo"

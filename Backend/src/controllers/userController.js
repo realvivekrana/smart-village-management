@@ -129,56 +129,91 @@ const uploadAvatar = async (req, res, next) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message:
-          "No image file provided",
+        message: "No image file provided",
       });
     }
 
     if (!env.cloudinary.enabled) {
       return res.status(503).json({
         success: false,
-        message:
-          "Image upload is not configured",
+        message: "Image upload is not configured",
       });
     }
 
-    const currentUser =
-      await User.findById(req.user._id);
+    const currentUser = await User.findById(req.user._id).select(
+      "+avatarPublicId"
+    );
 
-    if (
-      currentUser.avatarPublicId
-    ) {
-      await cloudinaryService.deleteImage(
-        currentUser.avatarPublicId
-      );
+    // Pehle nayi photo upload (square, chehre par focus). Fail ho to purani safe rehti hai.
+    const result = await cloudinaryService.uploadImage(
+      req.file.buffer,
+      "smart-village/avatars",
+      {
+        transformation: [
+          {
+            width: 600,
+            height: 600,
+            crop: "fill",
+            gravity: "face",
+          },
+          { quality: "auto", fetch_format: "auto" },
+        ],
+      }
+    );
+
+    const oldPublicId = currentUser?.avatarPublicId;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        avatar: result.url,
+        avatarPublicId: result.publicId,
+      },
+      { new: true }
+    );
+
+    // Nayi photo save hone ke baad purani Cloudinary se hatao
+    if (oldPublicId) {
+      await cloudinaryService.deleteImage(oldPublicId);
     }
-
-    const result =
-      await cloudinaryService.uploadImage(
-        req.file.buffer,
-        "smart-village/avatars"
-      );
-
-    const user =
-      await User.findByIdAndUpdate(
-        req.user._id,
-        {
-          avatar: result.url,
-          avatarPublicId:
-            result.publicId,
-        },
-        {
-          new: true,
-        }
-      );
 
     return res.status(200).json({
       success: true,
-      message:
-        "Avatar uploaded successfully",
-      data: {
-        user,
-      },
+      message: "Avatar uploaded successfully",
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/*
+|--------------------------------------------------------------------------
+| DELETE /api/v1/users/avatar
+|--------------------------------------------------------------------------
+*/
+const removeAvatar = async (req, res, next) => {
+  try {
+    const currentUser = await User.findById(req.user._id).select(
+      "+avatarPublicId"
+    );
+
+    const oldPublicId = currentUser?.avatarPublicId;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: "", avatarPublicId: "" },
+      { new: true }
+    );
+
+    if (oldPublicId) {
+      await cloudinaryService.deleteImage(oldPublicId);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Avatar removed successfully",
+      data: { user },
     });
   } catch (error) {
     next(error);
@@ -456,9 +491,18 @@ const deleteUser = async (
       });
     }
 
+    const withAvatar = await User.findById(req.params.id).select(
+      "+avatarPublicId"
+    );
+
     await User.findByIdAndDelete(
       req.params.id
     );
+
+    // User ki photo Cloudinary pe bhi na bachi rahe
+    if (withAvatar?.avatarPublicId) {
+      await cloudinaryService.deleteImage(withAvatar.avatarPublicId);
+    }
 
     return res.status(200).json({
       success: true,
@@ -475,6 +519,7 @@ module.exports = {
   updateMyProfile,
   changePassword,
   uploadAvatar,
+  removeAvatar,
   getAllUsers,
   getUserById,
   toggleUserActive,

@@ -18,7 +18,7 @@ const getPhotos = async (req, res, next) => {
 
     const [photos, total] = await Promise.all([
       GalleryPhoto.find(filter)
-        .populate("createdBy", "name")
+        .populate("createdBy", "name avatar")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -72,7 +72,7 @@ const getAllPhotosAdmin = async (req, res, next) => {
 
     const [photos, total] = await Promise.all([
       GalleryPhoto.find(filter)
-        .populate("createdBy", "name phone")
+        .populate("createdBy", "name avatar phone")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)

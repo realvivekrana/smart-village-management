@@ -9,6 +9,7 @@ import EmptyState from "../../components/common/EmptyState";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import BackButton from "../../components/common/BackButton";
 
+import { ZoomImage } from "../../components/common/ImageLightbox";
 function Stars({ avg }) {
   return (
     <span className="text-yellow-400 text-sm">
@@ -80,7 +81,7 @@ export default function MyBusiness() {
             return (
               <div key={b._id} className="card overflow-hidden">
                 {mainImage?.url ? (
-                  <img src={mainImage.url} alt={b.name} className="w-full h-36 object-cover" />
+                  <ZoomImage src={mainImage.url} group={b.images} index={Math.max(0, b.images.findIndex((i) => i.url === mainImage.url))} alt={b.name} className="w-full h-36 object-cover" />
                 ) : (
                   <div className="w-full h-36 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 flex items-center justify-center text-4xl">🏪</div>
                 )}

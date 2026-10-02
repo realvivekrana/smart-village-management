@@ -46,7 +46,7 @@ const getEvents = async (req, res, next) => {
     const [events, total] = await Promise.all([
       Event.find(filter)
         .select(LIST_FIELDS)
-        .populate("createdBy", "name")
+        .populate("createdBy", "name avatar")
         .sort({ startDate: 1 })
         .skip(skip)
         .limit(limit)
@@ -76,7 +76,7 @@ const getManageEvents = async (req, res, next) => {
 
     const [events, total, pendingCount] = await Promise.all([
       Event.find(filter)
-        .populate("createdBy", "name email role")
+        .populate("createdBy", "name avatar email role")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -117,7 +117,7 @@ const getMyEvents = async (req, res, next) => {
 /* GET /events/:id */
 const getEventById = async (req, res, next) => {
   try {
-    const event = await Event.findById(req.params.id).populate("createdBy", "name").lean();
+    const event = await Event.findById(req.params.id).populate("createdBy", "name avatar").lean();
 
     const isOwner = event && req.user && String(event.createdBy?._id) === String(req.user._id);
     const approved = event && !["pending", "rejected"].includes(event.status);

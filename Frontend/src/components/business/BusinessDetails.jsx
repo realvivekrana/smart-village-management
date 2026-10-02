@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatDate } from "../../utils/formatDate";
 
+import { ZoomImage } from "../common/ImageLightbox";
 function Stars({ avg, size = "lg" }) {
   const sz = size === "lg" ? "text-2xl" : "text-base";
   return (
@@ -20,7 +21,13 @@ export default function BusinessDetails({ business }) {
       {/* Images */}
       {business.images?.length > 0 && (
         <div>
-          <img src={mainImage?.url} alt={business.name} className="w-full h-72 object-cover rounded-xl mb-2" />
+          <ZoomImage
+            src={mainImage?.url}
+            group={business.images}
+            index={Math.max(0, business.images.findIndex((i) => i.url === mainImage?.url))}
+            alt={business.name}
+            className="w-full h-72 object-cover rounded-xl mb-2"
+          />
           {business.images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto">
               {business.images.map((img) => (

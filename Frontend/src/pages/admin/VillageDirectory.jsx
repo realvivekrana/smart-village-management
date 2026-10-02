@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import BackButton from "../../components/common/BackButton";
 
+import { ZoomImage } from "../../components/common/ImageLightbox";
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
 
@@ -750,7 +751,7 @@ const VillageDirectory = () => {
                     <td className="whitespace-nowrap px-5 py-4">
                       <div className="flex items-center gap-3">
                         {place.imageUrl ? (
-                          <img
+                          <ZoomImage
                             src={place.imageUrl}
                             alt={place.name}
                             className="h-10 w-10 rounded-lg object-cover"

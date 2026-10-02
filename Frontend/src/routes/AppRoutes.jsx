@@ -653,6 +653,12 @@ export default function AppRoutes() {
             element={<AdminDashboard />}
           />
 
+          {/* Admin Profile (same page as citizen profile) */}
+          <Route
+            path="/admin/profile"
+            element={<CitizenProfile />}
+          />
+
           {/* Users */}
           <Route
             path="/admin/users"

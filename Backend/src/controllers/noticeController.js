@@ -84,7 +84,7 @@ const getNotices = async (req, res, next) => {
       Notice.countDocuments(filter),
     ]);
 
-    const notices = await Notice.populate(rows, { path: "createdBy", select: "name" });
+    const notices = await Notice.populate(rows, { path: "createdBy", select: "name avatar" });
 
     res.status(200).json({
       success: true,
@@ -108,7 +108,7 @@ const getManageNotices = async (req, res, next) => {
 
     const [notices, total, pendingCount] = await Promise.all([
       Notice.find(filter)
-        .populate("createdBy", "name email role")
+        .populate("createdBy", "name avatar email role")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -149,7 +149,7 @@ const getMyNotices = async (req, res, next) => {
 /* GET /notices/:id  (public if approved; owner/admin can see their own) */
 const getNoticeById = async (req, res, next) => {
   try {
-    const notice = await Notice.findById(req.params.id).populate("createdBy", "name").lean();
+    const notice = await Notice.findById(req.params.id).populate("createdBy", "name avatar").lean();
 
     const isOwner = notice && req.user && String(notice.createdBy?._id) === String(req.user._id);
     const approved = notice && !["pending", "rejected"].includes(notice.status);

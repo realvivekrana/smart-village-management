@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useLanguage } from "../../context/LanguageContext";
 
+import Avatar from "../common/Avatar";
 const adminLinks = [
   { to: "/admin/dashboard", icon: "📊", label: "Dashboard", key: "sidebar.dashboard" },
   { to: "/admin/users", icon: "👥", label: "Users", key: "sidebar.users" },
@@ -22,6 +23,7 @@ const adminLinks = [
   { to: "/admin/submissions", icon: "✅", label: "Citizen Posts", key: "sidebar.submissions" },
   { to: "/admin/applications", icon: "📑", label: "Scheme Applications", key: "sidebar.featureApplications" },
   { to: "/admin/contact-messages", icon: "✉️", label: "Contact Messages", key: "sidebar.contactMessages" },
+  { to: "/admin/profile", icon: "👤", label: "Profile", key: "sidebar.profile" },
 ];
 
 const citizenLinks = [
@@ -71,9 +73,7 @@ export default function Sidebar({ onClose, onLogout }) {
       {/* User info */}
       <div className="px-4 py-4 border-b border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">
-            {user?.name?.charAt(0).toUpperCase()}
-          </div>
+          <Avatar user={user} size="md" zoom />
           <div className="min-w-0">
             <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user?.name}</p>
             <p className="text-xs text-gray-500 capitalize">{t(`roles.${user?.role}`, user?.role?.replace("_", " "))}</p>

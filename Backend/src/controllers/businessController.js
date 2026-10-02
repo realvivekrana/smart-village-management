@@ -43,7 +43,7 @@ const getBusinesses = async (req, res, next) => {
 
     const [businesses, total] = await Promise.all([
       Business.find(filter)
-        .populate("owner", "name")
+        .populate("owner", "name avatar")
         .sort({ isFeatured: -1, "rating.average": -1 })
         .skip(skip)
         .limit(limit)
@@ -69,7 +69,7 @@ const getBusinesses = async (req, res, next) => {
 const getBusinessById = async (req, res, next) => {
   try {
     const business = await Business.findById(req.params.id)
-      .populate("owner", "name email phone")
+      .populate("owner", "name avatar email phone")
       .lean();
 
     if (!business || !business.isActive) {
@@ -122,7 +122,7 @@ const getAllBusinessesAdmin = async (req, res, next) => {
 
     const [businesses, total] = await Promise.all([
       Business.find(filter)
-        .populate("owner", "name email phone")
+        .populate("owner", "name avatar email phone")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -240,7 +240,7 @@ const reviewBusiness = async (req, res, next) => {
   try {
     const { status, rejectionReason } = req.body;
 
-    const business = await Business.findById(req.params.id).populate("owner", "name email");
+    const business = await Business.findById(req.params.id).populate("owner", "name avatar email");
     if (!business) return res.status(404).json({ success: false, message: "Business not found" });
 
     business.status = status;

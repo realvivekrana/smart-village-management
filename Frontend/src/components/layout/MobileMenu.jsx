@@ -7,6 +7,7 @@ import LanguageSwitcher from "../common/LanguageSwitcher";
 import { allNavLinks } from "../../utils/navLinks";
 
 
+import Avatar from "../common/Avatar";
 export default function MobileMenu({ isOpen, onClose }) {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
@@ -57,9 +58,7 @@ export default function MobileMenu({ isOpen, onClose }) {
         {user ? (
           <div className="border-t border-gray-200 dark:border-gray-700 p-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">
-                {user.name?.charAt(0).toUpperCase()}
-              </div>
+              <Avatar user={user} size="md" zoom />
               <div>
                 <p className="font-semibold text-sm text-gray-900 dark:text-white">{user.name}</p>
                 <p className="text-xs text-gray-500 capitalize">{t(`roles.${user.role}`, user.role?.replace("_", " "))}</p>

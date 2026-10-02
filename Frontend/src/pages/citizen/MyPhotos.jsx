@@ -11,6 +11,7 @@ import EmptyState from "../../components/common/EmptyState";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import BackButton from "../../components/common/BackButton";
 
+import { ZoomImage } from "../../components/common/ImageLightbox";
 const MAX_IMAGES = 5;
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -161,7 +162,7 @@ export default function MyPhotos() {
             const review = REVIEW_STATUS[p.status];
             return (
               <div key={p._id} data-highlight-id={p._id} className={`card overflow-hidden ${hlClass(p._id)}`}>
-                <img src={p.image?.url} alt={p.caption || t("ui.villagePhoto92d", "Village photo")} className="h-40 w-full object-cover" loading="lazy" />
+                <ZoomImage src={p.image?.url} alt={p.caption || t("ui.villagePhoto92d", "Village photo")} className="h-40 w-full object-cover" loading="lazy" />
                 <div className="p-3 space-y-2">
                   {review && <span className={review.badge}>{t(review.key, review.label)}</span>}
                   {p.caption && <p className="text-sm text-gray-800 dark:text-gray-200">{p.caption}</p>}

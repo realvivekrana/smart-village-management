@@ -8,6 +8,7 @@ import {
 } from "../../services/userService";
 import { Badge, ErrorBox, Loading, Page } from "./AdminUI";
 
+import Avatar from "../../components/common/Avatar";
 const roles = ["citizen", "admin"];
 
 export default function UserDetail() {
@@ -124,9 +125,7 @@ export default function UserDetail() {
       <div className="card p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 text-2xl font-semibold text-primary-700">
-              {user.name?.charAt(0)?.toUpperCase() || "U"}
-            </div>
+            <Avatar user={user} name={user.name || "U"} size="lg" zoom />
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 {user.name || "Unknown User"}

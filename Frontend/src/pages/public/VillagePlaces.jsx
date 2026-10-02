@@ -5,6 +5,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import SEO from "../../components/common/SEO";
 
+import { ZoomImage } from "../../components/common/ImageLightbox";
 const CATEGORIES = [
   { value: "all", label: "All Places", icon: "🗺️" },
   { value: "school", label: "Schools", icon: "🏫" },
@@ -201,7 +202,7 @@ const PlaceCard = ({ place }) => {
   return (
     <div className="card overflow-hidden p-0">
       {place.imageUrl ? (
-        <img
+        <ZoomImage
           src={place.imageUrl}
           alt={place.name}
           className="h-40 w-full object-cover"

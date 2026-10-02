@@ -5,6 +5,7 @@ const {
   updateMyProfile,
   changePassword,
   uploadAvatar,
+  removeAvatar,
   getAllUsers,
   getUserById,
   toggleUserActive,
@@ -65,6 +66,13 @@ router.post(
   protect,
   uploadSingleImage("avatar"),
   uploadAvatar
+);
+
+// DELETE /api/v1/users/avatar  (/:id wale delete se PEHLE hona zaroori hai)
+router.delete(
+  "/avatar",
+  protect,
+  removeAvatar
 );
 
 /*

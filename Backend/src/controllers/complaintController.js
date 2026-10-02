@@ -27,7 +27,7 @@ const getComplaints = async (req, res, next) => {
 
     const [complaints, total] = await Promise.all([
       Complaint.find(filter)
-        .populate("submittedBy", "name email phone")
+        .populate("submittedBy", "name avatar email phone")
         .populate("assignedTo", "name email")
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -54,7 +54,7 @@ const getComplaints = async (req, res, next) => {
 const getComplaintById = async (req, res, next) => {
   try {
     const complaint = await Complaint.findById(req.params.id)
-      .populate("submittedBy", "name email phone")
+      .populate("submittedBy", "name avatar email phone")
       .populate("assignedTo", "name email")
       .populate("timeline.updatedBy", "name");
 
@@ -111,7 +111,7 @@ const updateComplaintStatus = async (req, res, next) => {
   try {
     const { status, note, adminNote } = req.body;
 
-    const complaint = await Complaint.findById(req.params.id).populate("submittedBy", "name email");
+    const complaint = await Complaint.findById(req.params.id).populate("submittedBy", "name avatar email");
     if (!complaint) return res.status(404).json({ success: false, message: "Complaint not found" });
 
     complaint.status = status;
