@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 import Hero from "../../components/home/Hero";
@@ -6,7 +5,7 @@ import VillageStats from "../../components/home/VillageStats";
 import QuickServices from "../../components/home/QuickServices";
 import UpcomingEvents from "../../components/home/UpcomingEvents";
 import LatestNotices from "../../components/home/LatestNotices";
-import EmergencySection from "../../components/home/EmergencySection";
+import VillageHighlights from "../../components/home/VillageHighlights";
 
 import { getHomeData } from "../../services/homeService";
 
@@ -18,6 +17,10 @@ export default function Home() {
   const [homeData, setHomeData] = useState({
     events: [],
     notices: [],
+    community: [],
+    bazaar: [],
+    businesses: [],
+    jobs: [],
   });
 
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,11 @@ export default function Home() {
           notices: Array.isArray(data?.notices)
             ? data.notices
             : [],
+
+          community: Array.isArray(data?.community) ? data.community : [],
+          bazaar: Array.isArray(data?.bazaar) ? data.bazaar : [],
+          businesses: Array.isArray(data?.businesses) ? data.businesses : [],
+          jobs: Array.isArray(data?.jobs) ? data.jobs : [],
         });
       } catch (error) {
         console.error(
@@ -57,6 +65,10 @@ export default function Home() {
         setHomeData({
           events: [],
           notices: [],
+          community: [],
+          bazaar: [],
+          businesses: [],
+          jobs: [],
         });
       } finally {
         if (isMounted) {
@@ -113,8 +125,14 @@ export default function Home() {
           loading={loading}
         />
 
-        {/* Emergency Information */}
-        <EmergencySection />
+        {/* Highlights: Community, Bazaar, Businesses, Jobs */}
+        <VillageHighlights
+          community={homeData.community}
+          bazaar={homeData.bazaar}
+          businesses={homeData.businesses}
+          jobs={homeData.jobs}
+          loading={loading}
+        />
       </div>
     </>
   );

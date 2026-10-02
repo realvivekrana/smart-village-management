@@ -1,5 +1,9 @@
 const Event = require("../models/Event");
 const Notice = require("../models/Notice");
+const CommunityPost = require("../models/CommunityPost");
+const Listing = require("../models/Listing");
+const Business = require("../models/Business");
+const Job = require("../models/Job");
 
 /*
 |--------------------------------------------------------------------------
@@ -84,7 +88,7 @@ const getHomeData = async (req, res, next) => {
     |--------------------------------------------------------------------------
     */
 
-    const [events, notices] = await Promise.all([
+    const [events, notices, community, bazaar, businesses, jobs] = await Promise.all([
       /*
       |--------------------------------------------------------------------------
       | Upcoming Events
@@ -135,6 +139,43 @@ const getHomeData = async (req, res, next) => {
         })
         .limit(4)
         .lean(),
+
+      /*
+      | Community posts (pinned pehle, phir latest)
+      */
+      CommunityPost.find({ isActive: true })
+        .select("_id content category images likeCount commentCount isPinned createdAt createdBy")
+        .populate("createdBy", "name avatar")
+        .sort({ isPinned: -1, createdAt: -1 })
+        .limit(4)
+        .lean(),
+
+      /*
+      | Gaon Bazaar listings (sirf approved + open)
+      */
+      Listing.find({ status: "approved", isActive: true, isClosed: false })
+        .select("_id type title price priceUnit location images itemStatus createdAt")
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .lean(),
+
+      /*
+      | Local businesses (sirf approved)
+      */
+      Business.find({ status: "approved", isActive: true })
+        .select("_id name category description images address createdAt")
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .lean(),
+
+      /*
+      | Jobs (jinki last date nikli nahi)
+      */
+      Job.find({ isActive: true, applyBy: { $gte: currentDate } })
+        .select("_id title company location type salary applyBy createdAt")
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .lean(),
     ]);
 
     /*
@@ -146,6 +187,10 @@ const getHomeData = async (req, res, next) => {
     const data = {
       events,
       notices,
+      community,
+      bazaar,
+      businesses,
+      jobs,
     };
 
     /*

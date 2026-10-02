@@ -52,6 +52,7 @@ const galleryRoutes = require("./routes/galleryRoutes");
 */
 
 const homeRoutes = require("./routes/homeRoutes");
+const { clearHomeCache } = require("./controllers/homeController");
 const assistantRoutes = require("./routes/assistantRoutes");
 
 const app = express();
@@ -293,6 +294,33 @@ app.use(
 app.use(
   "/api/v1/home",
   homeRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Home page highlights refresh
+|--------------------------------------------------------------------------
+| Jab bhi koi community post, notice, event, bazaar listing, business ya job
+| add / edit / delete / approve ho, home page ka cache turant clear ho jaye.
+*/
+
+app.use(
+  [
+    "/api/v1/community",
+    "/api/v1/notices",
+    "/api/v1/events",
+    "/api/v1/listings",
+    "/api/v1/businesses",
+    "/api/v1/jobs",
+  ],
+  (req, res, next) => {
+    if (req.method !== "GET") {
+      res.on("finish", () => {
+        if (res.statusCode < 400) clearHomeCache();
+      });
+    }
+    next();
+  }
 );
 
 /*
