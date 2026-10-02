@@ -1,4 +1,6 @@
 const Business = require("../models/Business");
+const Review = require("../models/Review");
+const Job = require("../models/Job");
 const { getPagination, getPaginationMeta } = require("../utils/pagination");
 const cloudinaryService = require("../services/cloudinaryService");
 const notificationService = require("../services/notificationService");
@@ -280,8 +282,15 @@ const deleteBusiness = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    business.isActive = false;
-    await business.save();
+    // Permanent delete: DB se hamesha ke liye hata do (pehle sirf isActive=false hota tha,
+    // isliye admin list reload par business wapas aa jaati thi)
+    const publicIds = (business.images || []).map((img) => img.publicId).filter(Boolean);
+    await Promise.all([
+      Review.deleteMany({ business: business._id }),
+      Job.updateMany({ business: business._id }, { $unset: { business: "" } }),
+      business.deleteOne(),
+    ]);
+    cloudinaryService.deleteMultipleImages(publicIds).catch(() => {});
 
     return res.status(200).json({ success: true, message: "Business deleted" });
   } catch (error) {
