@@ -65,6 +65,9 @@ const register = async (req, res, next) => {
       address,
     });
 
+    // Activity Monitor ke liye (middleware isse session link karta hai)
+    req.activityUser = user;
+
     // Generate JWT
     const token = generateToken(user._id);
 
@@ -134,6 +137,9 @@ const login = async (req, res, next) => {
     user.lastLogin = new Date();
 
     await user.save();
+
+    // Activity Monitor ke liye (middleware isse session link karta hai)
+    req.activityUser = user;
 
     // Generate JWT
     const token = generateToken(user._id);

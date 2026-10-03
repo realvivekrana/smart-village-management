@@ -169,6 +169,28 @@ const assistantLimiter = createLimiter({
 
 /*
 |--------------------------------------------------------------------------
+| Activity Tracker Limiter
+|--------------------------------------------------------------------------
+| Page view + heartbeat. Gaon me kai log ek hi mobile-network IP se aate
+| hain, isliye key IP nahi, visitor/session id hai.
+*/
+
+const trackLimiter = createLimiter({
+  windowMs: 60 * 1000,
+  limit: 60,
+
+  keyGenerator: (req) => {
+    const id = req.body && (req.body.sessionId || req.body.visitorId);
+    return typeof id === "string" && id.length <= 64
+      ? `track:${id}`
+      : ipKeyGenerator(req.ip);
+  },
+
+  message: "Too many tracking requests.",
+});
+
+/*
+|--------------------------------------------------------------------------
 | Export
 |--------------------------------------------------------------------------
 */
@@ -176,6 +198,7 @@ const assistantLimiter = createLimiter({
 module.exports = {
   apiLimiter,
   assistantLimiter,
+  trackLimiter,
   submissionLimiter,
 
   authLimiter,

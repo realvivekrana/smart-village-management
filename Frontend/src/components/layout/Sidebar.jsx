@@ -6,6 +6,7 @@ import Avatar from "../common/Avatar";
 const adminLinks = [
   { to: "/admin/dashboard", icon: "📊", label: "Dashboard", key: "sidebar.dashboard" },
   { to: "/admin/users", icon: "👥", label: "Users", key: "sidebar.users" },
+  { to: "/admin/activity", icon: "🛰️", label: "Activity Monitor", key: "sidebar.activityMonitor" },
   { to: "/admin/complaints", icon: "📋", label: "Complaints", key: "sidebar.complaints" },
   { to: "/admin/businesses", icon: "🏪", label: "Businesses", key: "sidebar.businesses" },
   { to: "/admin/events", icon: "📅", label: "Events", key: "sidebar.events" },

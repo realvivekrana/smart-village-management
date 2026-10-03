@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../utils/constants";
+import { getSessionId, getVisitorId } from "../utils/activityTracker";
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,20 @@ api.interceptors.request.use(
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Activity Monitor ids
+    |--------------------------------------------------------------------------
+    |
+    | Backend inse pehchanta hai ki ye request kis visitor / session ki hai
+    | (guest ho ya logged-in).
+    |--------------------------------------------------------------------------
+    */
+
+    config.headers = config.headers || {};
+    config.headers["X-Visitor-Id"] = getVisitorId();
+    config.headers["X-Session-Id"] = getSessionId();
 
     /*
     |--------------------------------------------------------------------------

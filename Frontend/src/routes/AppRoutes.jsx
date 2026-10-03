@@ -237,6 +237,10 @@ const AdminUserDetail = lazy(
   () => import("../pages/admin/UserDetail")
 );
 
+const AdminActivityMonitor = lazy(
+  () => import("../pages/admin/ActivityMonitor")
+);
+
 const AdminComplaints = lazy(
   () => import("../pages/admin/Complaints")
 );
@@ -678,6 +682,12 @@ export default function AppRoutes() {
           <Route
             path="/admin/users/:id"
             element={<AdminUserDetail />}
+          />
+
+          {/* Activity Monitor */}
+          <Route
+            path="/admin/activity"
+            element={<AdminActivityMonitor />}
           />
 
           {/* Complaints */}

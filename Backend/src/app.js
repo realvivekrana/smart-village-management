@@ -54,6 +54,8 @@ const galleryRoutes = require("./routes/galleryRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const { clearHomeCache } = require("./controllers/homeController");
 const assistantRoutes = require("./routes/assistantRoutes");
+const activityRoutes = require("./routes/activityRoutes");
+const { trackApiActivity } = require("./middleware/activityMiddleware");
 
 const app = express();
 
@@ -249,6 +251,8 @@ const corsOptions = {
     "Content-Type",
     "Authorization",
     "X-Requested-With",
+    "X-Visitor-Id",
+    "X-Session-Id",
   ],
 
   optionsSuccessStatus: 204,
@@ -261,6 +265,17 @@ const corsOptions = {
 */
 
 app.use(cors(corsOptions));
+
+/*
+|--------------------------------------------------------------------------
+| Activity Tracking (Admin Activity Monitor)
+|--------------------------------------------------------------------------
+| Rate limiter se PEHLE, taaki 429 (hamla / spam) bhi log ho.
+| Response ke baad chalta hai - koi slowdown nahi.
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/", trackApiActivity);
 
 /*
 |--------------------------------------------------------------------------
@@ -703,6 +718,17 @@ app.use(
 app.use(
   "/api/v1/assistant",
   assistantRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| Activity Monitor (visitor tracking + admin reports)
+|--------------------------------------------------------------------------
+*/
+
+app.use(
+  "/api/v1/activity",
+  activityRoutes
 );
 
 /*
