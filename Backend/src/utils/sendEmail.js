@@ -68,6 +68,7 @@ const sendWithBrevo = async ({ to, subject, html, text }) => {
     }
     const err = new Error(`Brevo API ${res.status}: ${detail}`);
     err.code = `BREVO_${res.status}`;
+    err.status = res.status;
     throw err;
   }
 
@@ -76,13 +77,41 @@ const sendWithBrevo = async ({ to, subject, html, text }) => {
 
 /*
 |--------------------------------------------------------------------------
-| Send Email
+| Send Email (retry + failover)
 |--------------------------------------------------------------------------
-| Priority: Brevo API (BREVO_API_KEY)  ->  SMTP (SMTP_HOST/USER/PASS)
-| Kuch bhi configured nahi hai to email bheji nahi jayegi, sirf console me
-| print hogi (development me reset/verify link yahin se mil jayega).
-| Fail hone par asli wajah logger me aati hai.
+| Providers (jo configured ho): Brevo API  ->  SMTP
+| - Har provider par temporary error (timeout, network, 5xx, 429) me 1 retry.
+| - Ek provider fail ho to agla provider try hota hai.
+| - Permanent error (galat key / sender, EAUTH) par retry nahi, seedha agla.
+| Kuch bhi configured nahi hai to email bheji nahi jayegi (sirf console warning).
 */
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const isPermanent = (error) => {
+  const status = error.status;
+  if (status && status >= 400 && status < 500 && ![408, 429].includes(status)) return true;
+  return ["EAUTH", "EENVELOPE", "EMESSAGE"].includes(error.code);
+};
+
+const getProviders = () => {
+  const list = [];
+  if (env.email.brevoApiKey) list.push("brevo");
+  if (env.email.smtpEnabled) list.push("smtp");
+  return list;
+};
+
+const sendVia = (provider, { to, subject, html, text }) => {
+  if (provider === "brevo") return sendWithBrevo({ to, subject, html, text });
+
+  return getTransporter().sendMail({
+    from: env.email.from,
+    to,
+    subject,
+    html,
+    text,
+  });
+};
 
 const sendEmail = async ({ to, subject, html, text }) => {
   if (!env.email.enabled) {
@@ -94,25 +123,35 @@ const sendEmail = async ({ to, subject, html, text }) => {
     return { skipped: true };
   }
 
-  try {
-    if (env.email.provider === "brevo") {
-      return await sendWithBrevo({ to, subject, html, text });
-    }
+  const MAX_ATTEMPTS = 2;
+  let lastError;
 
-    return await getTransporter().sendMail({
-      from: env.email.from,
-      to,
-      subject,
-      html,
-      text,
-    });
-  } catch (error) {
-    logger.error(
-      `Email send FAILED via ${env.email.provider} -> ${to} | ${subject} | ` +
-        `${error.code || ""} ${error.message}`
-    );
-    throw error;
+  for (const provider of getProviders()) {
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+      try {
+        const result = await sendVia(provider, { to, subject, html, text });
+
+        if (attempt > 1 || lastError) {
+          logger.info(`Email sent via ${provider} (attempt ${attempt}) after earlier failure.`);
+        }
+
+        return result;
+      } catch (error) {
+        lastError = error;
+
+        logger.error(
+          `Email send FAILED via ${provider} (attempt ${attempt}/${MAX_ATTEMPTS}) -> ${to} | ` +
+            `${error.code || ""} ${error.message}`
+        );
+
+        if (isPermanent(error) || attempt === MAX_ATTEMPTS) break;
+
+        await sleep(700);
+      }
+    }
   }
+
+  throw lastError;
 };
 
 module.exports = sendEmail;

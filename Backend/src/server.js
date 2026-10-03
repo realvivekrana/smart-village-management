@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const app = require("./app");
 const logger = require("./utils/logger");
+const startKeepAlive = require("./utils/keepAlive");
 
 let server;
 
@@ -30,6 +31,8 @@ const startServer = async () => {
     logger.info(
       `Server running in ${env.nodeEnv} mode on http://localhost:${env.port}`
     );
+
+    startKeepAlive();
   });
 };
 
